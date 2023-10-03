@@ -10,3 +10,7 @@
 	path = packages/hr
 	url = https://github.com/dimaslanjaka/hexo-renderers.git
 	branch = pre-release
+[submodule "packages/hs"]
+	path = packages/hs
+	url = https://github.com/dimaslanjaka/hexo-shortcodes
+	branch = pre-release
