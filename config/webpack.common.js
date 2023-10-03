@@ -22,6 +22,10 @@ const config = {
   module: {
     rules: [
       {
+        test: /\.(txt|md)$/i,
+        use: 'raw-loader'
+      },
+      {
         test: /\.(woff(2)?|eot|ttf|otf|svg|)$/,
         type: 'asset/resource',
         parser: {
