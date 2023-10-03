@@ -6,3 +6,7 @@
 	path = packages/hpp
 	url = https://github.com/dimaslanjaka/hexo-post-parser
 	branch = pre-release
+[submodule "packages/hr"]
+	path = packages/hr
+	url = https://github.com/dimaslanjaka/hexo-renderers.git
+	branch = pre-release
