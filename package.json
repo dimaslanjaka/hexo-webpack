@@ -68,9 +68,9 @@
     "glob": "^10.3.10",
     "hexo": "^7.0.0-rc2",
     "hexo-asset-link": "^2.2.2",
-    "hexo-post-parser": "workspace:^",
-    "hexo-renderers": "workspace:^",
-    "hexo-shortcodes": "workspace:^",
+    "hexo-post-parser": "^1.2.10",
+    "hexo-renderers": "^2.0.2",
+    "hexo-shortcodes": "^1.2.3",
     "html-webpack-plugin": "^5.5.0",
     "lint-staged": "^14.0.1",
     "minimist": "^1.2.8",
@@ -149,9 +149,6 @@
     "version": "7.0.0-rc2"
   },
   "workspaces": [
-    "packages/hpp",
-    "packages/hr",
-    "packages/hs",
-    "posts"
+    "src-posts"
   ]
 }

@@ -19,7 +19,7 @@ pretty_urls:
   trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
   trailing_html: true # Set to false to remove trailing '.html' from permalinks
 
-post_dir: "posts"
+post_dir: "src-posts"
 public_dir: "dist"
 source_dir: "source"
 
