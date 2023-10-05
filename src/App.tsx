@@ -4,7 +4,6 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 // import Markdown from 'react-markdown';
 // import rehypeRaw from 'rehype-raw';
 // import remarkGfm from 'remark-gfm';
-import Sample from './samples/readme';
 
 const router = createBrowserRouter([
   {
@@ -17,7 +16,10 @@ const router = createBrowserRouter([
       {
         index: true,
         // element: <Markdown remarkPlugins={[[remarkGfm]]} rehypePlugins={[rehypeRaw]} children={Sample} />
-        element: <Sample />
+        async lazy() {
+          const { default: Component } = await import('../test/tmp/body');
+          return { Component };
+        }
       },
       {
         path: '*',

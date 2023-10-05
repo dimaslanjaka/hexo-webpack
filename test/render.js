@@ -8,7 +8,8 @@ const fs = require('fs');
 // need `sbg post copy`
 
 const base = __dirname + '/..';
-const hexo = new Hexo(base, { ...yaml.parse(fs.readFileSync(base + '/_config.yml', 'utf8')), silent: true });
+// const hexo = new Hexo(base, { ...yaml.parse(fs.readFileSync(base + '/_config.yml', 'utf8')), silent: true });
+const hexo = new Hexo(__dirname, { ...yaml.parse(fs.readFileSync(base + '/_config.yml', 'utf8')), silent: true });
 
 /**
  * initialize renderer
@@ -18,6 +19,7 @@ const hexo = new Hexo(base, { ...yaml.parse(fs.readFileSync(base + '/_config.yml
 const init = callback =>
   hexo
     .init()
+    .then(() => hexo.loadPlugin(require.resolve('hexo-renderers')))
     .then(() => hexo.loadPlugin(require.resolve('hexo-shortcodes')))
     .then(() => hexo.load(callback));
 
@@ -69,16 +71,7 @@ async function render(source = path.join(__dirname, '/fixtures/sample.md')) {
 }
 
 if (require.main === module) {
-  init().then(() => {
-    render(__dirname + '/fixtures/shortcodes.md')
-      .then(result => {
-        delete result.hexo;
-        result.body = result.content;
-        delete result.content;
-        fs.writeFileSync(__dirname + '/../routes.json', JSON.stringify([result], null, 2));
-        fs.writeFileSync(__dirname + '/tmp/body.html', result.body);
-      })
-      .catch(console.error);
-  });
+  require('./test');
 }
+
 module.exports = { render, init };
