@@ -19,3 +19,7 @@ config.json
 # ignore lock files
 yarn.lock
 package-lock.json
+
+# ignore auto generated files
+source/_posts
+/routes.json

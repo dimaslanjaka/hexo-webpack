@@ -5,7 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "analyze": "webpack --profile --mode production",
+    "prepare": "touch routes.json",
     "build": "rm -rf dist && run-s \"build:**\" && gulp build",
     "build:webpack": "webpack --progress --mode production --config config/webpack.prod.js",
     "clean": "rm -rf dist tmp",
@@ -52,6 +52,7 @@
     "@types/webpack-bundle-analyzer": "^4",
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
+    "autoprefixer": "^10.4.16",
     "babel-loader": "^9.1.3",
     "babel-plugin-module-resolver": "^5.0.0",
     "clean-webpack-plugin": "^4.0.0",
@@ -65,18 +66,25 @@
     "fs-extra": "^11.1.1",
     "git-command-helper": "^2.0.1",
     "glob": "^10.3.10",
+    "hexo": "^7.0.0-rc2",
+    "hexo-asset-link": "^2.2.2",
+    "hexo-post-parser": "workspace:^",
+    "hexo-renderers": "workspace:^",
+    "hexo-shortcodes": "workspace:^",
     "html-webpack-plugin": "^5.5.0",
     "lint-staged": "^14.0.1",
     "minimist": "^1.2.8",
     "node-sass": "^7.0.0",
-    "postcss": "^8.4.30",
+    "postcss": "^8.4.31",
     "postcss-import": "^15.1.0",
     "postcss-loader": "^7.3.3",
     "postcss-preset-env": "^9.1.4",
     "prettier": "^3.0.3",
     "purgecss": "^5.0.0",
+    "raw-loader": "^4.0.2",
     "sass-loader": "^12.4.0",
     "sbg-utility": "^1.1.5",
+    "static-blog-generator": "^3.0.1",
     "style-loader": "^3.3.3",
     "tailwindcss": "^3.3.3",
     "through2": "^4.0.2",
@@ -88,7 +96,8 @@
     "webpack-bundle-analyzer": "^4.9.1",
     "webpack-cli": "^4.9.1",
     "webpack-dev-server": "^4.6.0",
-    "webpack-merge": "^5.8.0"
+    "webpack-merge": "^5.8.0",
+    "yaml": "^2.3.2"
   },
   "dependencies": {
     "buffer": "^6.0.3",
@@ -100,7 +109,10 @@
     "path-browserify": "^1.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-markdown": "^9.0.0",
     "react-router-dom": "^6.16.0",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.0",
     "sort-by": "^1.2.0",
     "stream-browserify": "^3.0.0",
     "tw-elements-react": "^1.0.0-alpha1"
@@ -116,16 +128,30 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^6.15.0",
-    "@types/hexo": "https://github.com/dimaslanjaka/hexo/raw/638a594/releases/hexo.tgz",
-    "hexo-log": "https://github.com/dimaslanjaka/hexo/raw/638a594/releases/hexo-log.tgz",
-    "hexo-util": "https://github.com/dimaslanjaka/hexo/raw/638a594/releases/hexo-util.tgz",
-    "instant-indexing": "https://github.com/dimaslanjaka/static-blog-generator/raw/3d352a6c2fa9217d57b8e049c40563c0a2ab41de/packages/instant-indexing/release/instant-indexing.tgz",
+    "static-blog-generator": "https://github.com/dimaslanjaka/static-blog-generator/raw/961f674/packages/static-blog-generator/release/static-blog-generator.tgz",
+    "instant-indexing": "https://github.com/dimaslanjaka/static-blog-generator/raw/961f674/packages/instant-indexing/release/instant-indexing.tgz",
+    "sbg-utility": "https://github.com/dimaslanjaka/static-blog-generator/raw/961f674/packages/sbg-utility/release/sbg-utility.tgz",
+    "sbg-api": "https://github.com/dimaslanjaka/static-blog-generator/raw/961f674/packages/sbg-api/release/sbg-api.tgz",
+    "sbg-cli": "https://github.com/dimaslanjaka/static-blog-generator/raw/961f674/packages/sbg-cli/release/sbg-cli.tgz",
+    "sbg-server": "https://github.com/dimaslanjaka/static-blog-generator/raw/961f674/packages/sbg-server/release/sbg-server.tgz",
     "nodejs-package-types": "https://github.com/dimaslanjaka/nodejs-package-types/raw/a2e797bc27975cba20ef4c87547841e6341bfcf4/release/nodejs-package-types.tgz",
-    "hexo-post-parser": "https://github.com/dimaslanjaka/hexo-post-parser/raw/0f213ec/release/hexo-post-parser.tgz",
-    "cross-spawn": "https://github.com/dimaslanjaka/node-cross-spawn/raw/ff4b648/release/cross-spawn.tgz"
+    "cross-spawn": "https://github.com/dimaslanjaka/node-cross-spawn/raw/ff4b648/release/cross-spawn.tgz",
+    "hexo": "https://github.com/dimaslanjaka/hexo/raw/8b31a11/releases/hexo.tgz",
+    "hexo-asset-link": "https://github.com/dimaslanjaka/hexo/raw/8b31a11/releases/hexo-asset-link.tgz",
+    "hexo-cli": "https://github.com/dimaslanjaka/hexo/raw/8b31a11/releases/hexo-cli.tgz",
+    "hexo-front-matter": "https://github.com/dimaslanjaka/hexo/raw/8b31a11/releases/hexo-front-matter.tgz",
+    "hexo-log": "https://github.com/dimaslanjaka/hexo/raw/8b31a11/releases/hexo-log.tgz",
+    "hexo-util": "https://github.com/dimaslanjaka/hexo/raw/8b31a11/releases/hexo-util.tgz",
+    "warehouse": "https://github.com/dimaslanjaka/hexo/raw/8b31a11/releases/warehouse.tgz"
   },
   "packageManager": "yarn@3.6.3",
+  "hexo": {
+    "version": "7.0.0-rc2"
+  },
   "workspaces": [
-    "packages/hwp"
+    "packages/hpp",
+    "packages/hr",
+    "packages/hs",
+    "posts"
   ]
 }

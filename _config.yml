@@ -1,0 +1,30 @@
+title: 'WMI'
+subtitle: 'Website Management Indonesia'
+description: Website Management Indonesia is a blog about scripts, tips and tricks, games, software. Covering php, javascript, jquery, mysql, seo, e-commerce and others.
+keywords: the legend of neverland, genshin impact, games, how to, tips and tricks, php, javascript, jquery, mysql, seo, e-commerce
+timezone: 'Asia/Jakarta'
+language:
+  - id # Bahasa Indonesia
+  - en # Default language
+  - zh-TW # Traditional Chinese
+  - zh-CN # Simplified Chinese
+  - zh-HK
+  - th # Thailand
+  - tl # Filipino
+
+url: https://www.webmanajemen.com/
+root: /
+permalink: :title.html
+pretty_urls:
+  trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
+  trailing_html: true # Set to false to remove trailing '.html' from permalinks
+
+post_dir: "posts"
+public_dir: "dist"
+source_dir: "source"
+
+default_category: uncategorized
+post_asset_folder: true
+marked:
+  prependRoot: true
+  postAsset: true
