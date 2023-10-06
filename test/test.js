@@ -21,14 +21,14 @@ init()
           const jsx = await toJsx(html);
           console.log('jsx successful');
           writefile(__dirname + '/tmp/body.jsx', jsx);
-        } catch {
-          return console.error('jsx fail');
+        } catch (je) {
+          return console.error('jsx fail', je);
         }
-      } catch (_e) {
-        return console.log('prettier fail');
+      } catch (pe) {
+        return console.log('prettier fail', pe);
       }
-    } catch (_e_1) {
-      return console.log('render fail');
+    } catch (re) {
+      return console.log('render fail', re);
     }
   })
   .catch(console.error);
