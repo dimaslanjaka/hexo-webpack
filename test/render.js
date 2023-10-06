@@ -38,6 +38,7 @@ const init = callback =>
 async function render(source = path.join(__dirname, '/fixtures/sample.md')) {
   // parse frontmatter post
   const post = (await hpp.parsePost(source)) || hpp.parsePostFM(source);
+  const meta = post.attributes ? post.attributes : post.metadata;
   // render hexo shortcodes
   let { content = '' } = await hexo.post.render(null, {
     content: post.body,
@@ -77,7 +78,7 @@ async function render(source = path.join(__dirname, '/fixtures/sample.md')) {
     console.log('cannot find image html from', source);
   }
 
-  return { content, hexo, ...post.attributes, ...post.metadata };
+  return { content, hexo, ...meta };
 }
 
 module.exports = { render, init };
