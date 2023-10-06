@@ -1,5 +1,5 @@
 const { JSDOM } = require('jsdom');
-const { format } = require('prettier');
+const prettierFormat = require('./format');
 
 const JSX_ATTRIBUTES = [
   'allowFullScreen',
@@ -139,7 +139,7 @@ export default function () {
 
   window.close();
 
-  let formatted = await format(result, { parser: 'babel' });
+  let formatted = await prettierFormat(result, { parser: 'babel' });
 
   // fix lowercased attributes
   // const regexAttr = /(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|\s*\/?[>"']))+.)["']?/gmi

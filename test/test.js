@@ -1,6 +1,6 @@
+const prettierFormat = require('./format');
 const { init, render } = require('./render');
 const toJsx = require('./toJsx');
-const prettier = require('prettier');
 const { writefile } = require('sbg-utility');
 
 init()
@@ -13,7 +13,7 @@ init()
       result.body = result.content;
       delete result.content;
       try {
-        const html = await prettier.format(result.body, { parser: 'html' });
+        const html = await prettierFormat(result.body, { parser: 'html' });
         console.log('prettier successful');
         writefile(__dirname + '/tmp/body.html', html);
         writefile(__dirname + '/../routes.json', JSON.stringify([result], null, 2));
