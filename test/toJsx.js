@@ -1,6 +1,9 @@
 const { JSDOM } = require('jsdom');
 const prettierFormat = require('./format');
 
+// inspired by
+// https://github.com/probablyup/markdown-to-jsx/blob/main/index.tsx#L266
+
 const JSX_ATTRIBUTES = [
   'allowFullScreen',
   'allowTransparency',
