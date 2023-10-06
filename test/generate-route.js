@@ -20,10 +20,10 @@ async function _all() {
         '**/readme.md',
         '**/bin',
         '**/.vscode',
-        '**/.frontmatter'
-      ]
+        '**/.frontmatter',
         // add exclude from _config.yml
-        .concat(config.exclude),
+        ...config.exclude
+      ],
       dot: true
     })
     .map(result => path.resolve(sourcePostDir, result));
@@ -34,8 +34,4 @@ async function _all() {
   writefile(__dirname + '/../routes.json', JSON.stringify(results, null, 2));
 }
 
-// _all()
-//   .then(() => {
-//     //
-//   })
-//   .catch(console.error);
+_all().catch(console.error);
