@@ -41,7 +41,8 @@
     "src/routes/**/*",
     "./src/**/*.json",
     "typings",
-    "./routes.json"
+    "./routes.json",
+    "./_config.json"
   ],
   "exclude": [
     "**/node_modules/**",
