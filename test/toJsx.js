@@ -1,7 +1,7 @@
 const { JSDOM } = require('jsdom');
 const { format } = require('prettier');
 
-const ATTRIBUTE_TO_JSX_PROP_MAP = [
+const JSX_ATTRIBUTES = [
   'allowFullScreen',
   'allowTransparency',
   'autoComplete',
@@ -42,7 +42,8 @@ const ATTRIBUTE_TO_JSX_PROP_MAP = [
   'srcSet',
   'tabIndex',
   'useMap'
-].reduce(
+];
+const ATTRIBUTE_TO_JSX_PROP_MAP = JSX_ATTRIBUTES.reduce(
   (obj, x) => {
     obj[x.toLowerCase()] = x;
     return obj;
@@ -68,7 +69,7 @@ function getAttrObj(element) {
  * transform html to jsx
  * @param {string} html
  */
-function toJsx(html) {
+async function toJsx(html) {
   const dom = new JSDOM(html);
   const { window } = dom;
   const { document } = window;
@@ -138,12 +139,23 @@ export default function () {
 
   window.close();
 
-  return format(result, { parser: 'babel' });
+  let formatted = await format(result, { parser: 'babel' });
+
+  // fix lowercased attributes
+  // const regexAttr = /(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|\s*\/?[>"']))+.)["']?/gmi
+  for (const attr in ATTRIBUTE_TO_JSX_PROP_MAP) {
+    const jsxattr = ATTRIBUTE_TO_JSX_PROP_MAP[attr];
+    const regex = new RegExp(attr + '=', 'gm');
+    formatted = formatted.replace(regex, jsxattr + '=');
+    // console.log(regex, jsxattr);
+  }
+
+  return formatted;
 }
 
 module.exports.toJsx = toJsx;
 module.exports = toJsx;
 
 if (require.main === module) {
-  require('./test');
+  require('./test-jsx');
 }
