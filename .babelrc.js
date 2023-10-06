@@ -10,7 +10,8 @@ const plugins = [
         '@routes': './src/routes',
         '@assets': './src/assets',
         '@project': './src/project',
-        'src': './src'
+        'src': './src',
+        '@root': './'
       }
     }
   ]

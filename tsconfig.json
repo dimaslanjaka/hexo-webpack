@@ -25,7 +25,8 @@
       "@routes/*": ["src/routes/*"],
       "@assets/*": ["./src/assets/*"],
       "@utils/*": ["./src/utils/*"],
-      "@project": ["./src/project"]
+      "@project": ["./src/project"],
+      "@root/*": ["./*"]
     },
     "plugins": [
       {
