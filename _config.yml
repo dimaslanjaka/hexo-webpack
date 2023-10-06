@@ -28,3 +28,34 @@ post_asset_folder: true
 marked:
   prependRoot: true
   postAsset: true
+
+generator:
+  cache: false
+  image:
+    type: 'url'
+
+exclude:
+  - '**/.git*'
+  - '**/.git'
+  - '**/.vscode'
+  - '**/.idea'
+  - '**/.env'
+  - '**/License.md'
+  - '**/frontmatter.json'
+  - '**/.frontmatter'
+  - '**/git-hooks'
+  - '**/License'
+  - '**/bin/**'
+  - '**/backend/**'
+  - '**/MIDI.js/**'
+  - '**/{readme,README,changelog,CHANGELOG,license,LICENSE,License}.md'
+  - '**/Test/**'
+  - '**/guzzle/**'
+  - '**/exclude/**'
+  - '**/hexo-post-parser/**'
+  - '**/node_modules/**'
+  - '**/vendor/**'
+  - '**/ads/**'
+  - '**/tmp/**'
+  - '**/hexo-theme-unit-test/**'
+  - '**/*-backup*'
