@@ -29,6 +29,21 @@ marked:
   prependRoot: true
   postAsset: true
 
+# https://github.com/hexojs/hexo-util
+# https://hexo.io/docs/syntax-highlight.html
+highlight:
+  enable: true
+  line_number: false
+  auto_detect: false
+  tab_replace: '  ' # replace tabs with 2 spaces
+  wrap: false
+  hljs: false
+prismjs:
+  enable: false
+  preprocess: true
+  line_number: true
+  tab_replace: ''
+
 generator:
   cache: false
   image:
