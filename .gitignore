@@ -24,3 +24,4 @@ package-lock.json
 source/_posts
 /routes.json
 /_config.json
+/src/posts

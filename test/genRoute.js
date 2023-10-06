@@ -58,7 +58,7 @@ async function genRoute(source) {
 
     // generate jsx
     const jsx = await toJsx(result.body);
-    const jsxPath = path.join(hexo.base_dir, '/tmp/jsx/', id + '.jsx');
+    const jsxPath = path.join(__dirname, '/../src/posts/', id + '.jsx');
     writefile(jsxPath, jsx);
 
     if (date) {
