@@ -1,13 +1,12 @@
 const Hexo = require('hexo');
-const path = require('upath');
 const yaml = require('yaml');
 const hpp = require('hexo-post-parser').default;
-const fs = require('fs');
+const { fs, path } = require('sbg-utility');
 
 // test render single post
 // need `sbg post copy`
 
-const base = __dirname + '/..';
+const base = path.resolve(__dirname, '..');
 const _config = yaml.parse(fs.readFileSync(base + '/_config.yml', 'utf8'));
 // const hexo = new Hexo(base, { ...yaml.parse(fs.readFileSync(base + '/_config.yml', 'utf8')), silent: false });
 const hexo = new Hexo(__dirname, { ..._config, silent: true });
@@ -24,6 +23,10 @@ const init = callback =>
     .then(() => hexo.loadPlugin(require.resolve('hexo-shortcodes')))
     .then(() => {
       hexo.config = { ...hexo.config, ..._config };
+      fs.writeFileSync(
+        __dirname + '/../_config.json',
+        JSON.stringify({ ...hexo.config, base_dir: path.toUnix(base) }, null, 2)
+      );
       hexo.load(() => typeof callback == 'function' && callback(hexo));
       return hexo;
     });
