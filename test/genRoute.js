@@ -57,9 +57,13 @@ async function genRoute(source) {
     };
 
     // generate jsx
-    const jsx = await toJsx(result.body);
     const jsxPath = path.join(__dirname, '/../src/posts/', id + '.jsx');
-    writefile(jsxPath, jsx);
+    try {
+      const jsx = await toJsx(content);
+      writefile(jsxPath, jsx);
+    } catch (_) {
+      console.error('genRoute', 'jsx fail');
+    }
 
     if (date) {
       result.meta.date = {

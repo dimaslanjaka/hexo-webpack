@@ -139,21 +139,25 @@ export default function () {
 
   window.close();
 
-  let formatted = await prettierFormat(result, { parser: 'babel' });
+  try {
+    let formatted = await prettierFormat(result, { parser: 'babel' });
 
-  // fix lowercased attributes
-  // const regexAttr = /(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|\s*\/?[>"']))+.)["']?/gmi
-  for (const attr in ATTRIBUTE_TO_JSX_PROP_MAP) {
-    const jsxattr = ATTRIBUTE_TO_JSX_PROP_MAP[attr];
-    const regex = new RegExp(attr + '=', 'gm');
-    formatted = formatted.replace(regex, jsxattr + '=');
-    // console.log(regex, jsxattr);
+    // fix lowercased attributes
+    // const regexAttr = /(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|\s*\/?[>"']))+.)["']?/gmi
+    for (const attr in ATTRIBUTE_TO_JSX_PROP_MAP) {
+      const jsxattr = ATTRIBUTE_TO_JSX_PROP_MAP[attr];
+      const regex = new RegExp(attr + '=', 'gm');
+      formatted = formatted.replace(regex, jsxattr + '=');
+      // console.log(regex, jsxattr);
+    }
+
+    return formatted;
+  } catch (e) {
+    console.error('toJsx', 'prettier fail', e);
+    return result;
   }
-
-  return formatted;
 }
 
-module.exports.toJsx = toJsx;
 module.exports = toJsx;
 
 if (require.main === module) {
