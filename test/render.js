@@ -8,12 +8,12 @@ const fs = require('fs');
 // need `sbg post copy`
 
 const base = __dirname + '/..';
-const hexo = new Hexo(base, { ...yaml.parse(fs.readFileSync(base + '/_config.yml', 'utf8')), silent: true });
-// const hexo = new Hexo(__dirname, { ...yaml.parse(fs.readFileSync(base + '/_config.yml', 'utf8')), silent: true });
+// const hexo = new Hexo(base, { ...yaml.parse(fs.readFileSync(base + '/_config.yml', 'utf8')), silent: false });
+const hexo = new Hexo(__dirname, { ...yaml.parse(fs.readFileSync(base + '/_config.yml', 'utf8')), silent: true });
 
 /**
  * initialize renderer
- * @param {(hexo: import('hexo')) => any} callback
+ * @param {(hexo: import('hexo')) => any} [callback]
  * @returns
  */
 const init = callback =>
@@ -21,7 +21,7 @@ const init = callback =>
     .init()
     .then(() => hexo.loadPlugin(require.resolve('hexo-renderers')))
     .then(() => hexo.loadPlugin(require.resolve('hexo-shortcodes')))
-    .then(() => hexo.load(() => callback(hexo)))
+    .then(() => hexo.load(() => typeof callback == 'function' && callback(hexo)))
     .then(() => hexo);
 
 /**
@@ -30,13 +30,14 @@ const init = callback =>
  */
 async function render(source = path.join(__dirname, '/fixtures/sample.md')) {
   // parse frontmatter post
-  const post = await hpp.parsePost(source);
+  const post = (await hpp.parsePost(source)) || hpp.parsePostFM(source);
   // render hexo shortcodes
   let { content = '' } = await hexo.post.render(null, {
     content: post.body,
     // disableNunjucks: true,
     engine: 'md'
   });
+  // console.log({ content });
   // let { content = '' } = await hexo.post.render(source);
   // replace image src to url base64
   const imagefinderreplacement = (whole, src) => {
@@ -68,11 +69,12 @@ async function render(source = path.join(__dirname, '/fixtures/sample.md')) {
   } catch {
     console.log('cannot find image html from', source);
   }
-  return { content, hexo, ...post.attributes };
+
+  return { content, hexo, ...post.attributes, ...post.metadata };
 }
+
+module.exports = { render, init };
 
 if (require.main === module) {
   require('./test');
 }
-
-module.exports = { render, init };
