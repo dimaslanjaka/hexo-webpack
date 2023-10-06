@@ -39,14 +39,16 @@ async function render(source = path.join(__dirname, '/fixtures/sample.md')) {
   // parse frontmatter post
   const post = (await hpp.parsePost(source)) || hpp.parsePostFM(source);
   const meta = post.attributes ? post.attributes : post.metadata;
+
   // render hexo shortcodes
   let { content = '' } = await hexo.post.render(null, {
     content: post.body,
-    // disableNunjucks: true,
-    engine: 'md'
+    engine: 'md',
+    page: meta
   });
+
   // console.log({ content });
-  // let { content = '' } = await hexo.post.render(source);
+
   // replace image src to url base64
   const imagefinderreplacement = (whole, src) => {
     // console.log(src);
