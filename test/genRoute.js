@@ -9,6 +9,8 @@ const { default: uuidv4 } = require('sbg-utility/dist/utils/uuid');
  * @returns
  */
 async function genRoute(source) {
+  /** @type {import('html-webpack-plugin').Options & { body: string, source: string; jsxPath: string; id: string; permalink: string; }} */
+  let result = {};
   try {
     // render hexo shortcodes
     const {
@@ -29,8 +31,7 @@ async function genRoute(source) {
     const url = new URL(hexo.config.url);
     url.pathname = permalink.replace(/^\//, '');
 
-    /** @type {import('html-webpack-plugin').Options & { body: string, source: string }} */
-    const result = {
+    result = {
       body: content,
       title,
       filename: permalink,
@@ -109,9 +110,10 @@ async function genRoute(source) {
         };
       }
     }
-    return { ...result, jsxPath, permalink };
+    return { ...result, jsxPath, permalink, id };
   } catch (e) {
     console.error('cannot parse', source);
+    return result;
   }
 }
 
