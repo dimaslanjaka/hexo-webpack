@@ -26,6 +26,9 @@ async function genRoute(source) {
       hexo
     } = await render.render(source);
 
+    const url = new URL(hexo.config.url);
+    url.pathname = permalink.replace(/^\//, '');
+
     /** @type {import('html-webpack-plugin').Options & { body: string, source: string }} */
     const result = {
       body: content,
@@ -35,11 +38,11 @@ async function genRoute(source) {
       meta: {
         canonical: {
           rel: 'canonical',
-          href: hexo.config.url + '/' + permalink.replace(/^\//, '')
+          href: String(url)
         },
         og_url: {
           property: 'og:url',
-          content: hexo.config.url + '/' + permalink.replace(/^\//, '')
+          content: String(url)
         },
         og_type: {
           property: 'og:type',
@@ -102,7 +105,7 @@ async function genRoute(source) {
         };
       }
     }
-    return { ...result, jsxPath };
+    return { ...result, jsxPath, permalink };
   } catch (e) {
     console.error('cannot parse', source);
   }
