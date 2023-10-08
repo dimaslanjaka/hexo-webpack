@@ -1,5 +1,5 @@
 const fixHtml = require('./fixHtml');
-const { init, render } = require('./render');
+const { init, render } = require('./render').default;
 const { writefile } = require('sbg-utility');
 const { tmp } = require('./utils');
 
