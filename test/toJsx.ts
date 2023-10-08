@@ -97,9 +97,6 @@ const UNCLOSED_TAGS = [
 //   return attrsObj;
 // }
 
-const _scripts: string[] = [];
-const _styles: string[] = [];
-
 /**
  * transform html to jsx
  * @param options
@@ -111,6 +108,8 @@ async function toJsx(options: {
   /** folder destination */
   dest: string;
 }) {
+  const _scripts: string[] = [];
+  const _styles: string[] = [];
   const { source } = options;
   let { body } = options;
   if (!body) {
