@@ -118,32 +118,45 @@ async function toJsx(options: {
   let newHtml = body;
 
   let m: RegExpExecArray | null;
-  while ((m = re_style_tag.exec(newHtml))) {
+  while ((m = re_style_tag.exec(newHtml)) !== null) {
     // delete style tag
     newHtml = newHtml.replace(m[0], '');
     _styles.push(m[1]);
   }
   const allScriptSrc: string[] = [];
-  while ((m = re_script_tag.exec(newHtml))) {
-    // delete script tag
-    newHtml = newHtml.replace(m[0], '');
-    const src = ((m[1] || '').match(/src=['"](.*)['"]/) || [])[1] || '';
-    let inner = (m[2] || '').trim().length > 0 ? m[2] : '';
-    // call src script dynamically
-    // skip duplicated script
-    if (src.length > 0 && !allScriptSrc.includes(src)) {
-      allScriptSrc.push(src);
-      inner +=
-        '\n\n' +
-        `
-(()=>{
-  const script = document.createElement('script');
-  script.src = '${src}';
-  document.body.appendChild(script);
-})()
-            `;
-    }
-    _scripts.push(inner);
+  const detachScriptTags = () => {
+    return new Promise(resolve => {
+      // process 3 times
+      for (let index = 0; index < 3; index++) {
+        while ((m = re_script_tag.exec(newHtml)) !== null) {
+          // delete script tag
+          newHtml = newHtml.replace(m[0], '');
+          const src = ((m[1] || '').match(/src=['"](.*)['"]/) || [])[1] || '';
+          let inner = (m[2] || '').trim().length > 0 ? m[2] : '';
+          // call src script dynamically
+          // skip duplicated script
+          if (src.length > 0 && !allScriptSrc.includes(src)) {
+            allScriptSrc.push(src);
+            inner +=
+              '\n\n' +
+              `
+    (()=>{
+      const script = document.createElement('script');
+      script.src = '${src}';
+      document.body.appendChild(script);
+    })()
+                `;
+          }
+
+          _scripts.push(inner);
+        }
+      }
+      resolve(null);
+    });
+  };
+
+  while (re_script_tag.test(newHtml)) {
+    await detachScriptTags();
   }
 
   // fix unclosed tags
