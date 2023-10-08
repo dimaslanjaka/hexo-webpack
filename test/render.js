@@ -1,7 +1,11 @@
 const Hexo = require('hexo');
 const yaml = require('yaml');
 const hpp = require('hexo-post-parser').default;
-const { fs, path } = require('sbg-utility');
+const { fs, path, writefile } = require('sbg-utility');
+const { RenderMarkdownBody } = require('hexo-post-parser/dist/markdown/renderBodyMarkdown');
+const { tmp } = require('./utils');
+const fixHtml = require('./fixHtml');
+const { default: img2base64 } = require('./utils/img2base64');
 
 // test render single post
 // need `sbg post copy`
@@ -23,7 +27,7 @@ const init = callback =>
     .then(() => hexo.loadPlugin(require.resolve('hexo-shortcodes')))
     .then(() => {
       hexo.config = { ...hexo.config, ..._config };
-      fs.writeFileSync(
+      writefile(
         __dirname + '/../_config.json',
         JSON.stringify({ ...hexo.config, base_dir: path.toUnix(base) }, null, 2)
       );
@@ -32,55 +36,46 @@ const init = callback =>
     });
 
 /**
- * @param {string} source
+ * @param {import('hexo-post-parser').Nullable<string>} [source]
  * @returns {Promise<{ content: string, hexo: import('hexo') } & import('hexo-post-parser').postMeta>}
  */
 async function render(source = path.join(__dirname, '/fixtures/sample.md')) {
   // parse frontmatter post
   const post = (await hpp.parsePost(source)) || hpp.parsePostFM(source);
   const meta = post.attributes ? post.attributes : post.metadata;
+  const cm = new RenderMarkdownBody(post);
+  // extract style, script
+  cm.extractStyleScript();
 
   // render hexo shortcodes
   let { content = '' } = await hexo.post.render(null, {
-    content: post.body,
+    content: cm.getContent(),
     engine: 'md',
     page: meta
   });
 
-  // console.log({ content });
+  // update content
+  cm.setContent(content);
+  writefile(tmp('render/after-render.html'), content);
+
+  // extract code block first
+  cm.extractCodeBlock();
+
+  writefile(tmp('render/extracted-codeblock.json'), cm.getExtractedCodeblock());
+  writefile(tmp('render/extracted-stylescript.json'), cm.getExtractedStyleScript());
+  content = await fixHtml(cm.getContent());
+  cm.setContent(content);
+  writefile(tmp('render/after-extract.html'), content);
 
   // replace image src to url base64
-  const imagefinderreplacement = (whole, src) => {
-    // console.log(src);
-    if (!src.startsWith('http')) {
-      const finds = [path.join(hexo.source_dir, src), path.join(path.dirname(source), src)];
-      finds.push(...finds.map(decodeURIComponent));
-      // console.log(finds);
-      const filter = finds.filter(fs.existsSync);
-      if (filter.length > 0) {
-        const file = filter[0];
-        const bitmap = fs.readFileSync(file);
-        // convert binary data to base64 encoded string
-        const encoded =
-          'data:image/' + path.extname(file).replace('.', '') + ';base64,' + Buffer.from(bitmap).toString('base64');
-        return whole.replace(src, encoded);
-      }
-    }
-  };
-  try {
-    const regex = /<img [^>]*src="[^"]*"[^>]*>/gm;
-    if (regex.test(content)) {
-      content.match(regex).map(imgTag => {
-        const replacement = imgTag.replace(/.*src="([^"]*)".*/, imagefinderreplacement);
-        content = content.replace(imgTag, replacement);
-      });
-    }
-    content = content.replace(/!\[.*\]\((.*)\)/gm, imagefinderreplacement);
-  } catch {
-    console.log('cannot find image html from', source);
-  }
+  content = img2base64({ source, content });
 
-  return { content, hexo, ...meta };
+  // restore codeblock
+  cm.restoreCodeBlock();
+  // restore style script
+  cm.restoreStyleScript();
+
+  return { content: cm.getContent(), hexo, ...meta };
 }
 
 module.exports = { render, init };

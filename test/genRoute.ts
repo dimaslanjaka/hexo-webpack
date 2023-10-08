@@ -1,0 +1,136 @@
+import { writefile } from 'sbg-utility';
+import { default as uuidv4 } from 'sbg-utility/dist/utils/uuid';
+import { init, render } from './render';
+import { tmp } from './utils';
+import { Nullable } from 'hexo-post-parser';
+import img2base64 from './utils/img2base64';
+
+/**
+ * generate route object
+ * @param source
+ * @returns
+ */
+async function genRoute(source: Nullable<string>) {
+  let result: import('html-webpack-plugin').Options & {
+    body: string;
+    source: string;
+    // jsxPath: string;
+    id: string;
+    permalink: string;
+    meta: import('html-webpack-plugin').Options['meta'];
+  } = {} as any;
+  // render hexo shortcodes
+  const {
+    title = '',
+    permalink = '',
+    description = '',
+    excerpt = '',
+    date,
+    updated,
+    author = 'L3n4r0x',
+    lang = 'en_US',
+    tags = [],
+    id,
+    hexo,
+    ...props
+  } = await render(source);
+
+  let { content = '' } = props;
+  // replace image src to url base64
+  content = img2base64({ source: source || '', content });
+
+  const url = new URL(hexo.config.url);
+  url.pathname = permalink.replace(/^\//, '');
+
+  result = {
+    ...result,
+    body: content,
+    title,
+    filename: permalink,
+    description: description || excerpt,
+    source: source as string
+  };
+
+  // generate jsx
+  // const jsxPath = path.join(__dirname, '/../src/posts/', id + '.jsx');
+  // content = await toJsx({ source, body: content, dest: jsxPath });
+
+  if (!result.meta)
+    result.meta = {
+      canonical: {
+        rel: 'canonical',
+        href: String(url)
+      },
+      og_url: {
+        property: 'og:url',
+        content: String(url)
+      },
+      og_type: {
+        property: 'og:type',
+        content: 'article'
+      },
+      id: {
+        property: 'article:id',
+        content: id || uuidv4(title)
+      }
+    };
+
+  if (date) {
+    result.meta.date = {
+      property: 'article:published_time',
+      content: String(date)
+    };
+  }
+  if (updated) {
+    result.meta.updated = {
+      property: 'article:modified_time',
+      content: String(updated)
+    };
+  }
+  if (author) {
+    if (typeof author === 'string') {
+      result.meta.author = {
+        property: 'article:author',
+        content: author
+      };
+    } else if (author.name) {
+      result.meta.author = {
+        property: 'article:author',
+        content: author.name
+      };
+    }
+  }
+  if (lang) {
+    result.meta.language = {
+      httpEquiv: 'Content-Language',
+      content: lang
+    };
+    result.meta.og_locale = {
+      httpEquiv: 'og:locale',
+      content: lang
+    };
+  }
+  if (tags && tags.length > 0) {
+    for (let i = 0; i < tags.length; i++) {
+      const tag = tags[i];
+      result.meta['tags' + i] = {
+        property: 'article:tag',
+        content: tag
+      };
+    }
+  }
+
+  return { ...result, permalink, id };
+}
+
+export default genRoute;
+
+if (require.main === module) {
+  (async () => {
+    await init();
+    const result = await genRoute(__dirname + '/fixtures/jsx-conflict.md');
+    writefile(tmp('genRoute/result.html'), result.body);
+    const { body: _body, ...props } = result;
+    writefile(tmp('genRoute/result.json'), { ...props });
+  })();
+}

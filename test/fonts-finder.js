@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { writefile } = require('sbg-utility');
 
 const scss = fs
   .readdirSync(__dirname)
@@ -17,4 +18,4 @@ const scss = fs
   })
   .join('\n');
 
-fs.writeFileSync(path.join(__dirname, 'index.scss'), scss);
+writefile(path.join(__dirname, 'index.scss'), scss);

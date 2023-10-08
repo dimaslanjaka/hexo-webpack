@@ -22,26 +22,3 @@ NEW: DevDocs now comes with syntax highlighting. http://devdocs.io
 {% youtube PL9hW1uS6HUfscJ9DHkOSoOX45MjXduUxo 'playlist' %}
 
 {% youtube lJIrF4YjHfQ %}
-
-![image](./image.jpg)
-
-## below is pretext
-
-inline codeblock `build-${{ hashFiles('package-lock.json') }}`
-
-```js
-const varx = `build-${{ hashFiles('package-lock.json') }}`
-```
-
-```ts
-const xvar = `build-${{ hashFiles('package-lock.json') }}`
-```
-
-```
-const var = `build-${{ hashFiles('package-lock.json') }}`
-```
-
-## below is meta info
-
-- published: {{ page.date }}
-- modified: {{ page.updated }}
