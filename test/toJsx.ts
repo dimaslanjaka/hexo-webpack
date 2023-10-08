@@ -223,6 +223,7 @@ async function toJsx(options: {
   // replace image src to url base64
   newHtml = img2base64({ source, body: newHtml });
 
+  const classWrapperName = 'toJsx-style-wrapper-' + md5(source || newHtml);
   let result = `
 import React from 'react';
 import './styles.scss';
@@ -231,7 +232,7 @@ export default function () {
   React.useEffect(() => {
     import('./script.js');
   });
-  return (<React.Fragment>${newHtml}</React.Fragment>)
+  return (<div className="${classWrapperName}">${newHtml}</div>)
 }
   `.trim();
   writefile(tmp('toJsx/result.jsx'), result);
@@ -260,7 +261,10 @@ export default function () {
 
   writefile(jsxPath, result);
   writefile(scriptPath, await prettierFormat(_scripts.join('\n'), { parser: 'typescript' }));
-  writefile(stylePath, await prettierFormat(_styles.join('\n'), { parser: 'scss' }));
+  writefile(
+    stylePath,
+    await prettierFormat(`.${classWrapperName}{\n` + _styles.join('\n') + '\n}', { parser: 'scss' })
+  );
 
   return {
     content: result,
