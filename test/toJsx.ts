@@ -222,10 +222,11 @@ export default toJsx;
 if (require.main === module) {
   (async () => {
     const source = fixtures('toJsx.html');
-    toJsx({
+    const result = await toJsx({
       source,
       body: readFileSync(source, 'utf-8'),
       dest: tmp('toJsx/result')
     });
+    console.log('jsx', result.jsxPath);
   })();
 }
