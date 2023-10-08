@@ -17,5 +17,5 @@ function prettierFormat(source, options) {
 module.exports = prettierFormat;
 
 if (require.main === module) {
-  require('./test-jsx');
+  require('./test-scripts/test-jsx');
 }
