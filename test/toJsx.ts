@@ -258,19 +258,20 @@ export default function () {
   const scriptPath = path.join(options.dest, '/script.js');
   const stylePath = path.join(options.dest, '/styles.scss');
   const jsxPath = path.join(options.dest, '/index.jsx');
+  const scriptContent = await prettierFormat(_scripts.join('\n'), { parser: 'typescript' });
+  const styleContent = await prettierFormat(`.${classWrapperName}{\n` + _styles.join('\n') + '\n}', { parser: 'scss' });
 
   writefile(jsxPath, result);
-  writefile(scriptPath, await prettierFormat(_scripts.join('\n'), { parser: 'typescript' }));
-  writefile(
-    stylePath,
-    await prettierFormat(`.${classWrapperName}{\n` + _styles.join('\n') + '\n}', { parser: 'scss' })
-  );
+  writefile(scriptPath, scriptContent);
+  writefile(stylePath, styleContent);
 
   return {
     content: result,
     jsxPath,
     stylePath,
-    scriptPath
+    styleContent,
+    scriptPath,
+    scriptContent
   };
 }
 
