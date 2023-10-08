@@ -180,6 +180,22 @@ async function toJsx(options: {
     return `{/*${_}*/}`;
   });
 
+  // extract inline style from html element
+  const regex = /style=['"]([\s\S]*?)['"]/gim;
+  const styleIds: string[] = [];
+  newHtml = newHtml.replace(regex, function (_whole, style) {
+    const id = md5(_whole + style);
+    if (!styleIds.includes(id)) {
+      styleIds.push(id);
+      _styles.push(`
+[data-htmlstyle="${id}"] {
+${style}
+}
+    `);
+    }
+    return `data-htmlstyle="${id}"`;
+  });
+
   // replace image src to url base64
   newHtml = img2base64({ source, body: newHtml });
 
