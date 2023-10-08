@@ -3,6 +3,7 @@ import { fs, md5, path, writefile } from 'sbg-utility';
 import prettierFormat from './format';
 import { fixtures, tmp } from './utils';
 import img2base64 from './utils/img2base64';
+import { JSDOM } from 'jsdom';
 
 // inspired by
 // https://github.com/probablyup/markdown-to-jsx/blob/main/index.tsx#L266
@@ -159,6 +160,44 @@ async function toJsx(options: {
     await detachScriptTags();
   }
 
+  // extract inline style from html element
+  // const regex = /style=['"]([\s\S]*?)['"]/gim;
+  //   newHtml = newHtml.replace(regex, function (_whole, style) {
+  //     const id = md5(_whole + style);
+  //     if (!styleIds.includes(id)) {
+  //       styleIds.push(id);
+  //       _styles.push(`
+  // [data-htmlstyle="${id}"] {
+  // ${style}
+  // }
+  //     `);
+  //     }
+  //     return `data-htmlstyle="${id}"`;
+  //   });
+  const styleIds: string[] = [];
+  const dom = new JSDOM(newHtml);
+  dom.window.document.querySelectorAll('*').forEach(el => {
+    if (el.hasAttribute('style')) {
+      const style = el.getAttribute('style');
+      const id = md5(el.outerHTML + style);
+      if (!styleIds.includes(id)) {
+        styleIds.push(id);
+        _styles.push(`
+[data-htmlstyle="${id}"] {
+  ${style}
+}
+      `);
+      }
+      el.removeAttribute('style');
+      el.setAttribute('data-htmlstyle', id);
+    } else if (el.tagName === 'STYLE') {
+      _styles.push(el.innerHTML);
+      el.remove();
+    }
+  });
+  newHtml = dom.window.document.body.innerHTML;
+  dom.window.close();
+
   // fix unclosed tags
   UNCLOSED_TAGS.forEach(tag => {
     // const regex = new RegExp(`<${tag}([^>]*)>`, 'g');
@@ -178,22 +217,6 @@ async function toJsx(options: {
   // escape html comments
   newHtml = newHtml.replace(/<!--[\s\S]*?(?:-->)/gm, function (_) {
     return `{/*${_}*/}`;
-  });
-
-  // extract inline style from html element
-  const regex = /style=['"]([\s\S]*?)['"]/gim;
-  const styleIds: string[] = [];
-  newHtml = newHtml.replace(regex, function (_whole, style) {
-    const id = md5(_whole + style);
-    if (!styleIds.includes(id)) {
-      styleIds.push(id);
-      _styles.push(`
-[data-htmlstyle="${id}"] {
-${style}
-}
-    `);
-    }
-    return `data-htmlstyle="${id}"`;
   });
 
   // replace image src to url base64
