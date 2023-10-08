@@ -12,5 +12,5 @@ module.exports = {
   // Project Working Directory
   cwd: path.resolve(__dirname, '..'),
   // base path
-  base: '/page/'
+  base: '/'
 };
