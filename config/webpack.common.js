@@ -1,5 +1,5 @@
 const paths = require('./paths');
-
+const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 
 const htmlPlugin = new HtmlWebPackPlugin({
@@ -72,7 +72,7 @@ const config = {
   },
   cache: {
     type: 'filesystem',
-    cacheDirectory: paths.tmp
+    cacheDirectory: path.join(process.cwd(), '.cache')
   }
 };
 
