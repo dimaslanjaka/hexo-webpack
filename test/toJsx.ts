@@ -139,14 +139,15 @@ async function toJsx(options: {
           if (src.length > 0 && !allScriptSrc.includes(src)) {
             allScriptSrc.push(src);
             inner +=
-              '\n\n' +
+              '\n' +
               `
     (()=>{
       const script = document.createElement('script');
       script.src = '${src}';
       document.body.appendChild(script);
-    })()
-                `;
+    })();
+                `.trim() +
+              '\n';
           }
 
           _scripts.push(inner);
