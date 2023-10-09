@@ -34,11 +34,12 @@ async function genR(options = {}) {
   // let total = 0;
   const routes = [];
   const posts = require('./.cache/posts.json');
-  await Promise.all(posts)
-    .each(async (postPath, i) => {
-      if (options.limit) {
-        if (i > options.limit) return;
-      }
+  let promise = await Promise.all(posts);
+  if (options.limit) {
+    promise = promise.splice(0, options.limit);
+  }
+  await promise
+    .each(async postPath => {
       /**
        * @type {Promise<import('hexo-post-parser').Nullable<{ route: Awaited<ReturnType<typeof genRoute>>; jsx: Awaited<ReturnType<typeof toJsx>>; value: Record<string, any>; }>>}
        */
