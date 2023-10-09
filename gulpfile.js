@@ -3,7 +3,7 @@ const { spawnAsync } = require('git-command-helper');
 const gulp = require('gulp');
 const { init } = require('./test/render');
 const { obj } = require('through2');
-const { fs, path, writefile, array_random } = require('sbg-utility');
+const { fs, path, writefile } = require('sbg-utility');
 const { default: toJsx } = require('./test/toJsx');
 const paths = require('./config/paths');
 const { default: genRoute } = require('./test/genRoute');
@@ -34,15 +34,20 @@ async function genR(options = {}) {
   }
   // let total = 0;
   const routes = [];
-  const posts = require('./.cache/posts.json');
-  let promise = await Promise.all(posts);
-  if (options.limit) {
-    promise = promise.splice(0, options.limit);
-  }
+  let posts = require('./.cache/posts.json');
+  posts = posts.filter(file => fs.existsSync(file) && fs.statSync(file).isFile());
+
   if (options.randomize) {
-    promise = array_random(promise);
+    posts = posts.sort(() => Math.random() - 0.5);
   }
-  await promise
+
+  if (options.limit) {
+    posts = posts.splice(0, options.limit);
+  }
+
+  console.log('total post to be processed', posts.length);
+
+  await Promise.all(posts)
     .each(async postPath => {
       /**
        * @type {Promise<import('hexo-post-parser').Nullable<{ route: Awaited<ReturnType<typeof genRoute>>; jsx: Awaited<ReturnType<typeof toJsx>>; value: Record<string, any>; }>>}
@@ -113,7 +118,7 @@ gulp.task('map', function () {
     )
     .pipe(gulp.dest('./tmp/fake'))
     .on('end', () => {
-      const w = writefile(dest, JSON.stringify(routes));
+      const w = writefile(dest, JSON.stringify(routes, null, 2));
       cache.onexit();
       console.log('map stream ends', w.file);
     });
