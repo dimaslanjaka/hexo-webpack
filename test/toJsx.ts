@@ -241,7 +241,7 @@ async function toJsx(options: {
           };
           imagePaths.push(obj);
           const buff = Buffer.from(base64, 'base64');
-          fs.writeFileSync(imagePath, buff);
+          writefile(imagePath, buff);
           return _.replace(src, `{ ${obj.importName} }`);
         } else {
           return _;

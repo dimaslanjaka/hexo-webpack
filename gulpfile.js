@@ -53,6 +53,7 @@ async function genR(options = {}) {
       return { route, jsx, value };
     } catch (e) {
       console.error('jsx cannot parse', route.source);
+      console.error(e);
     }
   });
 }
@@ -60,8 +61,8 @@ async function genR(options = {}) {
 // generate route from processed post
 // using `sbg post copy`
 gulp.task('rc', () => genR({ clean: true }));
-gulp.task('route', gulp.series(genR));
-gulp.task('r', gulp.series(genR));
+gulp.task('route', genR);
+gulp.task('r', genR);
 
 // mapping
 const yaml = require('yaml');
