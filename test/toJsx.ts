@@ -1,9 +1,9 @@
 import { readFileSync } from 'fs';
+import { JSDOM } from 'jsdom';
 import { fs, md5, path, writefile } from 'sbg-utility';
 import prettierFormat from './format';
 import { fixtures, tmp } from './utils';
 import img2base64 from './utils/img2base64';
-import { JSDOM } from 'jsdom';
 
 // inspired by
 // https://github.com/probablyup/markdown-to-jsx/blob/main/index.tsx#L266
@@ -117,6 +117,8 @@ async function toJsx(options: {
   }
   let newHtml = body;
 
+  writefile(options.dest + '/body.html', body);
+
   let m: RegExpExecArray | null;
   while ((m = re_style_tag.exec(newHtml)) !== null) {
     // delete style tag
@@ -219,22 +221,66 @@ async function toJsx(options: {
     return `{/*${_}*/}`;
   });
 
-  // replace image src to url base64
+  // replace image src to base64 encoded
   newHtml = img2base64({ source, body: newHtml });
 
+  // base64 encoded images to import style
+  const imagePaths: { importName: string; import: string; path: string }[] = [];
+  const re_images = /<img [^>]*src="[^"]*"[^>]*>/gim;
+  newHtml = newHtml.replace(re_images, function (tag) {
+    const repl = tag.replace(
+      /<img [^>]*src=(['"]data:image\/(\w{3,4});base64,(.*)['"])[^>]*>/gim,
+      function (_, src, ext, base64) {
+        if (ext && src && base64) {
+          const filename = md5(base64);
+          const imagePath = path.join(options.dest, filename + '.' + ext);
+          const obj = {
+            path: imagePath,
+            importName: '_' + filename,
+            import: `import _${filename} from './${filename}.${ext}';`
+          };
+          imagePaths.push(obj);
+          const buff = Buffer.from(base64, 'base64');
+          fs.writeFileSync(imagePath, buff);
+          return _.replace(src, `{ ${obj.importName} }`);
+        } else {
+          return _;
+        }
+      }
+    );
+    return repl;
+  });
+
   const classWrapperName = 'toJsx-style-wrapper-' + md5(source || newHtml);
+  const scriptPath = path.join(options.dest, '/script.js');
+  const stylePath = path.join(options.dest, '/styles.scss');
+  const jsxPath = path.join(options.dest, '/index.jsx');
+  let scriptContent = '';
+  let styleContent = '';
+  if (_scripts.length > 0) {
+    scriptContent = await prettierFormat(_scripts.join('\n'), { parser: 'typescript' });
+    writefile(scriptPath, scriptContent);
+  }
+  if (_styles.length > 0) {
+    styleContent = await prettierFormat(`.${classWrapperName}{\n` + _styles.join('\n') + '\n}', {
+      parser: 'scss'
+    });
+    writefile(stylePath, styleContent);
+  }
+
   let result = `
 import React from 'react';
-import './styles.scss';
+${styleContent.length > 0 && "import './styles.scss';"}
+${imagePaths.length > 0 && imagePaths.map(o => o.import).join('\n')}
 
 export default function () {
   React.useEffect(() => {
-    import('./script.js');
+    ${scriptContent.length > 0 && "import('./script.js');"}
   });
   return (<div className="${classWrapperName}">${newHtml}</div>)
 }
   `.trim();
-  writefile(tmp('toJsx/result.jsx'), result);
+  // writefile(tmp('toJsx/result.jsx'), result);
 
   // fix lowercased attributes
   // const regexAttr = /(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|\s*\/?[>"']))+.)["']?/gmi
@@ -247,22 +293,14 @@ export default function () {
 
   try {
     result = await prettierFormat(result, { parser: 'babel' });
-    writefile(tmp('toJsx/format.jsx'), result);
+    // writefile(tmp('toJsx/format.jsx'), result);
   } catch (e) {
     e.source = source;
-    const w = writefile(tmp('/toJsx/' + md5(newHtml.substring(0, 100)) + '.json'), e);
+    const w = writefile(tmp('/toJsx/errors/' + md5(newHtml.substring(0, 100)) + '.json'), e);
     console.error('toJsx', 'prettier fail', source, w.file.replace(process.cwd(), ''));
   }
 
-  const scriptPath = path.join(options.dest, '/script.js');
-  const stylePath = path.join(options.dest, '/styles.scss');
-  const jsxPath = path.join(options.dest, '/index.jsx');
-  const scriptContent = await prettierFormat(_scripts.join('\n'), { parser: 'typescript' });
-  const styleContent = await prettierFormat(`.${classWrapperName}{\n` + _styles.join('\n') + '\n}', { parser: 'scss' });
-
   writefile(jsxPath, result);
-  writefile(scriptPath, scriptContent);
-  writefile(stylePath, styleContent);
 
   return {
     content: result,
@@ -279,11 +317,16 @@ export default toJsx;
 if (require.main === module) {
   (async () => {
     const source = fixtures('toJsx.html');
-    const result = await toJsx({
+    const {
+      content: _,
+      styleContent: __,
+      scriptContent: ___,
+      ...result
+    } = await toJsx({
       source,
       body: readFileSync(source, 'utf-8'),
       dest: tmp('toJsx/result')
     });
-    console.log('jsx', result.jsxPath);
+    console.log(result);
   })();
 }
