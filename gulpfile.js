@@ -34,33 +34,41 @@ async function genR(options = {}) {
   // let total = 0;
   const routes = [];
   const posts = require('./.cache/posts.json');
-  await Promise.all(posts).each(async postPath => {
-    /**
-     * @type {Promise<import('hexo-post-parser').Nullable<{ route: Awaited<ReturnType<typeof genRoute>>; jsx: Awaited<ReturnType<typeof toJsx>>; value: Record<string, any>; }>>}
-     */
-    const route = await genRoute(postPath);
-    try {
-      const jsx = await toJsx({
-        body: route.body,
-        source: route.source,
-        dest: path.join(dest, route.id)
-      });
-      // total++;
-      const value = { ...route, jsxPath: jsx.jsxPath };
-      // console.log(total, route.permalink);
-      routes.push(value);
+  await Promise.all(posts)
+    .each(async (postPath, i) => {
+      if (options.limit) {
+        if (i > options.limit) return;
+      }
+      /**
+       * @type {Promise<import('hexo-post-parser').Nullable<{ route: Awaited<ReturnType<typeof genRoute>>; jsx: Awaited<ReturnType<typeof toJsx>>; value: Record<string, any>; }>>}
+       */
+      const { body: _body, ...route } = await genRoute(postPath);
+      try {
+        const jsx = await toJsx({
+          body: route.body,
+          source: route.source,
+          dest: path.join(dest, route.id)
+        });
+        // total++;
+        const value = { ...route, jsxPath: jsx.jsxPath };
+        // console.log(total, route.permalink);
+        routes.push(value);
+
+        return { route, jsx, value };
+      } catch (e) {
+        console.error('jsx cannot parse', route.source);
+        console.error(e);
+      }
+    })
+    .then(() => {
       writefile(__dirname + '/routes.json', JSON.stringify(routes, null, 2));
-      return { route, jsx, value };
-    } catch (e) {
-      console.error('jsx cannot parse', route.source);
-      console.error(e);
-    }
-  });
+    });
 }
 
 // generate route from processed post
 // using `sbg post copy`
 gulp.task('rc', () => genR({ clean: true }));
+gulp.task('rl', () => genR({ clean: true, limit: 4 }));
 gulp.task('route', genR);
 gulp.task('r', genR);
 
