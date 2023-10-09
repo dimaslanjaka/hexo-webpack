@@ -117,7 +117,7 @@ async function toJsx(options: {
   }
   let newHtml = body;
 
-  writefile(options.dest + '/body.html', body);
+  // writefile(options.dest + '/body.html', body);
 
   let m: RegExpExecArray | null;
   while ((m = re_style_tag.exec(newHtml)) !== null) {
