@@ -52,15 +52,16 @@ async function genR(options = {}) {
       /**
        * @type {Promise<import('hexo-post-parser').Nullable<{ route: Awaited<ReturnType<typeof genRoute>>; jsx: Awaited<ReturnType<typeof toJsx>>; value: Record<string, any>; }>>}
        */
-      const { body: _body, ...route } = await genRoute(postPath);
+      const route = await genRoute(postPath);
       try {
         const jsx = await toJsx({
           body: route.body,
           source: route.source,
           dest: path.join(dest, route.id)
         });
+        const { body: _body, ...toPrint } = route;
         // total++;
-        const value = { ...route, jsxPath: jsx.jsxPath };
+        const value = { ...toPrint, jsxPath: jsx.jsxPath };
         // console.log(total, route.permalink);
         routes.push(value);
 
