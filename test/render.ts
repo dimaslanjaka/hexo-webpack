@@ -6,6 +6,7 @@ import { parse } from 'yaml';
 import fixHtml from './fixHtml';
 import { default as img2base64 } from './utils/img2base64';
 import { fixtures, fromRoot } from './utils';
+import paths from '../config/paths';
 
 // test render single post
 // need `sbg post copy`
@@ -27,7 +28,15 @@ export const init = (callback?: (hexo: import('hexo')) => any) =>
     .then(() => hexo.loadPlugin(require.resolve('hexo-shortcodes')))
     .then(() => {
       hexo.config = { ...hexo.config, ..._config };
-      writefile(fromRoot('_config.json'), JSON.stringify({ ...hexo.config, base_dir: path.toUnix(base) }, null, 2));
+      const _paths = paths;
+      for (const key in paths) {
+        const value = paths[key];
+        _paths[key] = path.toUnix(value);
+      }
+      writefile(
+        fromRoot('_config.json'),
+        JSON.stringify({ ...hexo.config, base_dir: path.toUnix(base), paths: _paths }, null, 2)
+      );
       hexo.load(() => typeof callback == 'function' && callback(hexo));
       return hexo;
     });
