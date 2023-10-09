@@ -3,7 +3,7 @@ const { spawnAsync } = require('git-command-helper');
 const gulp = require('gulp');
 const { init } = require('./test/render');
 const { obj } = require('through2');
-const { fs, path, writefile } = require('sbg-utility');
+const { fs, path, writefile, array_random } = require('sbg-utility');
 const { default: toJsx } = require('./test/toJsx');
 const paths = require('./config/paths');
 const { default: genRoute } = require('./test/genRoute');
@@ -28,6 +28,7 @@ gulp.task('watch', function () {
 async function genR(options = {}) {
   await init();
   const dest = paths.src + '/posts';
+  options = Object.assign({ clean: false, limit: Infinity, randomize: false }, options || {});
   if (options.clean) {
     await fs.emptyDir(dest);
   }
@@ -37,6 +38,9 @@ async function genR(options = {}) {
   let promise = await Promise.all(posts);
   if (options.limit) {
     promise = promise.splice(0, options.limit);
+  }
+  if (options.randomize) {
+    promise = array_random(promise);
   }
   await promise
     .each(async postPath => {
@@ -70,6 +74,7 @@ async function genR(options = {}) {
 // using `sbg post copy`
 gulp.task('rc', () => genR({ clean: true }));
 gulp.task('rl', () => genR({ clean: true, limit: 4 }));
+gulp.task('rr', () => genR({ clean: true, limit: 4, randomize: true }));
 gulp.task('route', genR);
 gulp.task('r', genR);
 
