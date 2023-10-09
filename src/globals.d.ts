@@ -7,49 +7,6 @@ declare let require: {
   ensure: (paths: string[], callback: (require: <T>(path: string) => T) => void) => void;
 };
 
-// assets
-// declare module '*.svg' {
-//   const content: React.FunctionComponent<React.SVGAttributes<SVGElement>>;
-//   export default content;
-// }
-
-declare module '*.svg' {
-  const ReactComponent: React.FC<React.SVGProps<SVGSVGElement>>;
-  export default ReactComponent;
-}
-
-// typescript css modules
-
-declare module '*.module.css' {
-  const classes: { [key: string]: string };
-  export default classes;
-}
-
-declare module '*.module.scss' {
-  const classes: { [key: string]: string };
-  export default classes;
-}
-
-declare module '*.module.sass' {
-  const classes: { [key: string]: string };
-  export default classes;
-}
-
-declare module '*.module.less' {
-  const classes: { [key: string]: string };
-  export default classes;
-}
-
-declare module '*.module.styl' {
-  const classes: { [key: string]: string };
-  export default classes;
-}
-
-declare module '*.md' {
-  const value: string; // markdown is just a string
-  export default value;
-}
-
 // browser global scope
 declare global {
   interface Window {
