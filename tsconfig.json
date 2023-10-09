@@ -18,15 +18,15 @@
     "skipLibCheck": true,
     "strict": false,
     "lib": ["DOM", "DOM.Iterable", "ES2020"],
-    "typeRoots": ["./typings", "./node_modules/@types", "./node_modules/nodejs-package-types/typings"],
+    "typeRoots": ["./src/types", "./node_modules/@types", "./node_modules/nodejs-package-types/typings"],
     "paths": {
+      "@root/*": ["./*"],
       "src/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
       "@routes/*": ["src/routes/*"],
       "@assets/*": ["./src/assets/*"],
       "@utils/*": ["./src/utils/*"],
-      "@project": ["./src/project"],
-      "@root/*": ["./*"]
+      "@project": ["./src/project"]
     },
     "plugins": [
       {
@@ -39,9 +39,7 @@
     "./src",
     "./src/globals.d.ts",
     "./src/**/*",
-    "src/routes/**/*",
     "./src/**/*.json",
-    "typings",
     "./routes.json",
     "./_config.json"
   ],
@@ -51,6 +49,7 @@
     "**/dist/**",
     "**/assets/js/core.js",
     "**/assets/js/v*.js",
-    "**/assets/js/gijgo*.js"
+    "**/assets/js/gijgo*.js",
+    "./packages"
   ]
 }
