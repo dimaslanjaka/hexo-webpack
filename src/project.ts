@@ -1,7 +1,9 @@
+import _config from '../_config.json';
 import pkgjson from '../package.json';
 import routes from '../routes.json';
+
 export type Route = {
-  body: string;
+  body?: string;
   title: string;
   filename: string;
   description: string;
@@ -17,4 +19,5 @@ export type Route = {
 };
 
 export const routeConfig = routes as Route[];
-export { pkgjson };
+export { _config as config, pkgjson };
+export default {};
