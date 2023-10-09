@@ -36,9 +36,8 @@
   },
   "include": [
     "./package.json",
-    "./src",
-    "./src/globals.d.ts",
     "./src/**/*",
+    "./src/globals.d.ts",
     "./src/**/*.json",
     "./routes.json",
     "./_config.json"
