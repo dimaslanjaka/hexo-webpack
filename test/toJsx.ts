@@ -270,12 +270,12 @@ async function toJsx(options: {
 
   let result = `
 import React from 'react';
-${styleContent.length > 0 && "import './styles.scss';"}
-${imagePaths.length > 0 && imagePaths.map(o => o.import).join('\n')}
+${styleContent.length > 0 ? "import './styles.scss';" : ''}
+${imagePaths.length > 0 ? imagePaths.map(o => o.import).join('\n') : ''}
 
 export default function () {
   React.useEffect(() => {
-    ${scriptContent.length > 0 && "import('./script.js');"}
+    ${scriptContent.length > 0 ? "import('./script.js');" : ''}
   });
   return (<div className="${classWrapperName}">${newHtml}</div>)
 }
