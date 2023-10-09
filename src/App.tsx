@@ -1,11 +1,11 @@
 import React from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import project from '../_config.json';
-import { routeConfig } from './project';
+import * as project from './project';
 
-const postRoute = routeConfig
+const postRoute = project.routeConfig
   .map(route => {
-    const importPath = '../' + route.jsxPath.replace(project.base_dir, '').replace(/.jsx$/, '').replace(/^\//, '');
+    const importPath =
+      './' + route.jsxPath.replace(project.config.paths.src, '').replace(/.jsx$/, '').replace(/^\//, '');
     // console.log(importPath);
 
     return [
