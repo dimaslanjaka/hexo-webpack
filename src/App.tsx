@@ -1,9 +1,37 @@
 import React from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-// import routeConfig from '../routes.json';
-// import Markdown from 'react-markdown';
-// import rehypeRaw from 'rehype-raw';
-// import remarkGfm from 'remark-gfm';
+import project from '../_config.json';
+import { routeConfig } from './project';
+
+const postRoute = routeConfig
+  .map(route => {
+    const importPath = '../' + route.jsxPath.replace(project.base_dir, '').replace(/.jsx$/, '').replace(/^\//, '');
+    // console.log(importPath);
+
+    return [
+      {
+        path: route.permalink,
+        async lazy() {
+          const { default: Component } = await import(
+            /* webpackChunkName: "[request]" */
+            `${importPath}`
+          );
+          return { Component };
+        }
+      },
+      {
+        path: route.permalink.replace(/.html$/, ''),
+        async lazy() {
+          const { default: Component } = await import(
+            /* webpackChunkName: "[request]" */
+            `${importPath}`
+          );
+          return { Component };
+        }
+      }
+    ];
+  })
+  .flat();
 
 const router = createBrowserRouter([
   {
@@ -15,9 +43,8 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        // element: <Markdown remarkPlugins={[[remarkGfm]]} rehypePlugins={[rehypeRaw]} children={Sample} />
         async lazy() {
-          const { default: Component } = await import('../test/tmp/body');
+          const { default: Component } = await import('./pages/Home');
           return { Component };
         }
       },
@@ -29,7 +56,7 @@ const router = createBrowserRouter([
           return { Component };
         }
       }
-    ]
+    ].concat(postRoute)
   }
 ]);
 
