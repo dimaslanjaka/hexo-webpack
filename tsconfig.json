@@ -50,6 +50,9 @@
     "**/assets/js/core.js",
     "**/assets/js/v*.js",
     "**/assets/js/gijgo*.js",
-    "./packages"
+    "**/packages/**",
+    "**/src/posts/**",
+    "**/src-posts/**",
+    "**/source/_posts/**"
   ]
 }
