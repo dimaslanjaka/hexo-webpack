@@ -58,7 +58,7 @@
   "code-runner.runInTerminal": true,
   "code-runner.saveAllFilesBeforeRun": true,
   "files.exclude": {
-    "src/posts": true
+    "src/posts": false
   },
   "files.watcherExclude": {
     "src/posts": true
