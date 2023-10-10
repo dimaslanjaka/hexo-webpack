@@ -23,8 +23,9 @@ gulp.task('watch', function () {
   );
 });
 
-// generate route stream method
-// clone of ./test/generate-route.js
+/**
+ * @param {Partial<{ randomize: boolean; limit: number; onBeforePostsProcess: ((posts: string[]) => string[]) | ((posts: string[]) => Promise<string[]>); clean: boolean; }>} options
+ */
 async function genR(options = {}) {
   await init();
   const dest = paths.src + '/posts';
@@ -37,11 +38,23 @@ async function genR(options = {}) {
   let posts = require('./.cache/posts.json');
   posts = posts.filter(file => fs.existsSync(file) && fs.statSync(file).isFile());
 
+  if (typeof options.onBeforePostsProcess === 'function') {
+    // const promisify = Promise.promisify(options.onBeforePostsProcess);
+    // await promisify(posts);
+    const run = options.onBeforePostsProcess(posts);
+    if (run.then) {
+      posts = await run;
+    } else {
+      posts = run;
+    }
+  }
+
   if (options.randomize) {
     posts = posts.sort(() => Math.random() - 0.5);
   }
 
-  if (options.limit) {
+  // filter limit when post length is same or more than limit
+  if (options.limit && posts.length >= options.limit) {
     posts = posts.splice(0, options.limit);
   }
 
@@ -79,12 +92,10 @@ async function genR(options = {}) {
 // generate route from processed post
 // using `sbg post copy`
 gulp.task('rc', () => genR({ clean: true }));
-gulp.task('rl', () => genR({ clean: true, limit: 4 }));
-gulp.task('rr', () => genR({ clean: true, limit: 4, randomize: true }));
 gulp.task('route', genR);
 gulp.task('r', genR);
 
-// mapping
+// generate posts list
 const yaml = require('yaml');
 const config = yaml.parse(fs.readFileSync(__dirname + '/_config.yml', 'utf-8'));
 
@@ -153,3 +164,17 @@ gulp.task('c', () => {
     )
     .pipe(gulp.dest(__dirname + '/tmp/fake-c'));
 });
+gulp.task('rl', () => genR({ clean: true, limit: 4 }));
+gulp.task('rr', () => genR({ clean: true, limit: 4, randomize: true }));
+// test: only specified post
+gulp.task('feature', () =>
+  genR({
+    clean: true,
+    onBeforePostsProcess: posts => {
+      return posts.filter(post => {
+        if (post.endsWith('Quiz.md')) return true;
+        return false;
+      });
+    }
+  })
+);
