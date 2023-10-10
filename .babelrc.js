@@ -1,18 +1,11 @@
+const alias = require('./.alias');
 const presets = ['@babel/env', '@babel/react', '@babel/preset-typescript'];
 const plugins = [
   [
     require.resolve('babel-plugin-module-resolver'),
     {
       root: ['./src/'],
-      alias: {
-        '@utils': './src/utils',
-        '@components': './src/components',
-        '@routes': './src/routes',
-        '@assets': './src/assets',
-        '@project': './src/project',
-        'src': './src',
-        '@root': './'
-      }
+      alias
     }
   ]
 ];

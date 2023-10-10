@@ -22,6 +22,7 @@
     "paths": {
       "@root/*": ["./*"],
       "src/*": ["./src/*"],
+      "@post/*": ["./src/posts/*"],
       "@components/*": ["./src/components/*"],
       "@routes/*": ["src/routes/*"],
       "@assets/*": ["./src/assets/*"],

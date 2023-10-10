@@ -65,10 +65,7 @@ const config = {
       constants: require.resolve('constants-browserify'),
       stream: require.resolve('stream-browserify')
     },
-    alias: {
-      'react/jsx-dev-runtime': require.resolve('react/jsx-dev-runtime'),
-      'react/jsx-runtime': require.resolve('react/jsx-runtime')
-    }
+    alias: require('../.alias')
   },
   cache: {
     type: 'filesystem',
