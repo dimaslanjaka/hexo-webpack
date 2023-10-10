@@ -241,7 +241,10 @@ async function toJsx(options: {
           };
           imagePaths.push(obj);
           const buff = Buffer.from(base64, 'base64');
-          writefile(imagePath, buff);
+          if (!fs.existsSync(path.dirname(imagePath))) {
+            fs.mkdirSync(path.dirname(imagePath), { recursive: true });
+          }
+          fs.writeFileSync(imagePath, buff);
           return _.replace(src, `{ ${obj.importName} }`);
         } else {
           return _;
