@@ -8,19 +8,19 @@ const postRoute = project.routeConfig.map(routeMap).flat();
 const router = createBrowserRouter([
   {
     path: '/',
-    lazy: () => import('@components/Layout'),
+    lazy: () => import('./components/Layout/index'),
     children: [
       {
         index: true,
         async lazy() {
-          const { default: Component } = await import('./pages/Home');
+          const { default: Component } = await import('./pages/Home/index');
           return { Component };
         }
       },
       {
         path: '*',
         async lazy() {
-          const { default: Component } = await import('@components/NoMatch');
+          const { default: Component } = await import('./components/NoMatch');
           return { Component };
         }
       }

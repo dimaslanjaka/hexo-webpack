@@ -1,4 +1,4 @@
-import '@utils/promise';
+import './utils/promise';
 //
 import React from 'react';
 import ReactDOM from 'react-dom';

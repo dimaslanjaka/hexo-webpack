@@ -65,7 +65,7 @@ const config = {
       constants: require.resolve('constants-browserify'),
       stream: require.resolve('stream-browserify')
     },
-    alias: require('../.alias')
+    alias: paths.aliasAbsolute
   },
   cache: {
     type: 'filesystem',
