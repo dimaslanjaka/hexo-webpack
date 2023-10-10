@@ -11,5 +11,5 @@ module.exports = {
   '@post': './src/posts',
   'react/jsx-dev-runtime': require.resolve('react/jsx-dev-runtime'),
   'react/jsx-runtime': require.resolve('react/jsx-runtime'),
-  '@post': path.resolve(__dirname, 'src/posts')
+  '@post': './src/posts'
 }
