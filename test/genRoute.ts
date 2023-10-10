@@ -30,7 +30,7 @@ async function genRoute(source: Nullable<string>) {
     author = 'L3n4r0x',
     lang = 'en_US',
     tags = [],
-    categories = [],
+    categories = ['uncategorized'],
     thumbnail = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/2048px-No_image_available.svg.png',
     id,
     hexo,
