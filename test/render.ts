@@ -31,7 +31,21 @@ export const init = (callback?: (hexo: import('hexo')) => any) =>
       const _paths = paths;
       for (const key in paths) {
         const value = paths[key];
-        _paths[key] = path.toUnix(value);
+        if (value) {
+          if (typeof value === 'string') {
+            _paths[key] = path.toUnix(value);
+          } else if (Array.isArray(value)) {
+            // value is array
+          } else if (typeof value == 'object') {
+            // value is object
+            for (const kv in value) {
+              const val = value[kv];
+              value[kv] = path.toUnix(val);
+            }
+            // re-assign modified value
+            _paths[key] = value;
+          }
+        }
       }
       writefile(
         fromRoot('_config.json'),
