@@ -1,8 +1,8 @@
 import '@assets/css/main.scss';
+import { projectConfig } from '@root/src/project';
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import './style.scss';
-import { projectConfig } from '@root/src/project';
 
 export function Component() {
   return (
@@ -12,7 +12,7 @@ export function Component() {
           <div>
             <a
               className="mx-2 my-1 flex items-center text-neutral-900 hover:text-neutral-900 focus:text-neutral-900 lg:mb-0 lg:mt-0"
-              href="#"
+              href="/"
             >
               <img
                 className="mr-2"

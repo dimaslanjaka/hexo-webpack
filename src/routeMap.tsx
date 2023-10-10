@@ -1,11 +1,12 @@
 import { Route, projectConfig } from '@root/src/project';
 import React from 'react';
 import { useLoaderData } from 'react-router-dom';
+import { DisqusEmbed } from './components/Disqus/DisqusEmbed';
 
 export default function routeMap(route: Route) {
   const importPath = './' + route.jsxPath.replace(projectConfig.paths.src, '').replace(/^\//, '');
   //.replace(/.jsx$/, '');
-  console.log(importPath);
+  // console.log(importPath);
   const { body: _body, ...data } = route;
 
   const loader = ({ request }) => {
@@ -25,7 +26,13 @@ export default function routeMap(route: Route) {
         if (data.meta.og_image) {
           thumbnail = data.meta.og_image.content;
         }
-        // console.log(data);
+        const disqus_config = {
+          url: data.meta.canonical.href,
+          identifier: new URL(data.meta.canonical.href).pathname,
+          title: data.title,
+          language: data.meta.language.content || 'en_US'
+        };
+        console.log(disqus_config);
         return (
           <>
             <h1 className="mb-4 text-3xl font-bold">{data.title}</h1>
@@ -54,6 +61,8 @@ export default function routeMap(route: Route) {
             <img src={thumbnail} className="mb-6 w-full rounded-lg shadow-lg dark:shadow-black/20" alt={data.title} />
 
             <Post />
+
+            <DisqusEmbed shortname="dimaslanjaka" config={disqus_config} />
           </>
         );
       }
