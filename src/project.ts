@@ -19,5 +19,5 @@ export type Route = {
 };
 
 export const routeConfig = routes as Route[];
-export { _config as config, pkgjson };
+export { _config as config, _config as projectConfig, pkgjson };
 export default {};
