@@ -2,6 +2,12 @@ import { fs, path, writefile } from 'sbg-utility';
 import { fixtures, tmp } from '.';
 import paths from '../../config/paths';
 
+const configJson = path.resolve(__dirname, '../../_config.json');
+let config = {} as import('hexo')['config'] & { post_dir: string };
+if (fs.existsSync(configJson)) {
+  config = JSON.parse(fs.readFileSync(configJson, 'utf-8'));
+}
+
 interface Options {
   /** source markdown absolute path */
   source: string;
@@ -21,7 +27,11 @@ function img2base64(options: Options) {
         path.join(path.dirname(source), src),
         path.join(paths.src, src),
         path.join(paths.public, src),
-        path.join(paths.base, src)
+        path.join(paths.cwd, src),
+        path.join(config.post_dir, src),
+        path.join(paths.cwd, config.post_dir, src),
+        path.join(config.source_dir, src),
+        path.join(paths.cwd, config.source_dir, src)
       ];
       finds.push(...finds.map(decodeURIComponent));
       // console.log(finds);
