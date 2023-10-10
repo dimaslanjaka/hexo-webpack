@@ -30,6 +30,7 @@ async function genRoute(source: Nullable<string>) {
     author = 'L3n4r0x',
     lang = 'en_US',
     tags = [],
+    categories = [],
     thumbnail = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/2048px-No_image_available.svg.png',
     id,
     hexo,
@@ -123,12 +124,16 @@ async function genRoute(source: Nullable<string>) {
       content: lang
     };
   }
-  if (tags && tags.length > 0) {
-    for (let i = 0; i < tags.length; i++) {
-      const tag = tags[i];
+  const taxonomies = tags
+    .concat(categories)
+    .map(str => str.trim())
+    .filter(str => str.length > 0);
+  if (taxonomies.length > 0) {
+    for (let i = 0; i < taxonomies.length; i++) {
+      const label = taxonomies[i];
       result.meta['tags' + i] = {
         property: 'article:tag',
-        content: tag
+        content: label
       };
     }
   }
