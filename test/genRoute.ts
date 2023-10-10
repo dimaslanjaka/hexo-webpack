@@ -30,6 +30,7 @@ async function genRoute(source: Nullable<string>) {
     author = 'L3n4r0x',
     lang = 'en_US',
     tags = [],
+    thumbnail = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/2048px-No_image_available.svg.png',
     id,
     hexo,
     ...props
@@ -61,6 +62,10 @@ async function genRoute(source: Nullable<string>) {
         rel: 'canonical',
         href: String(url)
       },
+      og_image: {
+        property: 'og:image',
+        content: String(thumbnail)
+      },
       og_url: {
         property: 'og:url',
         content: String(url)
@@ -72,6 +77,14 @@ async function genRoute(source: Nullable<string>) {
       id: {
         property: 'article:id',
         content: id || uuidv4(title)
+      },
+      twitter_card: {
+        name: 'twitter:card',
+        content: 'summary_large_image'
+      },
+      twitter_image: {
+        name: 'twitter:image',
+        content: String(thumbnail)
       }
     };
 
