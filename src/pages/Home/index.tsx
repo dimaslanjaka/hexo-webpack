@@ -11,7 +11,7 @@ class Home extends React.Component {
         <div className="mb-2">
           <img src={logo} alt="" style={{ width: '40px' }} />
         </div>
-        <u>
+        <u className="mb-6 list-inside list-disc">
           {routeConfig.map(o => (
             <li key={o.title}>
               <a href={o.permalink.replace(/.html$/, '')}>{o.permalink}</a>

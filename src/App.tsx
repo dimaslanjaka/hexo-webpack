@@ -1,45 +1,14 @@
 import React from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import * as project from './project';
+import routeMap from './routeMap';
 
-const postRoute = project.routeConfig
-  .map(route => {
-    const importPath =
-      './' + route.jsxPath.replace(project.config.paths.src, '').replace(/.jsx$/, '').replace(/^\//, '');
-    // console.log(importPath);
-
-    return [
-      {
-        path: route.permalink,
-        async lazy() {
-          const { default: Component } = await import(
-            /* webpackChunkName: "[request]" */
-            `${importPath}`
-          );
-          return { Component };
-        }
-      },
-      {
-        path: route.permalink.replace(/.html$/, ''),
-        async lazy() {
-          const { default: Component } = await import(
-            /* webpackChunkName: "[request]" */
-            `${importPath}`
-          );
-          return { Component };
-        }
-      }
-    ];
-  })
-  .flat();
+const postRoute = project.routeConfig.map(routeMap).flat();
 
 const router = createBrowserRouter([
   {
     path: '/',
-    async lazy() {
-      const { default: Layout } = await import('@components/Layout');
-      return { Component: Layout };
-    },
+    lazy: () => import('@components/Layout'),
     children: [
       {
         index: true,
@@ -50,7 +19,6 @@ const router = createBrowserRouter([
       },
       {
         path: '*',
-        // element: <NoMatch />
         async lazy() {
           const { default: Component } = await import('@components/NoMatch');
           return { Component };
