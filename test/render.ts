@@ -145,11 +145,14 @@ export async function render(
         }
       }
     }
+
     return thumbnail;
   };
   // reassign thumbnail
   meta.thumbnail = thumbProcess(thumbnail);
-  if (meta.photos) meta.photos = meta.photos.map(thumbProcess);
+  // assign empty photos property
+  if (!meta.photos) meta.photos = [thumbnail];
+  meta.photos = meta.photos.map(thumbProcess);
   if (!meta.permalink) {
     meta.permalink = '/' + meta.id;
     console.error('meta permalink empty', 'settled to', meta.permalink);
