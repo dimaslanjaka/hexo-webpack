@@ -111,10 +111,10 @@
     url('https://db.onlinewebfonts.com/t/b118fb07592ef4854d1fb0ea1e6bafc2.svg#Monospaced') format('svg');
 }
 
-body,
-html {
-  height: 100%;
-}
+// body,
+// html {
+//   height: 100%;
+// }
 
 label,
 h1,
@@ -147,18 +147,18 @@ i:not([class^='fa-']) {
   font-family: 'Cera Pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 }
 
-#app {
-  height: 100%;
-  width: 100%;
-}
+// #app {
+//   height: 100%;
+//   width: 100%;
+// }
 
 // responsive image
-img {
-  width: 100%;
-  height: auto;
-  /* Prevent the image from stretching. So it crops the image to prevent from awkward stretching */
-  object-fit: cover;
-}
+// img {
+//   width: 100%;
+//   height: auto;
+//   /* Prevent the image from stretching. So it crops the image to prevent from awkward stretching */
+//   object-fit: cover;
+// }
 
 /* hide unfilled ads */
 // ins.adsbygoogle[data-ad-status='unfilled'] {
