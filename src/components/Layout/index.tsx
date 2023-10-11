@@ -29,6 +29,14 @@ export function Component() {
       <div className="container my-24 mx-auto md:px-6">
         <Outlet />
       </div>
+      <footer className="bg-neutral-200 text-center dark:bg-neutral-700 lg:text-left">
+        <div className="p-4 text-center text-neutral-700 dark:text-neutral-200">
+          © {new Date().getFullYear()} Copyright:
+          <a className="text-neutral-800 dark:text-neutral-400" href={projectConfig.url}>
+            {projectConfig.title}
+          </a>
+        </div>
+      </footer>
     </>
   );
 }
