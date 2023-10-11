@@ -6,6 +6,7 @@ module.exports = {
     // tw-elements
     // './node_modules/tw-elements-react/dist/js/**/*.js',
     // flowbite
+    './node_modules/flowbite/**/*.js',
     './node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}'
   ],
   theme: {
