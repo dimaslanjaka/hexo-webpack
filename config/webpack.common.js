@@ -1,6 +1,7 @@
 const paths = require('./paths');
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
+const excludePatterns = require('./webpack.excludes');
 
 const htmlPlugin = new HtmlWebPackPlugin({
   title: 'Website Manajemen Indonesia',
@@ -47,7 +48,7 @@ const config = {
       },
       {
         test: /\.(t|j|cj|mj)sx?$/,
-        exclude: /node_modules/,
+        exclude: [/node_modules/].concat(excludePatterns.js),
         use: {
           loader: 'babel-loader'
         }

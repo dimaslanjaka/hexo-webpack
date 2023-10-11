@@ -2,6 +2,7 @@ const { merge } = require('webpack-merge');
 const paths = require('./paths');
 const common = require('./webpack.common.js');
 const cli = require('./cli');
+const excludePatterns = require('./webpack.excludes');
 
 /**
  * @type {import('webpack').Configuration}
@@ -15,7 +16,8 @@ module.exports = merge(common, {
     rules: [
       {
         test: /\.(s[a|c]ss)$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader']
+        use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
+        exclude: excludePatterns.css
       }
     ]
   },

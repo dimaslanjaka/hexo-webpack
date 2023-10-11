@@ -1,4 +1,6 @@
 const paths = require('./config/paths');
+const excludePatterns = require('./config/webpack.excludes')
+
 const presets = ['@babel/env', '@babel/react', '@babel/preset-typescript'];
 const plugins = [
   [
@@ -15,11 +17,11 @@ module.exports.config = { cacheDirectory: './tmp/babel', presets, plugins };
 
 /**
  *
- * @param {*} api
- * @returns
+ * @param {import('@babel/core').ConfigAPI} api
+ * @returns {import('@babel/core').TransformOptions}
  */
 module.exports = function (api) {
   api.cache(true);
 
-  return { presets, plugins };
+  return { presets, plugins, ignore: excludePatterns.js };
 };

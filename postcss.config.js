@@ -1,5 +1,5 @@
-const path = require('path');
-const fs = require('fs');
+// const path = require('path');
+// const fs = require('fs');
 // const tailwindcss = require('tailwindcss');
 // const postcssPresetEnv = require('postcss-preset-env');
 // const devMode = /dev/i.test(process.env.NODE_ENV);
