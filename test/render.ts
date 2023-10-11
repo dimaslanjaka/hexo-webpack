@@ -155,6 +155,9 @@ export async function render(
     console.error('meta permalink empty', 'settled to', meta.permalink);
   }
 
+  // write metadata to tmp/meta
+  writefile(path.join(__dirname, '../tmp/meta', meta.id + '.json'), JSON.stringify(meta));
+
   return { content: cm.getContent(), hexo, ...meta };
 }
 
