@@ -21,18 +21,25 @@ export default function routeMap(route: Route) {
     );
     return {
       Component: () => {
-        const data = useLoaderData() as ReturnType<typeof loader>;
-        let thumbnail = 'https://mdbcdn.b-cdn.net/img/new/slides/194.jpg';
-        if (data.meta.og_image) {
-          thumbnail = data.meta.og_image.content;
-        }
+        const data = (useLoaderData() || { meta: {} }) as ReturnType<typeof loader>;
+        React.useEffect(() => {
+          document.title = data.title;
+          return () => {
+            //
+          };
+        });
+
+        const thumbnail = data.meta.og_image
+          ? data.meta.og_image.content
+          : 'https://mdbcdn.b-cdn.net/img/new/slides/194.jpg';
+        const disqus_canonical = data.meta.canonical ? data.meta.canonical.href : location.href;
         const disqus_config = {
-          url: data.meta.canonical.href,
-          identifier: new URL(data.meta.canonical.href).pathname,
+          url: disqus_canonical,
+          identifier: new URL(disqus_canonical).pathname,
           title: data.title,
-          language: data.meta.language.content || 'en_US'
+          language: (data.meta.language && data.meta.language.content) || 'en_US'
         };
-        console.log(disqus_config);
+        // console.log(disqus_config);
         return (
           <>
             <h1 className="mb-4 text-3xl font-bold">{data.title}</h1>
@@ -71,12 +78,13 @@ export default function routeMap(route: Route) {
   return [
     {
       path: route.permalink,
+      loader,
       lazy
     },
     {
       path: route.permalink.replace(/.html$/, ''),
-      lazy,
-      loader
+      loader,
+      lazy
     }
   ];
 }
