@@ -8,7 +8,7 @@ const postRoute = project.routeConfig.map(routeMap).flat();
 const router = createBrowserRouter([
   {
     path: '/',
-    lazy: () => import('./components/Layout/index'),
+    lazy: () => import('./components/TailwindLayout/index'),
     children: [
       {
         index: true,
