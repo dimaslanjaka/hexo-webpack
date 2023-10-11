@@ -4,7 +4,7 @@ import { RenderMarkdownBody } from 'hexo-post-parser/dist/markdown/renderBodyMar
 import { fs, path, writefile } from 'sbg-utility';
 import { parse } from 'yaml';
 import fixHtml from './fixHtml';
-import { default as img2base64 } from './utils/img2base64';
+import { default as htmlImg2base64 } from './utils/img2base64';
 import { fixtures, fromRoot } from './utils';
 import paths from '../config/paths';
 
@@ -97,7 +97,7 @@ export async function render(
   // writefile(tmp('render/after-extract.html'), content);
 
   // replace image src to url base64
-  content = img2base64({ source: source as string, content });
+  content = htmlImg2base64({ source: source as string, content });
 
   // restore codeblock
   cm.restoreCodeBlock();

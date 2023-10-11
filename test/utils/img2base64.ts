@@ -10,7 +10,7 @@ interface Options {
   content?: string;
 }
 
-function img2base64(options: Options) {
+function htmlImg2base64(options: Options) {
   const { source, body, content: body2 } = options;
   // fallback content
   let content = body || body2 || '';
@@ -42,12 +42,12 @@ function img2base64(options: Options) {
   return content;
 }
 
-export default img2base64;
+export default htmlImg2base64;
 
 if (require.main === module) {
   (async () => {
     const source = fixtures('toJsx.html');
-    const convert = img2base64({ source, body: fs.readFileSync(source, 'utf-8') });
+    const convert = htmlImg2base64({ source, body: fs.readFileSync(source, 'utf-8') });
     writefile(tmp('img2base64/result.html'), convert);
   })();
 }

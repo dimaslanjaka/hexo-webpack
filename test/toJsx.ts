@@ -3,7 +3,7 @@ import { JSDOM } from 'jsdom';
 import { fs, md5, path, writefile } from 'sbg-utility';
 import prettierFormat from './format';
 import { fixtures, tmp } from './utils';
-import img2base64 from './utils/img2base64';
+import htmlImg2base64 from './utils/img2base64';
 
 // inspired by
 // https://github.com/probablyup/markdown-to-jsx/blob/main/index.tsx#L266
@@ -222,7 +222,7 @@ async function toJsx(options: {
   });
 
   // replace image src to base64 encoded
-  newHtml = img2base64({ source, body: newHtml });
+  newHtml = htmlImg2base64({ source, body: newHtml });
 
   // base64 encoded images to import style
   const imagePaths: { importName: string; import: string; path: string }[] = [];
