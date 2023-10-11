@@ -11,7 +11,7 @@ import paths from '../../config/paths';
 render
   .init()
   .then(async () => {
-    const source = fixtures('meta-thumbnail-local.md');
+    const source = fixtures('thumbnails.md');
     const result = await genRoute(source);
     const { body: _body, ...toPrint } = result;
     const jsx = await toJsx({ body: result.body, dest: paths.src + '/posts', source });
