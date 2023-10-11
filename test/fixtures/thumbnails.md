@@ -5,3 +5,8 @@ photos: ['/The Legend Of Neverland/Quiz/SCENIC-QUIZ.jpg', 'data:image/png;base64
 ---
 
 body: markdown with local thumbnail
+
+![](https://picsum.photos/500/300?random=1)
+![](https://picsum.photos/500/300?random=2)
+![](https://picsum.photos/500/300?random=3)
+![](https://picsum.photos/500/300?random=4)
