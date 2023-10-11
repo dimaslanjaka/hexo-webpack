@@ -1,4 +1,4 @@
-import { array_shuffle, insertAfter, loadJS } from 'src/utils';
+import { array_shuffle, insertAfter, loadJS } from '@utils/index';
 import { paramBuilder } from './config';
 import createIns from './createIns';
 import findRootPlaces from './findRootPlaces';

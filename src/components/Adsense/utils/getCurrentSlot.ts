@@ -1,4 +1,4 @@
-import { getCookie, setCookie } from 'src/utils';
+import { getCookie, setCookie } from '@utils/index';
 import { getAllAds } from './config';
 
 /** current slot */

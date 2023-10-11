@@ -1,5 +1,5 @@
 import React from 'react';
-import { randomStr } from 'src/utils';
+import { randomStr } from '@utils/index';
 import * as helper from './helper';
 
 // css for browser
