@@ -2,6 +2,7 @@ import React from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import * as project from './project';
 import routeMap from './routeMap';
+import '@assets/css/main.scss';
 
 const postRoute = project.routeConfig.map(routeMap).flat();
 
