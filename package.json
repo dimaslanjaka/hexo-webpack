@@ -72,6 +72,7 @@
     "hexo-renderers": "^2.0.2",
     "hexo-shortcodes": "^1.2.3",
     "html-webpack-plugin": "^5.5.0",
+    "ignore-loader": "^0.1.2",
     "jsdom": "^22.1.0",
     "lint-staged": "^14.0.1",
     "minimist": "^1.2.8",
