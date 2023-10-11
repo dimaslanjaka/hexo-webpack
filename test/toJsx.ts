@@ -254,7 +254,8 @@ async function toJsx(options: {
     return repl;
   });
 
-  const classWrapperName = 'toJsx-style-wrapper-' + md5(source || newHtml);
+  const hash = md5(source || newHtml);
+  const classWrapperName = 'toJsx-style-wrapper-' + hash;
   const scriptPath = path.join(options.dest, '/script.js');
   const stylePath = path.join(options.dest, '/styles.scss');
   const jsxPath = path.join(options.dest, '/index.jsx');
@@ -271,17 +272,21 @@ async function toJsx(options: {
     writefile(stylePath, styleContent);
   }
 
+  const funcName = 'post_' + hash;
   let result = `
 import React from 'react';
 ${styleContent.length > 0 ? "import './styles.scss';" : ''}
 ${imagePaths.length > 0 ? imagePaths.map(o => o.import).join('\n') : ''}
 
-export default function () {
+function ${funcName}() {
   React.useEffect(() => {
     ${scriptContent.length > 0 ? "import('./script.js');" : ''}
   });
   return (<div className="${classWrapperName}">${newHtml}</div>)
 }
+
+export default ${funcName};
+export { ${funcName} as Component };
   `.trim();
   // writefile(tmp('toJsx/result.jsx'), result);
 
