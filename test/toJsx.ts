@@ -107,10 +107,12 @@ async function toJsx(options: {
   source: string;
   /** folder destination */
   dest: string;
+  /** post id */
+  id: string;
 }) {
   const _scripts: string[] = [];
   const _styles: string[] = [];
-  const { source } = options;
+  const { source, id } = options;
   let { body } = options;
   if (!body) {
     body = fs.readFileSync(source, 'utf-8');
@@ -333,7 +335,8 @@ if (require.main === module) {
     } = await toJsx({
       source,
       body: readFileSync(source, 'utf-8'),
-      dest: tmp('toJsx/result')
+      dest: tmp('toJsx/result'),
+      id: 'custom-id'
     });
     console.log(result);
   })();
