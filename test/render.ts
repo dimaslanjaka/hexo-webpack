@@ -159,7 +159,7 @@ export async function render(
   }
 
   // write metadata to tmp/meta
-  writefile(path.join(__dirname, '../tmp/meta', meta.id + '.json'), JSON.stringify(meta));
+  writefile(path.join(paths.tmp, 'meta', meta.id + '.json'), JSON.stringify(meta));
 
   // write dev server static html
   const template = fs.readFileSync(paths.public + '/index.html', 'utf-8');
