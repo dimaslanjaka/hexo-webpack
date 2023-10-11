@@ -1,12 +1,13 @@
 const { path } = require('sbg-utility');
 
 const alias = {
+  '*': '.',
   '@utils': './src/utils',
   '@components': './src/components',
   '@routes': './src/routes',
   '@assets': './src/assets',
   '@project': './src/project',
-  src: './src',
+  '@src': './src',
   '@root': './',
   '@post': './src/posts',
   'react/jsx-dev-runtime': require.resolve('react/jsx-dev-runtime'),

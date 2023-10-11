@@ -4,7 +4,8 @@ const plugins = [
   [
     require.resolve('babel-plugin-module-resolver'),
     {
-      root: ['./src/'],
+      root: [__dirname, './src'],
+      extensions: ['.jsx', '.js', '.ts', '.tsx', '.json'],
       alias: paths.aliasRelative
     }
   ]
