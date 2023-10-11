@@ -158,6 +158,19 @@ export async function render(
   // write metadata to tmp/meta
   writefile(path.join(__dirname, '../tmp/meta', meta.id + '.json'), JSON.stringify(meta));
 
+  // write dev server static html
+  const template = fs.readFileSync(paths.public + '/index.html', 'utf-8');
+  if (meta.permalink && meta.permalink.length > 0) {
+    let perm = meta.permalink;
+    // add index.html
+    if (perm.endsWith('/')) perm += 'index.html';
+    // add extension .html
+    if (!perm.endsWith('.html')) perm += '.html';
+    // write to temp static path
+    const dest = path.join(paths.tmp, 'static', perm);
+    writefile(dest, template);
+  }
+
   return { content: cm.getContent(), hexo, ...meta };
 }
 
