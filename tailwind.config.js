@@ -3,7 +3,10 @@ module.exports = {
   content: [
     './src/**/*.{html,js,jsx,ts,tsx}',
     './public/**/*.html',
-    './node_modules/tw-elements-react/dist/js/**/*.js'
+    // tw-elements
+    // './node_modules/tw-elements-react/dist/js/**/*.js',
+    // flowbite
+    './node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}'
   ],
   theme: {
     extend: {}
@@ -12,5 +15,8 @@ module.exports = {
     extend: {}
   },
   darkMode: 'class',
-  plugins: [require('tw-elements-react/dist/plugin.cjs')]
+  // tw-elements
+  // plugins: [require('tw-elements-react/dist/plugin.cjs')]
+  // flowbite
+  plugins: [require('flowbite/plugin')]
 };
