@@ -34,7 +34,7 @@ export default function imgfinder(src: string, includePaths?: string[] | string)
   }
   finds.push(...finds.map(decodeURIComponent));
   const filter = finds.filter(fs.existsSync);
-  return filter[0] ? path.resolve(filter[0]) : undefined;
+  return filter[0] ? path.toUnix(path.resolve(filter[0])) : undefined;
 }
 
 if (require.main === module) {
