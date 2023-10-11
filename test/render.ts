@@ -1,12 +1,13 @@
 import Hexo from 'hexo';
 import hpp from 'hexo-post-parser';
 import { RenderMarkdownBody } from 'hexo-post-parser/dist/markdown/renderBodyMarkdown';
-import { fs, path, writefile } from 'sbg-utility';
+import { fs, path, writefile, md5 } from 'sbg-utility';
 import { parse } from 'yaml';
 import fixHtml from './fixHtml';
 import { default as htmlImg2base64 } from './utils/img2base64';
 import { fixtures, fromRoot } from './utils';
 import paths from '../config/paths';
+import imgfinder from './utils/imgfinder';
 
 // test render single post
 // need `sbg post copy`
@@ -56,7 +57,7 @@ export const init = (callback?: (hexo: import('hexo')) => any) =>
     });
 
 /**
- * @param source
+ * @param source markdown source path
  * @returns {Promise<{ content: string, hexo: import('hexo') } & import('hexo-post-parser').postMeta>}
  */
 export async function render(
@@ -103,6 +104,55 @@ export async function render(
   cm.restoreCodeBlock();
   // restore style script
   cm.restoreStyleScript();
+
+  // local thumbnail to absolute path
+  const {
+    thumbnail = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/2048px-No_image_available.svg.png'
+  } = meta;
+  const thumbProcess = (thumbnail: string) => {
+    if (!thumbnail.startsWith('data:image') && !thumbnail.startsWith('http')) {
+      // console.log('local thumb', thumbnail);
+      const find = imgfinder(thumbnail);
+      if (find) {
+        const bitmap = fs.readFileSync(find);
+        // convert binary data to base64 encoded string
+        const encoded = Buffer.from(bitmap).toString('base64');
+        // format to base64 encoded url string
+        thumbnail = `data:image/${path.extname(find).replace(/[.]/g, '')};base64,` + encoded;
+      }
+    }
+
+    if (thumbnail.startsWith('data:image')) {
+      const re = /data:image\/(\w{3,4});base64,(.*)/;
+      const exec = re.exec(thumbnail);
+      if (exec) {
+        const ext = exec[1];
+        const encoded = exec[2];
+        const buff = Buffer.from(encoded, 'base64');
+        if (source) {
+          // only process when source defined
+          const imagePath = path.join(
+            path.dirname(source),
+            path.basename(source, path.extname(source)),
+            md5(thumbnail) + '.' + ext
+          );
+          if (!fs.existsSync(path.dirname(imagePath))) {
+            fs.mkdirSync(path.dirname(imagePath), { recursive: true });
+          }
+          fs.writeFileSync(imagePath, buff);
+          thumbnail = imagePath;
+        }
+      }
+    }
+    return thumbnail;
+  };
+  // reassign thumbnail
+  meta.thumbnail = thumbProcess(thumbnail);
+  if (meta.photos) meta.photos = meta.photos.map(thumbProcess);
+  if (!meta.permalink) {
+    meta.permalink = '/' + meta.id;
+    console.error('meta permalink empty', 'settled to', meta.permalink);
+  }
 
   return { content: cm.getContent(), hexo, ...meta };
 }
