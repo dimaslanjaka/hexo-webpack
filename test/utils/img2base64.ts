@@ -1,12 +1,6 @@
 import { fs, path, writefile } from 'sbg-utility';
 import { fixtures, tmp } from '.';
-import paths from '../../config/paths';
-
-const configJson = path.resolve(__dirname, '../../_config.json');
-let config = {} as import('hexo')['config'] & { post_dir: string };
-if (fs.existsSync(configJson)) {
-  config = JSON.parse(fs.readFileSync(configJson, 'utf-8'));
-}
+import imgfinder from './imgfinder';
 
 interface Options {
   /** source markdown absolute path */
@@ -23,21 +17,10 @@ function img2base64(options: Options) {
   const imagefinderreplacement: (substring: string, ...args: string[]) => string = (whole: string, src: string) => {
     // process non-http and base64 image
     if (!src.startsWith('http') && !src.startsWith('data:image/')) {
-      const finds = [
-        path.join(path.dirname(source), src),
-        path.join(paths.src, src),
-        path.join(paths.public, src),
-        path.join(paths.cwd, src),
-        path.join(config.post_dir, src),
-        path.join(paths.cwd, config.post_dir, src),
-        path.join(config.source_dir, src),
-        path.join(paths.cwd, config.source_dir, src)
-      ];
-      finds.push(...finds.map(decodeURIComponent));
       // console.log(finds);
-      const filter = finds.filter(fs.existsSync);
-      if (filter.length > 0) {
-        const file = filter[0];
+      const find = imgfinder(src, [source]);
+      if (find) {
+        const file = find;
         const bitmap = fs.readFileSync(file);
         // convert binary data to base64 encoded string
         const encoded =
@@ -65,6 +48,6 @@ if (require.main === module) {
   (async () => {
     const source = fixtures('toJsx.html');
     const convert = img2base64({ source, body: fs.readFileSync(source, 'utf-8') });
-    writefile(tmp('img2base64.html'), convert);
+    writefile(tmp('img2base64/result.html'), convert);
   })();
 }
