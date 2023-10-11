@@ -132,15 +132,16 @@ export async function render(
         if (source) {
           // only process when source defined
           const imagePath = path.join(
-            path.dirname(source),
+            'post-images',
             path.basename(source, path.extname(source)),
             md5(thumbnail) + '.' + ext
           );
-          if (!fs.existsSync(path.dirname(imagePath))) {
-            fs.mkdirSync(path.dirname(imagePath), { recursive: true });
+          const filePath = path.join(paths.public, imagePath);
+          if (!fs.existsSync(path.dirname(filePath))) {
+            fs.mkdirSync(path.dirname(filePath), { recursive: true });
           }
-          fs.writeFileSync(imagePath, buff);
-          thumbnail = imagePath;
+          fs.writeFileSync(filePath, buff);
+          thumbnail = '/' + imagePath;
         }
       }
     }
