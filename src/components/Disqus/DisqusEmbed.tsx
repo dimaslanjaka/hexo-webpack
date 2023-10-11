@@ -6,7 +6,8 @@ import { CALLBACKS, EMBED_SCRIPT_ID, THREAD_ID } from './constants';
 
 interface Props {
   shortname: string;
-  config: { identifier: string; url: string; title: string; language: string } & Partial<{
+  config: { identifier: string; url: string; title: string } & Partial<{
+    language: string;
     categoryID: string;
     remoteAuthS3: string;
     apiKey: string;
