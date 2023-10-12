@@ -1,4 +1,4 @@
-import { path, writefile } from 'sbg-utility';
+import { path, writefile, fs } from 'sbg-utility';
 import paths from '../../config/paths';
 import prettierFormat from '../format';
 import genRoute from '../genRoute';
@@ -6,6 +6,9 @@ import toJsx from '../toJsx';
 import { fixtures, fromRoot, tmp } from '../utils';
 
 const routes = [] as any[];
+const postDir = path.join(paths.src, 'posts');
+// empty post dir
+fs.emptyDirSync(postDir);
 
 /**
  * need render.init() before run this function
