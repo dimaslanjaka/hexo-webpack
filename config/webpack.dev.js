@@ -24,7 +24,7 @@ module.exports = merge(common, {
   mode: 'development',
   devtool: 'inline-source-map',
   devServer: {
-    static: [paths.public, paths.tmp + '/static'],
+    static: [paths.public, paths.tmp + '/static', paths.cwd + '/source'],
     historyApiFallback: true,
     compress: true,
     hot: true,
