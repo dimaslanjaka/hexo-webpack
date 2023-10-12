@@ -13,15 +13,30 @@ const { default: toJsx } = require('./test/toJsx');
 const paths = require('./config/paths');
 const { default: genRoute } = require('./test/genRoute');
 const Promise = require('bluebird');
+const args = require('./config/cli');
 require('./gulpfile.build');
 
 /**
  * @param {Partial<{ randomize: boolean; limit: number; onBeforePostsProcess: ((posts: string[]) => string[]) | ((posts: string[]) => Promise<string[]>); clean: boolean; }>} options
+ * @example
+ * ```bash
+ * gulp route
+ * # or force options
+ * gulp route --random --limit=10 --clean
+ * ```
  */
 async function genR(options = {}) {
   await init();
   const dest = paths.src + '/posts';
   options = Object.assign({ clean: false, limit: Infinity, randomize: false }, options || {});
+
+  // force option clean from cli
+  if (args.clean) options.clean = true;
+  // force randomize from cli
+  if (args.random || args.randomize) options.randomize = true;
+  // force limit from cli
+  if (args.limit) options.limit = parseInt(args.limit);
+
   if (options.clean) {
     // truncate auto generated post folder
     await fs.emptyDir(dest);
@@ -30,6 +45,7 @@ async function genR(options = {}) {
     // truncate auto generated static html folder
     await fs.emptyDir(paths.tmp + '/static');
   }
+
   // let total = 0;
   const routes = [];
   let posts = require('./.cache/posts.json');
