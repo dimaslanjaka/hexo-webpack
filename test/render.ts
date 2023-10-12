@@ -1,12 +1,11 @@
 import Hexo from 'hexo';
 import hpp from 'hexo-post-parser';
-import { RenderMarkdownBody } from 'hexo-post-parser/dist/markdown/renderBodyMarkdown';
-import { fs, path, writefile, md5 } from 'sbg-utility';
+import { fs, md5, path, writefile } from 'sbg-utility';
 import { parse } from 'yaml';
-import fixHtml from './fixHtml';
-import { default as htmlImg2base64 } from './utils/img2base64';
-import { fixtures, fromRoot } from './utils';
 import paths from '../config/paths';
+import fixHtml from './fixHtml';
+import { fixtures, fromRoot, tmp } from './utils';
+import { default as htmlImg2base64 } from './utils/img2base64';
 import imgfinder from './utils/imgfinder';
 
 // test render single post
@@ -57,6 +56,8 @@ export const init = (callback?: (hexo: import('hexo')) => any) =>
     });
 
 /**
+ * render post
+ * * need `init()`
  * @param source markdown source path
  * @returns {Promise<{ content: string, hexo: import('hexo') } & import('hexo-post-parser').postMeta>}
  */
@@ -73,37 +74,27 @@ export async function render(
     post = hpp.parsePostFM(source as string);
     if (post.attributes) meta = post.attributes;
   }
-  const cm = new RenderMarkdownBody(post as any);
-  // extract style, script
-  cm.extractStyleScript();
+  // const cm = new RenderMarkdownBody(post as any);
 
   // render hexo shortcodes
   let { content = '' } = (await hexo.post.render(null as any, {
-    content: cm.getContent(),
-    engine: 'md',
+    content: post.body,
+    engine: 'markdown',
     page: meta
   })) as { content: string };
 
   // update content
-  cm.setContent(content);
+  // cm.setContent(content);
   // writefile(tmp('render/after-render.html'), content);
-
-  // extract code block first
-  cm.extractCodeBlock();
 
   // writefile(tmp('render/extracted-codeblock.json'), cm.getExtractedCodeblock());
   // writefile(tmp('render/extracted-stylescript.json'), cm.getExtractedStyleScript());
-  content = await fixHtml(cm.getContent());
-  cm.setContent(content);
+  content = await fixHtml(content);
+  // cm.setContent(content);
   // writefile(tmp('render/after-extract.html'), content);
 
   // replace image src to url base64
   content = htmlImg2base64({ source: source as string, content });
-
-  // restore codeblock
-  cm.restoreCodeBlock();
-  // restore style script
-  cm.restoreStyleScript();
 
   // local thumbnail to absolute path
   const {
@@ -190,7 +181,7 @@ export async function render(
       });
       content = content.replace(imgTag, replacement);
       // update content
-      cm.setContent(content);
+      // cm.setContent(content);
     }
   }
   // process meta photos
@@ -199,6 +190,11 @@ export async function render(
     meta.permalink = '/' + meta.id;
     console.error('meta permalink empty', 'settled to', meta.permalink);
   }
+
+  // restore codeblock
+  // cm.restoreCodeBlock();
+  // restore style script
+  // cm.restoreStyleScript();
 
   // write metadata to tmp/meta
   writefile(path.join(paths.tmp, 'meta', meta.id + '.json'), JSON.stringify(meta));
@@ -216,7 +212,19 @@ export async function render(
     writefile(dest, template);
   }
 
-  return { content: cm.getContent(), hexo, ...meta };
+  return { content, hexo, ...meta };
 }
 
 export default { render, init };
+
+if (require.main === module) {
+  (async () => {
+    await init();
+    const source = fixtures('mixed.md');
+    const { content, hexo: __, ...meta } = await render(source);
+    const yaml = await import('yaml');
+    const metadata = yaml.stringify(meta);
+    writefile(tmp('render/metadata.yml'), metadata);
+    writefile(tmp('render/content.html'), content);
+  })();
+}

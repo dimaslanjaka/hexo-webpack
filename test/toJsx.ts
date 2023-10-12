@@ -120,54 +120,84 @@ async function toJsx(options: {
 
   // writefile(options.dest + '/body.html', body);
 
-  let m: RegExpExecArray | null;
-  while ((m = re_style_tag.exec(newHtml)) !== null) {
+  // extract style tags
+  let styleTagMatch: RegExpExecArray | null;
+  while ((styleTagMatch = re_style_tag.exec(newHtml)) !== null) {
     // delete style tag
-    newHtml = newHtml.replace(m[0], '');
-    _styles.push(m[1]);
+    newHtml = newHtml.replace(styleTagMatch[0], '');
+    _styles.push(styleTagMatch[1]);
   }
+
+  // extract script tags
   const allScriptSrc: string[] = [];
-  const detachScriptTags = () => {
-    return new Promise(resolve => {
-      // process 3 times
-      for (let index = 0; index < 3; index++) {
-        while ((m = re_script_tag.exec(newHtml)) !== null) {
-          // This is necessary to avoid infinite loops with zero-width matches
-          if (m.index === re_script_tag.lastIndex) {
-            re_script_tag.lastIndex++;
-          }
-          // delete script tag
-          newHtml = newHtml.replace(m[0], '');
-          const src = ((m[1] || '').match(/src=['"](.*)['"]/) || [])[1] || '';
-          let inner = (m[2] || '').trim().length > 0 ? m[2] : '';
-          // call src script dynamically
-          // skip duplicated script
-          if (src.length > 0 && !allScriptSrc.includes(src)) {
-            allScriptSrc.push(src);
-            inner +=
-              '\n' +
-              `
-    (()=>{
-      const script = document.createElement('script');
-      script.src = '${src}';
-      document.body.appendChild(script);
-    })();
-                `.trim() +
-              '\n';
-          }
+  let hasScript = re_script_tag.test(newHtml);
+  let scriptTagMatch: null | RegExpExecArray;
+  while ((scriptTagMatch = re_script_tag.exec(newHtml)) !== null) {
+    // This is necessary to avoid infinite loops with zero-width matches
+    if (scriptTagMatch.index === re_script_tag.lastIndex) {
+      re_script_tag.lastIndex++;
+    }
+    console.log('script', scriptTagMatch[1], scriptTagMatch[2]);
+    // delete script tag
+    newHtml = newHtml.replace(scriptTagMatch[0], '');
+    const src = ((scriptTagMatch[1] || '').match(/src=['"](.*)['"]/) || [])[1] || '';
+    let inner = (scriptTagMatch[2] || '').trim().length > 0 ? scriptTagMatch[2] : '';
+    // call src script dynamically
+    // skip duplicated script
+    if (src.length > 0 && !allScriptSrc.includes(src)) {
+      allScriptSrc.push(src);
+      inner +=
+        '\n' +
+        `
+(()=>{
+const script = document.createElement('script');
+script.src = '${src}';
+document.body.appendChild(script);
+})();
+              `.trim() +
+        '\n';
+    }
 
-          _scripts.push(inner);
-        }
-      }
-      resolve(null);
-    });
-  };
-
-  console.log('has script', re_script_tag.test(newHtml));
-  while (re_script_tag.test(newHtml)) {
-    await detachScriptTags();
+    _scripts.push(inner);
   }
-  console.log('total extracted script', _scripts.length);
+
+  // double check extract script tags
+  hasScript = re_script_tag.test(newHtml);
+  if (hasScript && _scripts.length === 0) {
+    const regex = /(<script\b[^>]*>)([\s\S]*?)(<\/script\b[^>]*>)/gim;
+    let m: RegExpExecArray | null;
+    while ((m = regex.exec(newHtml)) !== null) {
+      // This is necessary to avoid infinite loops with zero-width matches
+      if (m.index === regex.lastIndex) {
+        regex.lastIndex++;
+      }
+      let inner = (m[2] || '').trim().length > 0 ? m[2] : '';
+      let src = '';
+      if (m[1] && m[1].trim().length > 0) {
+        src = ((m[1] || '').match(/src=['"](.*)['"]/) || [])[1] || '';
+      }
+      // call src script dynamically
+      // skip duplicated script
+      if (src.length > 0 && !allScriptSrc.includes(src)) {
+        allScriptSrc.push(src);
+        inner +=
+          '\n' +
+          `
+(()=>{
+const script = document.createElement('script');
+script.src = '${src}';
+document.body.appendChild(script);
+})();
+              `.trim() +
+          '\n';
+      }
+
+      // delete script tag
+      newHtml = newHtml.replace(m[0], '');
+
+      _scripts.push(inner);
+    }
+  }
 
   // extract inline style from html element
   // const regex = /style=['"]([\s\S]*?)['"]/gim;
