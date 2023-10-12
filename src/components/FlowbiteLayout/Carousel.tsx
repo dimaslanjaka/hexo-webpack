@@ -1,5 +1,6 @@
 import { Carousel } from 'flowbite-react';
 import React from 'react';
+import Image from '../Image';
 
 interface Props {
   data: (string | { alt: string; src: string })[];
@@ -12,7 +13,7 @@ export default function FlowbiteCarousel(props: Props) {
       {props.data.map((strObj, i) => {
         const alt = typeof strObj === 'object' ? strObj.alt : strObj;
         const src = typeof strObj === 'object' ? strObj.src : strObj;
-        return <img alt={alt} src={src} height={String(props.height)} key={alt + src + i} />;
+        return <Image alt={alt} src={src} height={String(props.height)} key={alt + src + i} />;
       })}
     </Carousel>
   );
