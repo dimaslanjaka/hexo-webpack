@@ -112,7 +112,7 @@ async function toJsx(options: {
 }) {
   const _scripts: string[] = [];
   const _styles: string[] = [];
-  const { source, id } = options;
+  const { source, id: _id } = options;
   let { body } = options;
   if (!body) {
     body = fs.readFileSync(source, 'utf-8');
