@@ -279,9 +279,15 @@ import React from 'react';
 ${styleContent.length > 0 ? "import './styles.scss';" : ''}
 
 function ${funcName}() {
-  React.useEffect(() => {
-    ${scriptContent.length > 0 ? "import('./script.js');" : ''}
-  });
+${
+  scriptContent.length > 0
+    ? `
+React.useEffect(() => {
+  import('./script.js');
+});
+`
+    : ''
+}
   return (<div className="${classWrapperName}">${newHtml}</div>)
 }
 
