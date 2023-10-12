@@ -3,7 +3,6 @@ import { JSDOM } from 'jsdom';
 import { fs, md5, path, writefile } from 'sbg-utility';
 import prettierFormat from './format';
 import { fixtures, tmp } from './utils';
-import htmlImg2base64 from './utils/img2base64';
 
 // inspired by
 // https://github.com/probablyup/markdown-to-jsx/blob/main/index.tsx#L266
@@ -224,37 +223,37 @@ async function toJsx(options: {
   });
 
   // replace image src to base64 encoded
-  newHtml = htmlImg2base64({ source, body: newHtml });
+  // newHtml = htmlImg2base64({ source, body: newHtml });
 
   // base64 encoded images to import style
-  const imagePaths: { importName: string; import: string; path: string }[] = [];
-  const re_images = /<img [^>]*src="[^"]*"[^>]*>/gim;
-  newHtml = newHtml.replace(re_images, function (tag) {
-    const repl = tag.replace(
-      /<img [^>]*src=(['"]data:image\/(\w{3,4});base64,(.*)['"])[^>]*>/gim,
-      function (_, src, ext, base64) {
-        if (ext && src && base64) {
-          const filename = md5(base64);
-          const imagePath = path.join(options.dest, filename + '.' + ext);
-          const obj = {
-            path: imagePath,
-            importName: '_' + filename,
-            import: `import _${filename} from './${filename}.${ext}';`
-          };
-          imagePaths.push(obj);
-          const buff = Buffer.from(base64, 'base64');
-          if (!fs.existsSync(path.dirname(imagePath))) {
-            fs.mkdirSync(path.dirname(imagePath), { recursive: true });
-          }
-          fs.writeFileSync(imagePath, buff);
-          return _.replace(src, `{ ${obj.importName} }`);
-        } else {
-          return _;
-        }
-      }
-    );
-    return repl;
-  });
+  // const imagePaths: { importName: string; import: string; path: string }[] = [];
+  // const re_images = /<img [^>]*src="[^"]*"[^>]*>/gim;
+  // newHtml = newHtml.replace(re_images, function (tag) {
+  //   const repl = tag.replace(
+  //     /<img [^>]*src=(['"]data:image\/(\w{3,4});base64,(.*)['"])[^>]*>/gim,
+  //     function (_, src, ext, base64) {
+  //       if (ext && src && base64) {
+  //         const filename = md5(base64);
+  //         const imagePath = path.join(options.dest, filename + '.' + ext);
+  //         const obj = {
+  //           path: imagePath,
+  //           importName: '_' + filename,
+  //           import: `import _${filename} from './${filename}.${ext}';`
+  //         };
+  //         imagePaths.push(obj);
+  //         const buff = Buffer.from(base64, 'base64');
+  //         if (!fs.existsSync(path.dirname(imagePath))) {
+  //           fs.mkdirSync(path.dirname(imagePath), { recursive: true });
+  //         }
+  //         fs.writeFileSync(imagePath, buff);
+  //         return _.replace(src, `{ ${obj.importName} }`);
+  //       } else {
+  //         return _;
+  //       }
+  //     }
+  //   );
+  //   return repl;
+  // });
 
   const hash = md5(source || newHtml);
   const classWrapperName = 'toJsx-style-wrapper-' + hash;
@@ -278,7 +277,6 @@ async function toJsx(options: {
   let result = `
 import React from 'react';
 ${styleContent.length > 0 ? "import './styles.scss';" : ''}
-${imagePaths.length > 0 ? imagePaths.map(o => o.import).join('\n') : ''}
 
 function ${funcName}() {
   React.useEffect(() => {
