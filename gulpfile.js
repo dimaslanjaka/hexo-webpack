@@ -3,7 +3,6 @@ require('ts-node').register({
   transpileOnly: true
 });
 
-const { spawnAsync } = require('git-command-helper');
 const gulp = require('gulp');
 const { init } = require('./test/render');
 const { obj } = require('through2');
@@ -13,20 +12,6 @@ const paths = require('./config/paths');
 const { default: genRoute } = require('./test/genRoute');
 const Promise = require('bluebird');
 require('./gulpfile.build');
-
-gulp.task('watch', function () {
-  /**
-   * @param {gulp.TaskFunctionCallback} testCb
-   */
-  const run = function (testCb) {
-    spawnAsync('node', ['-r', 'ts-node/register', 'test/render.js'], { stdio: 'inherit' })
-      .then(() => testCb())
-      .catch(testCb);
-  };
-  run(() =>
-    gulp.watch(['src/**/*.*', 'public/**/*.*', 'test/**/*.*', '!**/node_modules/**', '!**/dist/**', '!**/tmp/**'], run)
-  );
-});
 
 /**
  * @param {Partial<{ randomize: boolean; limit: number; onBeforePostsProcess: ((posts: string[]) => string[]) | ((posts: string[]) => Promise<string[]>); clean: boolean; }>} options
