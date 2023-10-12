@@ -1,4 +1,4 @@
-import { writefile } from 'sbg-utility';
+import { writefile, path } from 'sbg-utility';
 import prettierFormat from '../format';
 import genRoute from '../genRoute';
 import render from '../render';
@@ -16,7 +16,7 @@ render
     const { body: _body, ...toPrint } = result;
     const jsx = await toJsx({
       body: result.body,
-      dest: paths.src + '/posts',
+      dest: path.join(paths.src, 'posts', result.id),
       source,
       id: result.id || 'custom-id-thumbnails'
     });
