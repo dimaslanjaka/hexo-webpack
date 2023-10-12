@@ -55,7 +55,7 @@ const ATTRIBUTE_TO_JSX_PROP_MAP = JSX_ATTRIBUTES.reduce(
     obj[x.toLowerCase()] = x;
     return obj;
   },
-  { for: 'htmlFor', class: 'className' }
+  { for: 'htmlFor', class: 'className', defaultvalue: 'defaultValue' }
 );
 
 /**
@@ -199,22 +199,12 @@ document.body.appendChild(script);
     }
   }
 
-  // extract inline style from html element
-  // const regex = /style=['"]([\s\S]*?)['"]/gim;
-  //   newHtml = newHtml.replace(regex, function (_whole, style) {
-  //     const id = md5(_whole + style);
-  //     if (!styleIds.includes(id)) {
-  //       styleIds.push(id);
-  //       _styles.push(`
-  // [data-htmlstyle="${id}"] {
-  // ${style}
-  // }
-  //     `);
-  //     }
-  //     return `data-htmlstyle="${id}"`;
-  //   });
-  const styleIds: string[] = [];
+  // initialize JSDOM
+  // prepare modification
   const dom = new JSDOM(newHtml);
+
+  // extract inline style from html element
+  const styleIds: string[] = [];
   dom.window.document.querySelectorAll('*').forEach(el => {
     if (el.hasAttribute('style')) {
       const style = el.getAttribute('style');
@@ -234,7 +224,27 @@ document.body.appendChild(script);
       el.remove();
     }
   });
+
+  // change selected select or input value attribute to react defaultValue
+  dom.window.document.querySelectorAll('select,input').forEach(el => {
+    let defaultValue: string | null = null;
+    if (el.tagName === 'SELECT') {
+      el.querySelectorAll('option[selected]').forEach(option => {
+        option.removeAttribute('selected');
+        defaultValue = option.getAttribute('value');
+      });
+    } else {
+      defaultValue = el.getAttribute('value');
+      el.removeAttribute('value');
+    }
+    if (defaultValue) el.setAttribute('defaultValue', defaultValue);
+  });
+
+  // re-assign html with JSDOM inner body
   newHtml = dom.window.document.body.innerHTML;
+
+  // close JSDOM instance
+  // free memory
   dom.window.close();
 
   // fix unclosed tags
