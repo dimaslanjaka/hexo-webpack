@@ -273,7 +273,7 @@ async function toJsx(options: {
     writefile(stylePath, styleContent);
   }
 
-  const funcName = 'post_' + hash;
+  const funcName = 'Post_' + hash;
   let result = `
 import React from 'react';
 ${styleContent.length > 0 ? "import './styles.scss';" : ''}
