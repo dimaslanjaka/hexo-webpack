@@ -132,6 +132,10 @@ async function toJsx(options: {
       // process 3 times
       for (let index = 0; index < 3; index++) {
         while ((m = re_script_tag.exec(newHtml)) !== null) {
+          // This is necessary to avoid infinite loops with zero-width matches
+          if (m.index === re_script_tag.lastIndex) {
+            re_script_tag.lastIndex++;
+          }
           // delete script tag
           newHtml = newHtml.replace(m[0], '');
           const src = ((m[1] || '').match(/src=['"](.*)['"]/) || [])[1] || '';
@@ -159,9 +163,11 @@ async function toJsx(options: {
     });
   };
 
+  console.log('has script', re_script_tag.test(newHtml));
   while (re_script_tag.test(newHtml)) {
     await detachScriptTags();
   }
+  console.log('total extracted script', _scripts.length);
 
   // extract inline style from html element
   // const regex = /style=['"]([\s\S]*?)['"]/gim;
