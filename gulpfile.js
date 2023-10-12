@@ -1,4 +1,8 @@
-require('ts-node').register({ compilerOptions: require('./tsconfig.json').compilerOptions });
+require('ts-node').register({
+  compilerOptions: { ...require('./tsconfig.json').compilerOptions, checkJs: false, strict: false, noEmit: true },
+  transpileOnly: true
+});
+
 const { spawnAsync } = require('git-command-helper');
 const gulp = require('gulp');
 const { init } = require('./test/render');
@@ -8,6 +12,7 @@ const { default: toJsx } = require('./test/toJsx');
 const paths = require('./config/paths');
 const { default: genRoute } = require('./test/genRoute');
 const Promise = require('bluebird');
+require('./gulpfile.build');
 
 gulp.task('watch', function () {
   /**
