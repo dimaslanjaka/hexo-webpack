@@ -16,7 +16,7 @@ export default function routeMap(route: Route) {
 
   const lazy = async () => {
     const { default: Post } = await import(
-      /* webpackChunkName: "[request]" */
+      /* webpackChunkName: "post-[request]" */
       /* webpackPrefetch: true */
       `${importPath}`
     );
