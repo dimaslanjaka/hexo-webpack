@@ -2,6 +2,7 @@ import { Route, projectConfig } from '@root/src/project';
 import React from 'react';
 import { useLoaderData } from 'react-router-dom';
 import { DisqusEmbed } from './components/Disqus/DisqusEmbed';
+import FlowbiteCarousel from './components/FlowbiteLayout/Carousel';
 
 export default function routeMap(route: Route) {
   const importPath = './' + route.jsxPath.replace(projectConfig.paths.src, '').replace(/^\//, '');
@@ -22,8 +23,13 @@ export default function routeMap(route: Route) {
     return {
       Component: () => {
         const data = (useLoaderData() || { meta: {} }) as ReturnType<typeof loader>;
+        const [meta, setMeta] = React.useState(data.meta as import('hexo-post-parser').postMeta & Record<string, any>);
         React.useEffect(() => {
           document.title = data.title;
+          import('@root/tmp/meta/' + data.id + '.json').then(importedMeta => {
+            setMeta({ ...data.meta, ...importedMeta });
+          });
+
           return () => {
             //
           };
@@ -36,8 +42,8 @@ export default function routeMap(route: Route) {
         const disqus_config = {
           url: disqus_canonical,
           identifier: new URL(disqus_canonical).pathname,
-          title: data.title,
-          language: (data.meta.language && data.meta.language.content) || 'en_US'
+          title: data.title
+          // language: (data.meta.language && data.meta.language.content) || 'en_US'
         };
         // console.log(disqus_config);
         return (
@@ -68,6 +74,13 @@ export default function routeMap(route: Route) {
             <img src={thumbnail} className="mb-6 w-full rounded-lg shadow-lg dark:shadow-black/20" alt={data.title} />
 
             <Post />
+
+            {/* mix photos */}
+            {meta.photos && (
+              <div className="py-4 h-56 sm:h-64 xl:h-80 2xl:h-96">
+                <FlowbiteCarousel data={meta.photos} height="100%" />
+              </div>
+            )}
 
             <DisqusEmbed shortname="dimaslanjaka" config={disqus_config} />
           </>
