@@ -7,6 +7,7 @@ import fixHtml from './fixHtml';
 import { fixtures, fromRoot, tmp } from './utils';
 import { default as htmlImg2base64 } from './utils/img2base64';
 import imgfinder from './utils/imgfinder';
+import extractStyleTag, { extractScriptTag, restoreScriptTag, restoreStyleTag } from './utils/extractStyleScriptTag';
 
 // test render single post
 // need `sbg post copy`
@@ -62,8 +63,9 @@ export const init = (callback?: (hexo: import('hexo')) => any) =>
  * @returns {Promise<{ content: string, hexo: import('hexo') } & import('hexo-post-parser').postMeta>}
  */
 export async function render(
-  source: import('hexo-post-parser').Nullable<string> = path.join(fixtures('sample.md'))
+  source = path.join(fixtures('sample.md'))
 ): Promise<{ content: string; hexo: import('hexo') } & import('hexo-post-parser').postMeta> {
+  if (!fs.statSync(source).isFile()) throw new Error('source file is not file');
   // parse frontmatter post
   let post: Awaited<ReturnType<(typeof hpp)['parsePost']>> | ReturnType<(typeof hpp)['parsePostFM']>;
   let meta: hpp.postMeta = {} as any;
@@ -72,26 +74,23 @@ export async function render(
     if (post.metadata) meta = post.metadata;
   } catch {
     post = hpp.parsePostFM(source as string);
-    if (post.attributes) meta = post.attributes;
+    if (post.attributes) meta = post.attributes as any;
   }
-  // const cm = new RenderMarkdownBody(post as any);
+
+  if (!post.body) throw new Error('body undefined or null');
+
+  // extract script and style tag
+  let body = extractStyleTag(post.body).html;
+  body = extractScriptTag(body).html;
 
   // render hexo shortcodes
   let { content = '' } = (await hexo.post.render(null as any, {
-    content: post.body,
+    content: body,
     engine: 'markdown',
     page: meta
   })) as { content: string };
 
-  // update content
-  // cm.setContent(content);
-  // writefile(tmp('render/after-render.html'), content);
-
-  // writefile(tmp('render/extracted-codeblock.json'), cm.getExtractedCodeblock());
-  // writefile(tmp('render/extracted-stylescript.json'), cm.getExtractedStyleScript());
   content = await fixHtml(content);
-  // cm.setContent(content);
-  // writefile(tmp('render/after-extract.html'), content);
 
   // replace image src to url base64
   content = htmlImg2base64({ source: source as string, content });
@@ -191,10 +190,9 @@ export async function render(
     console.error('meta permalink empty', 'settled to', meta.permalink);
   }
 
-  // restore codeblock
-  // cm.restoreCodeBlock();
-  // restore style script
-  // cm.restoreStyleScript();
+  // restore script and style tag
+  content = restoreStyleTag(content);
+  content = restoreScriptTag(content);
 
   // write metadata to tmp/meta
   writefile(path.join(paths.tmp, 'meta', meta.id + '.json'), JSON.stringify(meta));

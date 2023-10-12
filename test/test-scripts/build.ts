@@ -16,26 +16,22 @@ fs.emptyDirSync(postDir);
  * @returns
  */
 async function build(filename: string) {
-  try {
-    const source = fixtures(filename + '.md');
-    const renderResult = await genRoute(source);
-    const { body: _body, ...toPrint } = renderResult;
-    const jsxResult = await toJsx({
-      body: renderResult.body,
-      dest: path.join(paths.src, 'posts', renderResult.id),
-      source,
-      id: renderResult.id || 'custom-id-' + filename
-    });
-    const value = { ...toPrint, jsxPath: jsxResult.jsxPath };
-    routes.push(value);
-    const { jsx, result } = await { jsx: jsxResult, result: renderResult };
-    const route = writefile(fromRoot('routes.json'), JSON.stringify(routes, null, 2));
-    const html = await prettierFormat(result.body, { parser: 'html' });
-    const wh = writefile(tmp('html/' + filename + '.html'), html);
-    console.log({ jsx: jsx.jsxPath, html: wh.file, route: route.file });
-  } catch (message_1) {
-    return console.error(message_1);
-  }
+  const source = fixtures(filename + '.md');
+  const renderResult = await genRoute(source);
+  const { body: _body, ...toPrint } = renderResult;
+  const jsxResult = await toJsx({
+    body: renderResult.body,
+    dest: path.join(paths.src, 'posts', renderResult.id),
+    source,
+    id: renderResult.id || 'custom-id-' + filename
+  });
+  const value = { ...toPrint, jsxPath: jsxResult.jsxPath };
+  routes.push(value);
+
+  const route = writefile(fromRoot('routes.json'), JSON.stringify(routes, null, 2));
+  const html = await prettierFormat(renderResult.body, { parser: 'html' });
+  const wh = writefile(tmp('html/' + filename + '.html'), html);
+  console.log({ jsx: jsxResult.jsxPath, html: wh.file, route: route.file });
 }
 
 export default build;

@@ -67,7 +67,7 @@ pre {
 }
 ```
 
- Here the test code from jsfiddle (CSS and HTML) section tabs.
+Here the test code from jsfiddle (CSS and HTML) section tabs.
 
 <iframe allowfullscreen="allowfullscreen" frameborder="0" height="auto" src="//jsfiddle.net/dimaslanjaka/p9uw69bb/embedded/" width="100%"></iframe>
 
