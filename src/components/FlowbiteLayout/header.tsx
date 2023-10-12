@@ -37,7 +37,7 @@ const Header: FC<Record<string, never>> = function () {
           </button>
         )}
         <Navbar.Brand href="/">
-          <Image alt="Flowbite logo" height="24" src="/favicon.png" width="24" />
+          <Image alt="Flowbite logo" height="24" src="/favicon.jpg" width="24" />
           <span className="self-center whitespace-nowrap px-3 text-xl font-semibold dark:text-white">Flowbite</span>
         </Navbar.Brand>
         <div className="flex md:order-2">
