@@ -14,7 +14,7 @@ class Home extends React.Component {
         <u className="mb-6 list-inside list-disc">
           {routeConfig.map(o => (
             <li key={o.title}>
-              <a href={o.permalink.replace(/.html$/, '')}>{o.permalink || o.title}</a>
+              <a href={o.permalink}>{o.permalink || o.title}</a>
             </li>
           ))}
         </u>
