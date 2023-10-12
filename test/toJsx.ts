@@ -137,7 +137,7 @@ async function toJsx(options: {
     if (scriptTagMatch.index === re_script_tag.lastIndex) {
       re_script_tag.lastIndex++;
     }
-    console.log('script', scriptTagMatch[1], scriptTagMatch[2]);
+    // console.log('script', scriptTagMatch[1], scriptTagMatch[2]);
     // delete script tag
     newHtml = newHtml.replace(scriptTagMatch[0], '');
     const src = ((scriptTagMatch[1] || '').match(/src=['"](.*)['"]/) || [])[1] || '';
@@ -356,8 +356,7 @@ export { ${funcName} as Component };
     // writefile(tmp('toJsx/format.jsx'), result);
   } catch (e) {
     e.source = source;
-    const w = writefile(tmp('/toJsx/errors/' + md5(newHtml.substring(0, 100)) + '.json'), e);
-    console.error('toJsx', 'prettier fail', source, w.file.replace(process.cwd(), ''));
+    console.error(e);
   }
 
   writefile(jsxPath, result);
