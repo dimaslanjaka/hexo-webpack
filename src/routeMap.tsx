@@ -35,9 +35,9 @@ export default function routeMap(route: Route) {
           };
         });
 
-        const thumbnail = data.meta.og_image
-          ? data.meta.og_image.content
-          : 'https://mdbcdn.b-cdn.net/img/new/slides/194.jpg';
+        // const thumbnail = data.meta.og_image
+        //   ? data.meta.og_image.content
+        //   : 'https://mdbcdn.b-cdn.net/img/new/slides/194.jpg';
         const disqus_canonical = data.meta.canonical ? data.meta.canonical.href : location.href;
         const disqus_config = {
           url: disqus_canonical,
@@ -48,30 +48,31 @@ export default function routeMap(route: Route) {
         // console.log(disqus_config);
         return (
           <>
-            <h1 className="mb-4 text-3xl font-bold">{data.title}</h1>
-            <p className="mb-6 flex items-center font-bold uppercase text-danger dark:text-danger-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-                stroke="currentColor"
-                className="mr-2 h-5 w-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z"
-                />
-              </svg>
-              {data.id}
-            </p>
-            <img src={thumbnail} className="mb-6 w-full rounded-lg shadow-lg dark:shadow-black/20" alt={data.title} />
+            <div>
+              <h1 className="mb-4 text-3xl font-bold">{data.title}</h1>
+              <p className="mb-6 flex items-center font-bold uppercase text-danger dark:text-danger-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  className="mr-2 h-5 w-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z"
+                  />
+                </svg>
+                {data.id}
+              </p>
+            </div>
 
             <Post />
 
@@ -88,14 +89,18 @@ export default function routeMap(route: Route) {
       }
     };
   };
+
+  /** permalink with single slash */
+  const perm = '/' + route.permalink.replace(/^\/{1,}/, '');
+
   return [
     {
-      path: route.permalink,
+      path: perm,
       loader,
       lazy
     },
     {
-      path: route.permalink.replace(/.html$/, ''),
+      path: perm.replace(/.html$/, ''),
       loader,
       lazy
     }

@@ -5,7 +5,6 @@ import { Outlet } from 'react-router-dom';
 import { SidebarProvider } from './context/SidebarContext';
 import Header from './header';
 import Sidebar from './sidebar';
-import './style.scss';
 import FlowbiteContext from './context/FlowbitContext';
 
 function FlowbiteLayout() {

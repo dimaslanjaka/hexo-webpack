@@ -3,13 +3,19 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import * as project from './project';
 import routeMap from './routeMap';
 import '@assets/css/main.scss';
+import {
+  FlowbiteLoadStylesheet,
+  FlowbiteSingleContentLayout,
+  FlowbiteWithSidebarLayout
+} from './components/FlowbiteLayout/utils';
+
+FlowbiteLoadStylesheet();
 
 const postRoute = project.routeConfig.map(routeMap).flat();
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    lazy: () => import('./components/FlowbiteLayout/index'),
+    lazy: FlowbiteWithSidebarLayout,
     children: [
       {
         index: true,
@@ -25,8 +31,9 @@ const router = createBrowserRouter([
           return { Component };
         }
       }
-    ].concat(postRoute)
-  }
+    ]
+  },
+  { lazy: FlowbiteSingleContentLayout, children: postRoute }
 ]);
 
 class App extends React.Component {
