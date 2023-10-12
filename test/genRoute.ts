@@ -1,9 +1,8 @@
+import { Nullable } from 'hexo-post-parser';
 import { writefile } from 'sbg-utility';
 import { default as uuidv4 } from 'sbg-utility/dist/utils/uuid';
 import { init, render } from './render';
 import { tmp } from './utils';
-import { Nullable } from 'hexo-post-parser';
-import img2base64 from './utils/img2base64';
 
 /**
  * generate route object
@@ -37,9 +36,9 @@ async function genRoute(source: Nullable<string>) {
     ...props
   } = await render(source);
 
-  let { content = '' } = props;
+  const { content = '' } = props;
   // replace image src to url base64
-  content = img2base64({ source: source || '', content });
+  // content = img2base64({ source: source || '', content });
 
   const url = new URL(hexo.config.url);
   url.pathname = permalink.replace(/^\//, '');
