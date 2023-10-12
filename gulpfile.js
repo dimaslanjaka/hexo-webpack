@@ -3,10 +3,12 @@ require('ts-node').register({
   transpileOnly: true
 });
 
+const yaml = require('yaml');
 const gulp = require('gulp');
 const { init } = require('./test/render');
 const { obj } = require('through2');
 const { fs, path, writefile } = require('sbg-utility');
+const config = yaml.parse(fs.readFileSync(__dirname + '/_config.yml', 'utf-8'));
 const { default: toJsx } = require('./test/toJsx');
 const paths = require('./config/paths');
 const { default: genRoute } = require('./test/genRoute');
@@ -21,7 +23,12 @@ async function genR(options = {}) {
   const dest = paths.src + '/posts';
   options = Object.assign({ clean: false, limit: Infinity, randomize: false }, options || {});
   if (options.clean) {
+    // truncate auto generated post folder
     await fs.emptyDir(dest);
+    // truncate auto generated post images folder
+    await fs.emptyDir(paths.public + '/post-images');
+    // truncate auto generated static html folder
+    await fs.emptyDir(paths.tmp + '/static');
   }
   // let total = 0;
   const routes = [];
@@ -86,9 +93,6 @@ gulp.task('route', genR);
 gulp.task('r', genR);
 
 // generate posts list
-const yaml = require('yaml');
-const config = yaml.parse(fs.readFileSync(__dirname + '/_config.yml', 'utf-8'));
-
 gulp.task('map', function () {
   const dest = __dirname + '/.cache/posts.json';
   const routes = [];
