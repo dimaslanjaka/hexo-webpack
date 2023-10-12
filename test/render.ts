@@ -189,6 +189,8 @@ export async function render(
         return _.replace(src, imgp);
       });
       content = content.replace(imgTag, replacement);
+      // update content
+      cm.setContent(content);
     }
   }
   // process meta photos
