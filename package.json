@@ -10,7 +10,7 @@
     "build:webpack": "webpack --progress --mode production --config config/webpack.prod.js",
     "clean": "rm -rf dist tmp",
     "clean:build": "yarn run clean && yarn run build",
-    "php": "php -S 127.0.0.1:4000",
+    "php": "php -S 127.0.0.1:4000 -t dist",
     "prod": "cd page && yarn install --omit=dev --production",
     "prod:update": "cd page && npx npm-check-updates -u && yarn install --omit=dev --production",
     "start": "cross-env-shell NODE_ENV=development webpackAnalyze=server webpack-dev-server --progress --no-open --mode development --config config/webpack.dev.js \"$@\"",
