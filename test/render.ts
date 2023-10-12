@@ -78,11 +78,11 @@ export async function render(
   cm.extractStyleScript();
 
   // render hexo shortcodes
-  let { content = '' } = await hexo.post.render(null as any, {
+  let { content = '' } = (await hexo.post.render(null as any, {
     content: cm.getContent(),
     engine: 'md',
     page: meta
-  });
+  })) as { content: string };
 
   // update content
   cm.setContent(content);
@@ -109,8 +109,21 @@ export async function render(
   const {
     thumbnail = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/2048px-No_image_available.svg.png'
   } = meta;
-  const thumbProcess = (thumbnail: string) => {
-    if (!thumbnail.startsWith('data:image') && !thumbnail.startsWith('http')) {
+  /**
+   * process local image
+   * @param thumbnail image source
+   * @returns local image path
+   */
+  const imgProcess = (thumbnail: string) => {
+    // process local image
+    if (
+      // skip base64 encoded image
+      !thumbnail.startsWith('data:image') &&
+      // skip external image
+      !thumbnail.startsWith('http') &&
+      // skip already processed image
+      !thumbnail.startsWith('/post-images/')
+    ) {
       // console.log('local thumb', thumbnail);
       const find = imgfinder(thumbnail);
       if (find) {
@@ -122,6 +135,7 @@ export async function render(
       }
     }
 
+    // process base encoded
     if (thumbnail.startsWith('data:image')) {
       const re = /data:image\/(\w{3,4});base64,(.*)/;
       const exec = re.exec(thumbnail);
@@ -148,11 +162,37 @@ export async function render(
 
     return thumbnail;
   };
-  // reassign thumbnail
-  meta.thumbnail = thumbProcess(thumbnail);
+  // process thumbnail
+  meta.thumbnail = imgProcess(thumbnail);
   // assign empty photos property
   if (!meta.photos) meta.photos = [thumbnail];
-  meta.photos = meta.photos.map(thumbProcess);
+  // collect images from body and push to meta photos
+  // let m: RegExpExecArray | null;
+  // const regex = /<img[^>]+src=(?:"|')(.[^">]+?)(?="|')/gm;
+  // while ((m = regex.exec(content)) !== null) {
+  //   // This is necessary to avoid infinite loops with zero-width matches
+  //   if (m.index === regex.lastIndex) {
+  //     regex.lastIndex++;
+  //   }
+  //   // meta.photos.push(thumbProcess(m[1]));
+  //   console.log(m[1]);
+  // }
+  const regex = /<img [^>]*src="[^"]*"[^>]*>/gm;
+  if (regex.test(content)) {
+    const match = content.match(regex) || [];
+    for (let i = 0; i < match.length; i++) {
+      const imgTag = match[i];
+      const replacement = imgTag.replace(/.*src="([^"]*)".*/, (_, src) => {
+        const imgp = imgProcess(src);
+        // push to meta.photos
+        meta.photos?.push(imgp);
+        return _.replace(src, imgp);
+      });
+      content = content.replace(imgTag, replacement);
+    }
+  }
+  // process meta photos
+  meta.photos = meta.photos.map(imgProcess);
   if (!meta.permalink) {
     meta.permalink = '/' + meta.id;
     console.error('meta permalink empty', 'settled to', meta.permalink);
