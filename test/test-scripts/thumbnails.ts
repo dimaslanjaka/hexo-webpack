@@ -1,29 +1,6 @@
-import { writefile, path } from 'sbg-utility';
-import prettierFormat from '../format';
-import genRoute from '../genRoute';
-import render from '../render';
-import toJsx from '../toJsx';
-import { fixtures, fromRoot, tmp } from '../utils';
-import paths from '../../config/paths';
+import { init } from '../render';
+import build from './build';
 
 // need sbg post copy
 
-render
-  .init()
-  .then(async () => {
-    const source = fixtures('thumbnails.md');
-    const result = await genRoute(source);
-    const { body: _body, ...toPrint } = result;
-    const jsx = await toJsx({
-      body: result.body,
-      dest: path.join(paths.src, 'posts', result.id),
-      source,
-      id: result.id || 'custom-id-thumbnails'
-    });
-    const value = { ...toPrint, jsxPath: jsx.jsxPath };
-    const route = writefile(fromRoot('routes.json'), JSON.stringify([value], null, 2));
-    const html = await prettierFormat(result.body, { parser: 'html' });
-    const wh = writefile(tmp('body.html'), html);
-    console.log({ jsx: jsx.jsxPath, html: wh.file, route: route.file });
-  })
-  .catch(console.error);
+init().then(() => build('thumbnails'));
