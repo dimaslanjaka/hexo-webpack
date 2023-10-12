@@ -1,7 +1,3 @@
-[submodule "src-posts"]
-	path = src-posts
-	url = https://github.com/dimaslanjaka/source-posts/
-	branch = posts
 [submodule "packages/hpp"]
 	path = packages/hpp
 	url = https://github.com/dimaslanjaka/hexo-post-parser
