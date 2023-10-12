@@ -26,3 +26,7 @@ source/_posts
 /_config.json
 /src/posts
 .cache
+
+# ignore source posts
+/src-posts/*
+!/src-posts/.gitignore
