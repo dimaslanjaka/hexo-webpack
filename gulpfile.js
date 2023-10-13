@@ -15,6 +15,7 @@ const { default: genRoute } = require('./test/genRoute');
 const Promise = require('bluebird');
 const args = require('./config/cli');
 const { modifyConfigJson } = require('./config/utils');
+const { splitIntoChunks } = require('./test/utils/array');
 require('./gulpfile.build');
 
 /**
@@ -72,35 +73,54 @@ async function genR(options = {}) {
     posts = posts.splice(0, options.limit);
   }
 
-  console.log('total post to be processed', posts.length);
+  console.log('total post', posts.length);
 
-  await Promise.all(posts)
-    .each(async postPath => {
-      /**
-       * @type {Promise<import('hexo-post-parser').Nullable<{ route: Awaited<ReturnType<typeof genRoute>>; jsx: Awaited<ReturnType<typeof toJsx>>; value: Record<string, any>; }>>}
-       */
-      const route = await genRoute(postPath);
-      try {
-        const jsx = await toJsx({
-          body: route.body,
-          source: route.source,
-          dest: path.join(dest, route.id)
-        });
-        const { body: _body, ...toPrint } = route;
-        // total++;
-        const value = { ...toPrint, jsxPath: jsx.jsxPath };
-        // console.log(total, route.permalink);
-        routes.push(value);
+  const processPost = async postPath => {
+    /**
+     * @type {Promise<import('hexo-post-parser').Nullable<{ route: Awaited<ReturnType<typeof genRoute>>; jsx: Awaited<ReturnType<typeof toJsx>>; value: Record<string, any>; }>>}
+     */
+    const route = await genRoute(postPath);
+    try {
+      const jsx = await toJsx({
+        body: route.body,
+        source: route.source,
+        dest: path.join(dest, route.id)
+      });
+      const { body: _body, ...toPrint } = route;
+      // total++;
+      const value = { ...toPrint, jsxPath: jsx.jsxPath };
+      // console.log(total, route.permalink);
+      routes.push(value);
 
-        return { route, jsx, value };
-      } catch (e) {
-        console.error('jsx cannot parse', route.source);
-        console.error(e);
-      }
-    })
-    .then(() => {
-      writefile(__dirname + '/routes.json', JSON.stringify(routes, null, 2));
-    });
+      return { route, jsx, value };
+    } catch (e) {
+      console.error('jsx cannot parse', route.source);
+      console.error(e);
+    }
+  };
+
+  // const readableStream = stream.Readable.from(posts);
+
+  // readableStream
+  //   .on('data', postPath =>
+  //     processPost(postPath).then(() => writefile(__dirname + '/routes.json', JSON.stringify(routes, null, 2)))
+  //   )
+  //   .on('end', function () {
+  //     // This may not been called since we are destroying the stream
+  //     // the first time "data" event is received
+  //     console.log('All the data in the file has been read');
+  //   })
+  //   .on('close', function (_err) {
+  //     console.log('Stream has been destroyed and file has been closed');
+  //   });
+
+  const chunks = splitIntoChunks(posts, 100);
+  for (let i = 0; i < chunks.length; i++) {
+    const chunk = chunks[i];
+    await Promise.all(chunk).each(processPost);
+  }
+
+  writefile(__dirname + '/routes.json', JSON.stringify(routes, null, 2));
 }
 
 // generate route from processed post
