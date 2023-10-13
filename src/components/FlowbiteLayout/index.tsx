@@ -9,19 +9,21 @@ import FlowbiteContext from './context/FlowbitContext';
 
 function FlowbiteLayout() {
   return (
-    <FlowbiteContext>
-      <SidebarProvider>
-        <Header />
-        <div className="flex dark:bg-gray-900">
-          <main className="order-2 mx-4 mt-4 mb-24 flex-[1_0_16rem]">
-            <Outlet />
-          </main>
-          <div className="order-1">
-            <ActualSidebar />
+    <div id="FlowbiteLayout">
+      <FlowbiteContext>
+        <SidebarProvider>
+          <Header />
+          <div className="flex dark:bg-gray-900">
+            <main className="order-2 mx-4 mt-4 mb-24 flex-[1_0_16rem]">
+              <Outlet />
+            </main>
+            <div className="order-1">
+              <ActualSidebar />
+            </div>
           </div>
-        </div>
-      </SidebarProvider>
-    </FlowbiteContext>
+        </SidebarProvider>
+      </FlowbiteContext>
+    </div>
   );
 }
 

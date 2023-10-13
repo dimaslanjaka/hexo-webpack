@@ -7,6 +7,7 @@ import {
   FlowbiteSingleContentLayout,
   FlowbiteWithSidebarLayout
 } from './components/FlowbiteLayout/utils';
+import { initHljs } from './components/Highlight.js/helper';
 
 FlowbiteLoadStylesheet();
 
@@ -36,6 +37,13 @@ const router = createBrowserRouter([
 ]);
 
 class App extends React.Component {
+  componentDidMount(): void {
+    window.adsense_option = Object.assign(window.adsense_option || {}, {
+      places: ['#FlowbiteLayout'],
+      localhost: ['adsense.webmanajemen.com', 'agc.io', 'dev.webmanajemen.com']
+    });
+    initHljs();
+  }
   render() {
     return <RouterProvider router={router} fallbackElement={<div>Loading...</div>} />;
   }
