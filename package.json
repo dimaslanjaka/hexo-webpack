@@ -165,6 +165,8 @@
   },
   "workspaces": [
     "src-posts",
-    "packages/hpp"
+    "packages/hpp",
+    "packages/hr",
+    "packages/hs"
   ]
 }
