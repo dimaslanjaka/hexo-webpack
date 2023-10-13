@@ -8,7 +8,7 @@ export function extractMarkdownCodeblock(str: string) {
    * * group 1 = code language when exist otherwise inner codeblock
    * * group 2 = inner codeblock
    */
-  const regex = /^```(?: +)?(\w.*\s+)?([\s\S]*?)```/gm;
+  const regex = /^```(?: +)?(\w.*\s+)?([\s\S]*?)```/m;
   let m: RegExpExecArray | null;
   const localCodeblock = [] as typeof globalCodeblock;
 
@@ -18,13 +18,14 @@ export function extractMarkdownCodeblock(str: string) {
       regex.lastIndex++;
     }
 
-    const lang = m[1].trim();
+    // empty string = plaintext
+    const lang = (m[1] || '').trim();
     const val = { whole: m[0], lang, content: m[2] };
 
     localCodeblock.push(val);
     globalCodeblock.push(val);
     // delete codeblock
-    str = str.replace(m[0], `<div htmlFor="codeblock" data-index="${counter}" data-lang="${lang}"></div>`);
+    str = str.replace(m[0], `\n<div htmlFor="codeblock" data-index="${counter}" data-lang="${lang}"></div>\n`);
 
     counter++;
   }
@@ -48,14 +49,13 @@ export function restoreMarkdownCodeblockAsHtml(str: string, jsx = false) {
     // eslint-disable-next-line prefer-const
     let html = data.content;
     if (jsx) {
-      // escape backslash
       // This escapes all instances of the three special characters
       // that would break a backtick string literal definition: ` \
       // https://stackoverflow.com/a/75688937/6404439
-      html = html.replace(/[`\\]/g, '\\$&');
+      html = html.replace(/[`\\]|\${/g, '\\$&');
       return `<pre><code class="hljs ${data.lang}">{\`${html}\`}</code></pre>`;
     }
-    return `<!-- prettier-ignore-start --><pre><code class="hljs ${data.lang}">${encodeEntities(
+    return `<!-- prettier-ignore-start --><pre><code class="hljs language-${data.lang}">${encodeEntities(
       html
     )}</code></pre><!-- prettier-ignore-end -->`;
   });

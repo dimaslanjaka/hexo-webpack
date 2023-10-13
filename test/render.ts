@@ -5,9 +5,10 @@ import { parse } from 'yaml';
 import paths from '../config/paths';
 import fixHtml from './fixHtml';
 import { fixtures, fromRoot, tmp } from './utils';
+import { extractMarkdownCodeblock, restoreMarkdownCodeblock } from './utils/extractMarkdownCodeblock';
+import extractStyleTag, { extractScriptTag, restoreScriptTag, restoreStyleTag } from './utils/extractStyleScriptTag';
 import { default as htmlImg2base64 } from './utils/img2base64';
 import imgfinder from './utils/imgfinder';
-import extractStyleTag, { extractScriptTag, restoreScriptTag, restoreStyleTag } from './utils/extractStyleScriptTag';
 
 // test render single post
 // need `sbg post copy`
@@ -80,8 +81,12 @@ export async function render(
   if (!post.body) throw new Error('body undefined or null');
 
   // extract script and style tag
-  let body = extractStyleTag(post.body).html;
+
+  let body = extractMarkdownCodeblock(post.body).html;
+  body = extractStyleTag(body).html;
   body = extractScriptTag(body).html;
+
+  // writefile(__dirname + '/tmp/render/codeblock.html', body);
 
   // render hexo shortcodes
   let { content = '' } = (await hexo.post.render(null as any, {
@@ -193,6 +198,9 @@ export async function render(
   // restore script and style tag
   content = restoreStyleTag(content);
   content = restoreScriptTag(content);
+  // restore markdown codeblock
+  // keep raw markdown codeblock to be processed at toJsx.ts
+  content = restoreMarkdownCodeblock(content);
 
   // write metadata to tmp/meta
   writefile(path.join(paths.tmp, 'meta', meta.id + '.json'), JSON.stringify(meta));

@@ -3,6 +3,7 @@ import { JSDOM } from 'jsdom';
 import { fs, md5, path, writefile } from 'sbg-utility';
 import prettierFormat from './format';
 import { fixtures, tmp } from './utils';
+import { extractMarkdownCodeblock, restoreMarkdownCodeblockAsHtml } from './utils/extractMarkdownCodeblock';
 
 // inspired by
 // https://github.com/probablyup/markdown-to-jsx/blob/main/index.tsx#L266
@@ -58,15 +59,8 @@ const ATTRIBUTE_TO_JSX_PROP_MAP = JSX_ATTRIBUTES.reduce(
   { for: 'htmlFor', class: 'className', defaultvalue: 'defaultValue' }
 );
 
-/**
- * * group 0 = whole codeblock
- * * group 1 = code language when exist otherwise inner codeblock
- * * group 2 = inner codeblock
- */
-export const re_code_block = /^```\s?(\w.*\s+)?([\s\S]*?)```/gm;
-export const re_inline_code_block = /`([^`\n\r]+)`/gm;
-export const re_script_tag = /<script(\b[^>]*)>([\s\S]*?)<\/script\b[^>]*>/gim;
-export const re_style_tag = /<style\b[^>]*>([\s\S]*?)<\/style\b[^>]*>/gim;
+const re_script_tag = /<script(\b[^>]*)>([\s\S]*?)<\/script\b[^>]*>/gim;
+const re_style_tag = /<style\b[^>]*>([\s\S]*?)<\/style\b[^>]*>/gim;
 
 const UNCLOSED_TAGS = [
   'area',
@@ -86,15 +80,6 @@ const UNCLOSED_TAGS = [
   'track',
   'wbr'
 ];
-
-// function getAttrObj(element) {
-//   const attrsObj = {};
-//   const attrs = [...element.attributes];
-//   for (let attr of attrs) {
-//     attrsObj[attr.name] = attr.value;
-//   }
-//   return attrsObj;
-// }
 
 /**
  * transform html to jsx
@@ -119,6 +104,11 @@ async function toJsx(options: {
   let newHtml = body;
 
   // writefile(options.dest + '/body.html', body);
+
+  // extract markdown codeblock
+  newHtml = extractMarkdownCodeblock(newHtml).html;
+
+  // writefile(__dirname + '/tmp/toJsx/codeblock.html', newHtml);
 
   // extract style tags
   let styleTagMatch: RegExpExecArray | null;
@@ -268,38 +258,17 @@ document.body.appendChild(script);
     return `{/*${_}*/}`;
   });
 
-  // replace image src to base64 encoded
-  // newHtml = htmlImg2base64({ source, body: newHtml });
+  // fix lowercased attributes
+  // const regexAttr = /(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|\s*\/?[>"']))+.)["']?/gmi
+  for (const attr in ATTRIBUTE_TO_JSX_PROP_MAP) {
+    const jsxattr = ATTRIBUTE_TO_JSX_PROP_MAP[attr];
+    const regex = new RegExp(`\\b${attr}\\b=`, 'gm');
+    newHtml = newHtml.replace(regex, jsxattr + '=');
+    // console.log(regex, jsxattr);
+  }
 
-  // base64 encoded images to import style
-  // const imagePaths: { importName: string; import: string; path: string }[] = [];
-  // const re_images = /<img [^>]*src="[^"]*"[^>]*>/gim;
-  // newHtml = newHtml.replace(re_images, function (tag) {
-  //   const repl = tag.replace(
-  //     /<img [^>]*src=(['"]data:image\/(\w{3,4});base64,(.*)['"])[^>]*>/gim,
-  //     function (_, src, ext, base64) {
-  //       if (ext && src && base64) {
-  //         const filename = md5(base64);
-  //         const imagePath = path.join(options.dest, filename + '.' + ext);
-  //         const obj = {
-  //           path: imagePath,
-  //           importName: '_' + filename,
-  //           import: `import _${filename} from './${filename}.${ext}';`
-  //         };
-  //         imagePaths.push(obj);
-  //         const buff = Buffer.from(base64, 'base64');
-  //         if (!fs.existsSync(path.dirname(imagePath))) {
-  //           fs.mkdirSync(path.dirname(imagePath), { recursive: true });
-  //         }
-  //         fs.writeFileSync(imagePath, buff);
-  //         return _.replace(src, `{ ${obj.importName} }`);
-  //       } else {
-  //         return _;
-  //       }
-  //     }
-  //   );
-  //   return repl;
-  // });
+  // restore markdown codeblock
+  newHtml = restoreMarkdownCodeblockAsHtml(newHtml, true);
 
   const hash = md5(source || newHtml);
   const classWrapperName = 'toJsx-style-wrapper-' + hash;
@@ -341,15 +310,6 @@ export default ${funcName};
 export { ${funcName} as Component };
   `.trim();
   // writefile(tmp('toJsx/result.jsx'), result);
-
-  // fix lowercased attributes
-  // const regexAttr = /(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|\s*\/?[>"']))+.)["']?/gmi
-  for (const attr in ATTRIBUTE_TO_JSX_PROP_MAP) {
-    const jsxattr = ATTRIBUTE_TO_JSX_PROP_MAP[attr];
-    const regex = new RegExp(attr + '=', 'gm');
-    result = result.replace(regex, jsxattr + '=');
-    // console.log(regex, jsxattr);
-  }
 
   try {
     result = await prettierFormat(result, { parser: 'babel' });
