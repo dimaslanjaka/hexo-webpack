@@ -8,6 +8,7 @@
     "prepare": "touch routes.json && husky install",
     "build": "rm -rf dist && run-s \"build:**\" && gulp build",
     "build:webpack": "webpack --progress --mode production --config config/webpack.prod.js",
+    "watch:build": "webpack --progress --mode production --config config/webpack.prod-watch.js",
     "clean": "rm -rf dist tmp",
     "clean:build": "yarn run clean && yarn run build",
     "php": "php -S 127.0.0.1:4000 -t dist",

@@ -51,7 +51,7 @@ gulp.task('watch-build', () => {
       ignored: ['**/node_modules', '**/posts/**', '**/_posts/**']
     },
     async () => {
-      await gch.spawnAsync('yarn', ['build'], { shell: true, stdio: 'inherit' });
+      await gch.spawnAsync('yarn', ['watch:build'], { shell: true, stdio: 'inherit' });
     }
   );
 });
