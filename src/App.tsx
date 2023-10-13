@@ -39,10 +39,13 @@ const router = createBrowserRouter([
 class App extends React.Component {
   componentDidMount(): void {
     window.adsense_option = Object.assign(window.adsense_option || {}, {
-      places: ['#FlowbiteLayout'],
+      places: ['#FlowbiteLayout #flowbite-main-content'],
       localhost: ['adsense.webmanajemen.com', 'agc.io', 'dev.webmanajemen.com']
     });
     initHljs();
+    import('@components/Adsense/utils').then(load => {
+      load.triggerAdsense({ react: true });
+    });
   }
   render() {
     return <RouterProvider router={router} fallbackElement={<div>Loading...</div>} />;
