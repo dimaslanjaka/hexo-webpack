@@ -147,26 +147,6 @@ gulp.task('map', function () {
     });
 });
 
-// populate ./routes.json
-// generate static html permalink
-gulp.task('populate', done => {
-  const routes = require('./routes.json');
-  const template = fs.readFileSync(paths.public + '/index.html', 'utf-8');
-  for (let i = 0; i < routes.length; i++) {
-    const route = routes[i];
-    if (route.permalink && route.permalink.length > 0) {
-      // add index.html
-      if (route.permalink.endsWith('/')) route.permalink += 'index.html';
-      // add extension .html
-      if (!route.permalink.endsWith('.html')) route.permalink += '.html';
-      // write to temp static path
-      const dest = path.join(paths.tmp, 'static', route.permalink);
-      writefile(dest, template);
-    }
-  }
-  done();
-});
-
 // just testing
 const modifyCfg = () => {
   // write to ./config.json
