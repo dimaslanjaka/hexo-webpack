@@ -1,6 +1,9 @@
 # Jekyll with webpack
 generate static site jekyll/hexo/huge markdown posts using webpack
 
+- folder `src-posts` source markdown post
+- folder `source/_posts` auto generated post from `src-posts` using `sbg post copy`
+
 - install
 
 ```bash
