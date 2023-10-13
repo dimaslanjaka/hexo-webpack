@@ -43,8 +43,9 @@ export default async function genR(
     await fs.emptyDir(dest);
     // truncate auto generated post images folder
     await fs.emptyDir(paths.public + '/post-images');
-    // truncate auto generated static html folder
+    // truncate auto generated static folder
     await fs.emptyDir(paths.tmp + '/static');
+    await fs.emptyDir(paths.tmp + '/meta');
   }
 
   // let total = 0;
