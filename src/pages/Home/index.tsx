@@ -4,15 +4,11 @@ import Image from '@components/Image';
 import { routeConfig } from '@project';
 import moment from 'moment-timezone';
 import React from 'react';
-import logo from './logo.jpg';
 
 class Home extends React.Component {
   render() {
     return (
       <>
-        <div className="mb-2">
-          <img src={logo} alt="" style={{ width: '40px' }} />
-        </div>
         <div className="flex flex-wrap -mx-1 lg:-mx-4">
           {routeConfig.map(o => (
             <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3" key={o.title + o.permalink}>
