@@ -11,7 +11,7 @@ const { modifyConfigJson } = require('./utils');
 module.exports = merge(common, {
   entry: [paths.src + '/index.tsx'],
   output: {
-    filename: 'page/main.js'
+    filename: 'runtime/main.js'
   },
   module: {
     rules: [
