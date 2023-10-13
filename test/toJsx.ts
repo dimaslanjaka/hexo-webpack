@@ -269,6 +269,7 @@ document.body.appendChild(script);
 
   // restore markdown codeblock
   newHtml = restoreMarkdownCodeblockAsHtml(newHtml, true);
+  newHtml = newHtml.replace(/<code class="hljs /gm, '<code className="hljs ');
 
   const hash = md5(source || newHtml);
   const classWrapperName = 'toJsx-style-wrapper-' + hash;
