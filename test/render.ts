@@ -207,7 +207,9 @@ export async function render(
     if (!perm.endsWith('.html')) perm += '.html';
     // write to temp static path
     const dest = path.join(paths.tmp, 'static', perm);
-    writefile(dest, template);
+    let content = template;
+    content = content.replace('</head>', '<script defer src="/runtime/main.js"></script></head>');
+    writefile(dest, content);
   }
 
   return { content, hexo, ...meta };
