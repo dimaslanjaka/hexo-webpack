@@ -27,7 +27,7 @@ export default async function genR(
 ) {
   await init();
   const dest = paths.src + '/posts';
-  options = Object.assign({ clean: false, limit: Infinity, randomize: false }, options || {});
+  options = Object.assign({ filter: '', clean: false, limit: Infinity, randomize: false }, options || {});
 
   // force option clean from cli
   if (args.clean) options.clean = true;
@@ -35,6 +35,8 @@ export default async function genR(
   if (args.random || args.randomize) options.randomize = true;
   // force limit from cli
   if (args.limit) options.limit = parseInt(args.limit);
+  // force filter from cli
+  if (args.filter) options.filter = options.filter?.split(',').concat(args.filter.split(',')).join(',');
 
   if (options.clean) {
     // truncate auto generated post folder
@@ -47,9 +49,22 @@ export default async function genR(
 
   // let total = 0;
   const routes = [] as any[];
-  let posts = [] as string[];
-  posts = (await import('./.cache/posts.json')) as string[];
-  posts = (posts as string[]).filter(file => fs.existsSync(file) && fs.statSync(file).isFile());
+  let { default: posts } = await import('./.cache/posts.json');
+  // filter only file
+  posts = posts.filter(file => fs.existsSync(file) && fs.statSync(file).isFile());
+  // filter by options
+  posts = posts.filter(file => {
+    const fil = options.filter
+      ?.split(',')
+      .filter(str => str.length > 0)
+      .some(str => {
+        const regex = new RegExp(str);
+        const test = regex.test(file);
+        // if (test) console.log({ str, regex, test, file });
+        return test;
+      });
+    return fil || false;
+  });
 
   if (typeof options.onBeforePostsProcess === 'function') {
     // const promisify = Promise.promisify(options.onBeforePostsProcess);
