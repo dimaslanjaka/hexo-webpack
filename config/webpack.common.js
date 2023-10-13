@@ -2,12 +2,14 @@ const paths = require('./paths');
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const excludePatterns = require('./webpack.excludes');
+const webpack = require('webpack');
 
 const htmlPlugin = new HtmlWebPackPlugin({
   title: 'Website Manajemen Indonesia',
   template: paths.public + '/index.html', // template file
   filename: 'index.html' // output file
 });
+
 /**
  * @type {import('webpack').Configuration}
  */
@@ -56,7 +58,13 @@ const config = {
       }
     ]
   },
-  plugins: [htmlPlugin],
+  plugins: [
+    htmlPlugin,
+    // process undefined fix - https://stackoverflow.com/a/65018686/6404439
+    new webpack.ProvidePlugin({
+      process: 'process/browser'
+    })
+  ],
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.jsx', '.scss', '.css', '.json', '.otf'],
     fallback: {
