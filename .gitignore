@@ -29,4 +29,3 @@ source/_posts
 
 # ignore source posts
 /src-posts/*
-!/src-posts/.gitignore
