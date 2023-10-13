@@ -2,6 +2,7 @@ const paths = require('./config/paths');
 const gulp = require('gulp');
 const { generateRouteHtml } = require('./html/generate');
 const { copyPath } = require('sbg-utility');
+const gch = require('git-command-helper');
 
 // const publics = [];
 //[paths.public, , path.join(paths.cwd, 'source')];
@@ -42,3 +43,15 @@ gulp.task('build-asset', async () => {
 });
 
 gulp.task('build', gulp.series('build-html', 'build-asset'));
+
+gulp.task('watch-build', () => {
+  gulp.watch(
+    ['src/**/*.*', 'public/**/*.*', 'source/**/*.*', 'config/**/*.*', 'html/**/*.*', './_config.json', './routes.json'],
+    {
+      ignored: ['**/node_modules', '**/posts/**', '**/_posts/**']
+    },
+    async () => {
+      await gch.spawnAsync('yarn', ['build'], { shell: true, stdio: 'inherit' });
+    }
+  );
+});
