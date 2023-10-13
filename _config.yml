@@ -33,7 +33,7 @@ marked:
 # https://github.com/hexojs/hexo-util
 # https://hexo.io/docs/syntax-highlight.html
 highlight:
-  enable: true
+  enable: false
   line_number: false
   auto_detect: false
   tab_replace: '  ' # replace tabs with 2 spaces
@@ -49,6 +49,9 @@ generator:
   cache: false
   image:
     type: 'url'
+
+hexo-shortcodes:
+  raw: true # hexo-shortcodes return as markdown instead of html
 
 exclude:
   - '**/.git*'
