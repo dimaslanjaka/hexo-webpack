@@ -14,6 +14,7 @@ const paths = require('./config/paths');
 const { default: genRoute } = require('./test/genRoute');
 const Promise = require('bluebird');
 const args = require('./config/cli');
+const { modifyConfigJson } = require('./config/utils');
 require('./gulpfile.build');
 
 /**
@@ -167,7 +168,11 @@ gulp.task('populate', done => {
 });
 
 // just testing
-gulp.task('direct', () => genR(__dirname + '/src-posts', { clean: true }));
+const modifyCfg = () => {
+  // write to ./config.json
+  modifyConfigJson({ mode: 'development' });
+};
+gulp.task('direct', () => genR(__dirname + '/src-posts', { clean: true }).then(modifyCfg));
 gulp.task('c', () => {
   return gulp
     .src('**/*.md', {
@@ -192,10 +197,11 @@ gulp.task('c', () => {
         callback(null, vinyl);
       })
     )
-    .pipe(gulp.dest(__dirname + '/tmp/fake-c'));
+    .pipe(gulp.dest(__dirname + '/tmp/fake-c'))
+    .on('end', modifyCfg);
 });
-gulp.task('rl', () => genR({ clean: true, limit: 4 }));
-gulp.task('rr', () => genR({ clean: true, limit: 4, randomize: true }));
+gulp.task('rl', () => genR({ clean: true, limit: 4 }).then(modifyCfg));
+gulp.task('rr', () => genR({ clean: true, limit: 4, randomize: true }).then(modifyCfg));
 // test: only specified post
 gulp.task('feature', () =>
   genR({

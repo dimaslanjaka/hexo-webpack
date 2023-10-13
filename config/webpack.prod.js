@@ -4,6 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const common = require('./webpack.common.js');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const excludePatterns = require('./webpack.excludes');
+const { modifyConfigJson } = require('./utils');
 
 /**
  * @type {import('webpack').Configuration}
@@ -42,3 +43,6 @@ const config = merge(common, {
 });
 
 module.exports = merge(config, require('./webpack.entry'));
+
+// write to ../config.json
+modifyConfigJson({ mode: 'production' });

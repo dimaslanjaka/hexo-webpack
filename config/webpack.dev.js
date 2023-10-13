@@ -3,6 +3,7 @@ const paths = require('./paths');
 const common = require('./webpack.common.js');
 const cli = require('./cli');
 const excludePatterns = require('./webpack.excludes');
+const { modifyConfigJson } = require('./utils');
 
 /**
  * @type {import('webpack').Configuration}
@@ -35,3 +36,6 @@ module.exports = merge(common, {
     open: false
   }
 });
+
+// write to ../config.json
+modifyConfigJson({ mode: 'development' });
