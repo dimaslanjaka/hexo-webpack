@@ -169,3 +169,9 @@ Artikel ini untuk mempermudah visitor untuk memahami github workflow.
 https://github.com/dimaslanjaka/static-blog-generator/blob/e8ef351552d57c5e28e016e39e78fef139a8e7b2/.github/workflows/build-beta.yml
 
 {% github https://github.com/dimaslanjaka/static-blog-generator/blob/e8ef351552d57c5e28e016e39e78fef139a8e7b2/.github/workflows/build-beta.yml %}
+
+### gist shortcode
+
+dimaslanjaka/a6aa24a8fa7a13999ee3dac077fa21fe
+
+{% gist https://gist.github.com/dimaslanjaka/a6aa24a8fa7a13999ee3dac077fa21fe filename:anonymize-ip.php %}

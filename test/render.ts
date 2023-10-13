@@ -9,6 +9,9 @@ import { extractMarkdownCodeblock, restoreMarkdownCodeblock } from './utils/extr
 import extractStyleTag, { extractScriptTag, restoreScriptTag, restoreStyleTag } from './utils/extractStyleScriptTag';
 import { default as htmlImg2base64 } from './utils/img2base64';
 import imgfinder from './utils/imgfinder';
+import { githubEmbedTagRegister } from 'hexo-shortcodes/dist/github';
+import { gistEmbedTagRegister } from 'hexo-shortcodes/dist/gist';
+import { shortcodeParserResultToArrayAttrParam, shortcodeParser } from 'hexo-shortcodes/dist/utils';
 
 // test render single post
 // need `sbg post copy`
@@ -80,9 +83,40 @@ export async function render(
 
   if (!post.body) throw new Error('body undefined or null');
 
+  let { body = '' } = post;
+
+  // parse custom gist, github shortcodes
+  // append new config - if not settled in _config.yml
+  // hexo.config = Object.assign(hexo.config || {}, { 'hexo-shortcodes': { raw: true } });
+  // prepare renderer
+  const parserGithub = githubEmbedTagRegister(hexo);
+  const parserGist = gistEmbedTagRegister(hexo);
+
+  const rgist = /{%\s(gist|github)\s([^%}]+)%}/m;
+  let mg: RegExpExecArray | null;
+  while ((mg = rgist.exec(body)) !== null) {
+    // This is necessary to avoid infinite loops with zero-width matches
+    if (mg.index === rgist.lastIndex) {
+      rgist.lastIndex++;
+    }
+
+    let replacement = '';
+    const parse = shortcodeParser(mg[0]);
+    const arr = shortcodeParserResultToArrayAttrParam(parse);
+    if (parse.tagName === 'github') {
+      const git = await parserGithub(arr);
+      replacement = git;
+    } else if (parse.tagName === 'gist') {
+      const git = await parserGist(arr);
+      replacement = git;
+    }
+
+    body = body.replace(mg[0], replacement);
+  }
+
   // extract script and style tag
 
-  let body = extractMarkdownCodeblock(post.body).html;
+  body = extractMarkdownCodeblock(body).html;
   body = extractStyleTag(body).html;
   body = extractScriptTag(body).html;
 

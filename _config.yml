@@ -50,6 +50,7 @@ generator:
   image:
     type: 'url'
 
+## https://github.com/dimaslanjaka/hexo-shortcodes/blob/pre-release/readme.md#config
 hexo-shortcodes:
   raw: true # hexo-shortcodes return as markdown instead of html
 
