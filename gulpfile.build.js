@@ -44,14 +44,16 @@ gulp.task('build-asset', async () => {
 
 gulp.task('build', gulp.series('build-html', 'build-asset'));
 
-gulp.task('watch-build', () => {
+gulp.task('watch-build', async () => {
+  const build = async () => {
+    await gch.spawnAsync('yarn', ['watch:build'], { shell: true, stdio: 'inherit' });
+  };
+  await build();
   gulp.watch(
     ['src/**/*.*', 'public/**/*.*', 'source/**/*.*', 'config/**/*.*', 'html/**/*.*', './_config.json', './routes.json'],
     {
       ignored: ['**/node_modules', '**/posts/**', '**/_posts/**']
     },
-    async () => {
-      await gch.spawnAsync('yarn', ['watch:build'], { shell: true, stdio: 'inherit' });
-    }
+    build
   );
 });
