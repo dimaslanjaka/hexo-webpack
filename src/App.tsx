@@ -36,14 +36,17 @@ const router = createBrowserRouter([
   { lazy: FlowbiteSingleContentLayout, children: postRoute }
 ]);
 
+window.adsense_option = Object.assign(window.adsense_option || {}, {
+  root: '#FlowbiteLayout #flowbite-main-content',
+  places: ['pre code.hljs'],
+  localhost: ['adsense.webmanajemen.com', 'agc.io', 'dev.webmanajemen.com']
+});
+
 class App extends React.Component {
   componentDidMount(): void {
-    window.adsense_option = Object.assign(window.adsense_option || {}, {
-      places: ['#FlowbiteLayout #flowbite-main-content'],
-      localhost: ['adsense.webmanajemen.com', 'agc.io', 'dev.webmanajemen.com']
-    });
     initHljs();
-    import('@components/Adsense/utils').then(load => {
+    import('@components/Adsense/utils/exports').then(load => {
+      load.setAdsenseConfig(window.adsense_option);
       load.triggerAdsense({ react: true });
     });
   }
