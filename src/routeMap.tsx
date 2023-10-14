@@ -15,11 +15,11 @@ export default function routeMap(route: Route) {
   };
 
   const lazy = async () => {
-    const { default: Post } = await import(
+    const { default: Post } = (await import(
       /* webpackChunkName: "post-[request]" */
       /* webpackPrefetch: true */
       `${importPath}`
-    );
+    )) as { default: () => JSX.Element };
     return {
       Component: () => {
         const data = (useLoaderData() || { meta: {} }) as ReturnType<typeof loader>;
