@@ -1,5 +1,5 @@
 import { array_shuffle, insertAfter, loadJS } from '@utils/index';
-import { paramBuilder } from './config';
+import { getAdsenseConfig, paramBuilder } from './config';
 import createIns from './createIns';
 import findRootPlaces from './findRootPlaces';
 import getCurrentSlot from './getCurrentSlot';
@@ -10,7 +10,7 @@ import isLocalHostname from './isLocalHostname';
  * * you can specify places on `window.adsense_option.places`
  */
 export default function initializeRandomAds() {
-  const { places = [] } = window.adsense_option || {};
+  const { places = [] } = getAdsenseConfig();
   const currentSlot = getCurrentSlot();
   const roots = findRootPlaces();
 
@@ -110,6 +110,8 @@ export default function initializeRandomAds() {
 
   //loadJS("//imasdk.googleapis.com/js/sdkloader/ima3.js")
 }
+
+export { initializeRandomAds };
 
 /**
  * get all ads places

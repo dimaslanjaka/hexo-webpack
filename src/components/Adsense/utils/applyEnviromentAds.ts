@@ -37,3 +37,5 @@ export default function applyEnviromentAds() {
     }
   }
 }
+
+export { applyEnviromentAds };

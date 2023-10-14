@@ -72,3 +72,5 @@ export default function createIns(attributes: Record<string, any>) {
   // ins.style.minHeight = '250px';
   return ins;
 }
+
+export { createIns };

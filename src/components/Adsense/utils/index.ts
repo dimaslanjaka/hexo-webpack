@@ -1,22 +1,11 @@
-// 5 6 ^ %
-//
-
 import { islocalhost } from '@utils/index';
-import applyEnviromentAds from './applyEnviromentAds';
-import fillFixedPosition from './fillFixedPosition';
-import getCurrentSlot from './getCurrentSlot';
-import initializeRandomAds from './initializeRandomAds';
+import triggerAdsense from './triggerAdsense';
+
+// 5 6 ^ %
 
 /**
  * ADSENSE FULLY AUTOMATIC
  */
-
-/** Option */
-if (!window.adsense_option) {
-  window.adsense_option = {
-    places: []
-  };
-}
 
 /**
  * do not show ads to these page title
@@ -26,45 +15,6 @@ const banned = [/lagu|jackpot|montok|hack|crack|nulled/gi]
   .some(result => result == true);
 /** localhost indicator */
 const localhost = islocalhost();
-
-interface TriggerOptions extends Partial<Event> {
-  react?: boolean;
-}
-
-/**
- * Trigger adsense
- * @param _e
- * @returns is blocked?
- */
-export async function triggerAdsense(ev: TriggerOptions = {}) {
-  // run once
-  if (window.adsenseInitialized) return;
-  window.adsenseInitialized = true;
-
-  // apply current slot
-  const apply = () => {
-    window.adsense_option.currentSlot = getCurrentSlot();
-    fillFixedPosition(window.adsense_option.currentSlot);
-    initializeRandomAds();
-    applyEnviromentAds();
-  };
-
-  const { default: adblock } = await import('./adblock');
-  if (!ev.react) {
-    await new adblock().load().inject();
-    apply();
-    // on non react always return false
-    return false;
-  } else {
-    try {
-      const result = await new adblock().ajaxMethod();
-      if (result === false) apply();
-      return false;
-    } catch (_) {
-      return true;
-    }
-  }
-}
 
 /**
  * adsense main function

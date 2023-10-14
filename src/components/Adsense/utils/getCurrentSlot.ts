@@ -1,14 +1,14 @@
 import { getCookie, setCookie } from '@utils/index';
-import { getAllAds } from './config';
-
-/** current slot */
-let currentSlot = window.adsense_option.currentSlot;
+import { getAdsenseConfig, getAllAds, setAdsenseConfig } from './config';
 
 /**
  * get current page ad slot
  * @returns
  */
 export default function getCurrentSlot() {
+  /** current slot */
+  let currentSlot = getAdsenseConfig().currentSlot;
+
   // select ads
   // cookie key
   const ck = 'currentAds';
@@ -35,6 +35,8 @@ export default function getCurrentSlot() {
     }
   }
   // apply to window.adsense_option.currentSlot
-  window.adsense_option.currentSlot = currentSlot;
+  setAdsenseConfig({ currentSlot });
   return currentSlot;
 }
+
+export { getCurrentSlot };

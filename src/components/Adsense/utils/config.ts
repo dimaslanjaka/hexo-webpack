@@ -49,10 +49,12 @@ export interface AdsenseOption {
   allAds?: AdsList;
 }
 
+let globalAdsenseConfig: AdsenseOption = {};
+
 // initialize undefined window properties
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   if (!window.adsense_option) {
-    window.adsense_option = {
+    globalAdsenseConfig = window.adsense_option = {
       places: [],
       localhost: ['adsense.webmanajemen.com', 'agc.io', 'dev.webmanajemen.com']
     };
@@ -165,4 +167,18 @@ export function removeDuplicateAds(
   }
 }
 
-export const getAllAds = () => removeDuplicateAds(window.adsense_option.allAds || allAds) as AdsenseOption['allAds'];
+export const getAllAds = () => removeDuplicateAds(getAdsenseConfig().allAds || allAds) as AdsenseOption['allAds'];
+
+/**
+ * get global adsense config
+ * @param obj
+ */
+export function setAdsenseConfig(obj: Record<string, any>) {
+  globalAdsenseConfig = window.adsense_option = Object.assign(window.adsense_option || {}, obj);
+}
+
+/**
+ * get global adsense config
+ * @returns
+ */
+export const getAdsenseConfig = () => globalAdsenseConfig;

@@ -60,3 +60,5 @@ export default function fillFixedPosition(currentSlot?: ReturnType<typeof getCur
     }
   }
 }
+
+export { fillFixedPosition };
