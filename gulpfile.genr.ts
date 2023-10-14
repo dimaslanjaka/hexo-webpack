@@ -27,18 +27,22 @@ export default async function genR(
 ) {
   await init();
   const dest = paths.src + '/posts';
-  options = Object.assign({ filter: '', clean: false, limit: Infinity, randomize: false }, options || {});
+  let { limit, filter, randomize, clean } = Object.assign(
+    { filter: '', clean: false, limit: 0, randomize: false },
+    options || {}
+  );
+  const { onBeforePostsProcess } = options;
 
   // force option clean from cli
-  if (args.clean) options.clean = true;
+  if (args.clean) clean = true;
   // force randomize from cli
-  if (args.random || args.randomize) options.randomize = true;
+  if (args.random || args.randomize) randomize = true;
   // force limit from cli
-  if (args.limit) options.limit = parseInt(args.limit);
+  if (args.limit) limit = parseInt(args.limit);
   // force filter from cli
-  if (args.filter) options.filter = options.filter?.split(',').concat(args.filter.split(',')).join(',');
+  if (args.filter) filter = filter?.split(',').concat(args.filter.split(',')).join(',');
 
-  if (options.clean) {
+  if (clean) {
     // truncate auto generated post folder
     await fs.emptyDir(dest);
     // truncate auto generated post images folder
@@ -54,23 +58,25 @@ export default async function genR(
   // filter only file
   posts = posts.filter(file => fs.existsSync(file) && fs.statSync(file).isFile());
   // filter by options
-  posts = posts.filter(file => {
-    const fil = options.filter
-      ?.split(',')
-      .filter(str => str.length > 0)
-      .some(str => {
-        const regex = new RegExp(str);
-        const test = regex.test(file);
-        // if (test) console.log({ str, regex, test, file });
-        return test;
-      });
-    return fil || false;
-  });
+  if (filter.length > 0) {
+    posts = posts.filter(file => {
+      const fil = filter
+        ?.split(',')
+        .filter(str => str.length > 0)
+        .some(str => {
+          const regex = new RegExp(str);
+          const test = regex.test(file);
+          // if (test) console.log({ str, regex, test, file });
+          return test;
+        });
+      return fil || false;
+    });
+  }
 
-  if (typeof options.onBeforePostsProcess === 'function') {
-    // const promisify = Promise.promisify(options.onBeforePostsProcess);
+  if (typeof onBeforePostsProcess === 'function') {
+    // const promisify = Promise.promisify(onBeforePostsProcess);
     // await promisify(posts);
-    const run = options.onBeforePostsProcess(posts);
+    const run = onBeforePostsProcess(posts);
     if (run['then'] || run instanceof Promise) {
       posts = await run;
     } else {
@@ -78,21 +84,18 @@ export default async function genR(
     }
   }
 
-  if (options.randomize) {
+  if (randomize) {
     posts = posts.sort(() => Math.random() - 0.5);
   }
 
   // filter limit when post length is same or more than limit
-  if (options.limit && posts.length >= options.limit) {
-    posts = posts.splice(0, options.limit);
+  if (limit > 0 && posts.length >= limit) {
+    posts = posts.splice(0, limit);
   }
 
   console.log('total post', posts.length);
 
-  const processPost = async postPath => {
-    /**
-     * @type {Promise<import('hexo-post-parser').Nullable<{ route: Awaited<ReturnType<typeof genRoute>>; jsx: Awaited<ReturnType<typeof toJsx>>; value: Record<string, any>; }>>}
-     */
+  const processPost = async (postPath: string) => {
     const route = await genRoute(postPath);
     try {
       const jsx = await toJsx({
