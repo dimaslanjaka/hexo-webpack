@@ -44,16 +44,23 @@ gulp.task('build-asset', async () => {
 
 gulp.task('build', gulp.series('build-html', 'build-asset'));
 
-gulp.task('watch-build', async () => {
+gulp.task('watch-build', () => {
+  let building = false;
   const build = async () => {
-    await gch.spawnAsync('yarn', ['watch:build'], { shell: true, stdio: 'inherit' });
+    if (!building) {
+      building = true;
+      await gch.spawnAsync('yarn', ['watch:build'], { shell: true, stdio: 'inherit' });
+      building = false;
+    }
   };
-  await build();
-  gulp.watch(
-    ['src/**/*.*', 'public/**/*.*', 'source/**/*.*', 'config/**/*.*', 'html/**/*.*', './_config.json', './routes.json'],
-    {
-      ignored: ['**/node_modules', '**/posts/**', '**/_posts/**']
-    },
-    build
-  );
+  const watcher = gulp.watch(['src/**/*.*', 'public/**/*.*', 'source/**/*.*', 'config/**/*.*', 'html/**/*.*'], {
+    ignored: ['**/node_modules', '**/posts/**', '**/_posts/**', '**/post-images/**', '**/tmp/**']
+  });
+  watcher.on('change', (filename, _stat) => {
+    console.log(filename);
+    if (/.(ts|tsx|jsx|js|css|scss)$/.test(filename)) build();
+  });
+  return watcher;
 });
+
+gulp.task('build-watch', gulp.series('watch-build'));
