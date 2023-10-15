@@ -1,6 +1,11 @@
 import _config from '../_config.json';
-import pkgjson from '../package.json';
+import pjson from '../package.json';
 import routes from '../routes.json';
+
+interface PropCont {
+  property: string;
+  content: string;
+}
 
 export type Route = {
   body?: string;
@@ -8,9 +13,13 @@ export type Route = {
   filename: string;
   description: string;
   source: string;
-  meta: {
+  meta: PropCont & {
     [property: string]: {
       [property: string]: string;
+    };
+    canonical: {
+      rel: 'canonical';
+      href: string;
     };
   };
   permalink: string;
@@ -19,5 +28,6 @@ export type Route = {
 };
 
 export const routeConfig = routes as Route[];
-export { _config as config, _config as projectConfig, pkgjson };
-export default {};
+export const projectConfig = _config as Hexo['config'];
+export const pkgjson = pjson;
+export default { routeConfig, projectConfig, pkgjson };
