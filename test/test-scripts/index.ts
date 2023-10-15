@@ -1,10 +1,10 @@
 import render from '../render';
-import build from './build';
-
+import build, { pruneFolders } from './build';
 // need sbg post copy
 
 render
   .init()
+  .then(() => pruneFolders())
   .then(() => build('jsx-failed2'))
   .then(() => build('jsx-conflict'))
   .then(() => build('mixed'))

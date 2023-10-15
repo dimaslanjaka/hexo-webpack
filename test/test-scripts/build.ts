@@ -9,10 +9,12 @@ import { Route } from '../../src/project';
 const routes = [] as Route[];
 const folders = ['src/posts', 'tmp/meta', 'tmp/static', 'public/post-images'];
 
-folders
-  .map(p => path.join(paths.cwd, p))
-  .filter(p => fs.existsSync(p))
-  .forEach(p => fs.emptyDirSync(p));
+/** prune auto generated folders */
+export const pruneFolders = () =>
+  folders
+    .map(p => path.join(paths.cwd, p))
+    .filter(p => fs.existsSync(p))
+    .forEach(p => fs.emptyDirSync(p));
 
 /**
  * need render.init() before run this function
