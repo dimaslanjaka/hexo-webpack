@@ -21,6 +21,13 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
+
+    - name: update submodules
+      run: |
+        wget https://raw.githubusercontent.com/dimaslanjaka/bin/master/bin/submodule-install
+        bash -e ./submodule-install
+        rm ./submodule-install
+        
     - name: install
       run: touch yarn.lock && yarn install
 
