@@ -2,27 +2,45 @@
 
 import Image from '@components/Image';
 import { projectConfig, routeConfig } from '@project';
+import { Label, TextInput } from 'flowbite-react';
 import moment from 'moment-timezone';
 import React from 'react';
 import { BiSearch } from 'react-icons/bi';
-import { Label, TextInput } from 'flowbite-react';
 
 interface State {
   keyword: string;
+  limit: number;
 }
 
 class Home extends React.Component<any, State> {
   constructor(props: any) {
     super(props);
     this.state = {
-      keyword: ''
+      keyword: '',
+      limit: parseInt(String(projectConfig.per_page)) || 10
     };
+  }
+
+  getPosts() {
+    return routeConfig.filter(o => {
+      const kw = this.state.keyword;
+      if (kw.length > 0) {
+        return new RegExp(kw, 'gmi').test(o.title + ' ' + o.description);
+      }
+      return true;
+    });
+  }
+
+  dateFormat(str: string, pattern = '') {
+    return moment(str)
+      .tz(projectConfig.timezone || 'Asia/Jakarta')
+      .format(pattern);
   }
 
   render() {
     return (
-      <React.Fragment>
-        <div className="max-w">
+      <div id="homepage">
+        <div className="w-full sm:fit mb-2">
           <div className="mb-2 block">
             <Label htmlFor="searchTerm" value="Search Post" />
           </div>
@@ -38,68 +56,39 @@ class Home extends React.Component<any, State> {
           />
         </div>
 
-        <div className="flex flex-wrap -mx-1 lg:-mx-4">
-          {routeConfig
-            .filter(o => {
-              const kw = this.state.keyword;
-              if (kw.length > 0) {
-                return new RegExp(kw, 'gmi').test(o.title + ' ' + o.description);
-              }
-              return true;
-            })
-            .map(o => (
-              <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3" key={o.title + o.permalink}>
-                <div className="max-w-sm">
-                  <article className="overflow-hidden rounded-lg shadow-lg" style={{ height: 450 }}>
-                    <a href={o.permalink}>
-                      <Image
-                        alt="Placeholder"
-                        className="block h-auto w-full"
-                        fallbackSrc="https://picsum.photos/600/400/?random"
-                        src={o.meta.og_image.content || 'https://picsum.photos/600/400/?random'}
-                        style={{ height: 200 }}
-                      />
-                    </a>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-1 md:gap-4">
+          {this.getPosts().map((o, i) => {
+            const { meta } = o;
+            const fallbackSrc = 'https://picsum.photos/600/400/?random=' + i;
+            const thumb = meta.og_image.content || fallbackSrc;
+            const tags = [] as string[];
+            for (const key in meta) {
+              if (key.startsWith('tag')) tags.push((meta as any)[key].content);
+            }
 
-                    <div className="p-2 md:p-4">
-                      <header className="flex items-center justify-between leading-tight">
-                        <h5 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white mb-2">
-                          <a href={o.permalink} className="no-underline hover:underline text-black">
-                            {o.title || o.permalink}
-                          </a>
-                        </h5>
-                        <p className="text-grey-darker text-sm">
-                          {moment(o.meta.date.content).format('YYYY/MM/HH') || '-'}
-                        </p>
-                      </header>
-
-                      <p className="font-normal text-gray-700 dark:text-gray-400">{o.description}</p>
-
-                      <footer className="flex items-center justify-between leading-none p-2 md:p-4">
-                        <a className="flex items-center no-underline hover:underline text-black" href="#">
-                          <Image
-                            alt="author"
-                            className="block rounded-full"
-                            src="https://png.pngtree.com/png-vector/20191125/ourmid/pngtree-beautiful-admin-roles-line-vector-icon-png-image_2035379.jpg"
-                            height={32}
-                            width={32}
-                          />
-                          <p className="ml-2 text-sm">
-                            {(o.meta.author && o.meta.author.content) || projectConfig.author || 'L3n4r0x'}
-                          </p>
-                        </a>
-                        {/* <a className="no-underline text-grey-darker hover:text-red-dark" href="#">
-                          <span className="hidden">Like</span>
-                          <i className="fa fa-heart"></i>
-                        </a> */}
-                      </footer>
-                    </div>
-                  </article>
+            return (
+              <a
+                href={o.permalink}
+                className="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+                title={o.title}
+              >
+                <Image
+                  className="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-l-lg"
+                  src={thumb}
+                  alt={o.title}
+                  fallbackSrc={fallbackSrc}
+                />
+                <div className="flex flex-col justify-between p-4 leading-normal">
+                  <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                    {o.title.substring(0, 40)}
+                  </h5>
+                  <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{o.description.substring(0, 200)}</p>
                 </div>
-              </div>
-            ))}
+              </a>
+            );
+          })}
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }
