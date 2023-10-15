@@ -52,13 +52,18 @@ export const init = (callback?: (hexo: import('hexo')) => any) =>
           }
         }
       }
-      writefile(
-        fromRoot('_config.json'),
-        JSON.stringify({ ...hexo.config, base_dir: path.toUnix(base), paths: _paths }, null, 2)
-      );
+      if (!configWritten) {
+        configWritten = true;
+        writefile(
+          fromRoot('_config.json'),
+          JSON.stringify({ ...hexo.config, base_dir: path.toUnix(base), paths: _paths }, null, 2)
+        );
+      }
       hexo.load(() => typeof callback == 'function' && callback(hexo));
       return hexo;
     });
+
+let configWritten = false;
 
 /**
  * render post
