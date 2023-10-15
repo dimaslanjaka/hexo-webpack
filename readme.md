@@ -85,9 +85,14 @@ gulp build-watch
 
 ## RoadMap
 
+<!--
+|&check;|_|&cross;|
+|&#x2611;|&#x2610;|&#x2612;|
+-->
+
 | Status | Goal | Date |
 | :---: | :--- | --- |
-| [x] | sync configuration setup webpack, typescript, babel, react | 09/2023 |
-| [x] | create markdown to JSX react converter | 09/2023 |
-| [x] | mapping and populate markdown posts | 09/2023 |
-| [ ] | mapping and populate markdown pages from `source` folder | - |
+| &#x2611; | sync configuration setup webpack, typescript, babel, react | 09/2023 |
+| &#x2611; | create markdown to JSX react converter | 09/2023 |
+| &#x2611; | mapping and populate markdown posts | 09/2023 |
+| &#x2610; | mapping and populate markdown pages from `source` folder | - |
