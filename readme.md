@@ -2,7 +2,7 @@
 generate static site jekyll/hexo/huge markdown posts using webpack
 
 ## Advantages
-- reduce site size (useful for github pages)
+- reduce site size (useful for github pages with limit **1GB** only)
 - SEO improvement by setting html metadata then add `<script>` tag to main bundle.js
 
 ## Features
