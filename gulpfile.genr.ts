@@ -19,6 +19,9 @@ import moment from 'moment-timezone';
  */
 export default async function genRoute(
   options: Partial<{
+    /**
+     * filter by keywords (comma separated)
+     */
     filter: string;
     randomize: boolean;
     limit: number;
@@ -44,6 +47,7 @@ export default async function genRoute(
   if (args.filter) filter = filter?.split(',').concat(args.filter.split(',')).join(',');
 
   if (clean) {
+    console.log('cleaning...');
     await Promise.all([
       // truncate auto generated post folder
       dest,
@@ -64,6 +68,7 @@ export default async function genRoute(
   posts = posts.filter(file => fs.existsSync(file) && fs.statSync(file).isFile());
   // filter by options
   if (filter.length > 0) {
+    console.log('filtering by keywords...');
     posts = posts.filter(file => {
       const fil = filter
         ?.split(',')
@@ -79,8 +84,7 @@ export default async function genRoute(
   }
 
   if (typeof onBeforePostsProcess === 'function') {
-    // const promisify = Promise.promisify(onBeforePostsProcess);
-    // await promisify(posts);
+    console.log('executing on before post process...');
     const run = onBeforePostsProcess(posts);
     if (run['then'] || run instanceof Promise) {
       posts = await run;
@@ -90,6 +94,7 @@ export default async function genRoute(
   }
 
   if (randomize) {
+    console.log('randomizing...');
     posts = posts.sort(() => Math.random() - 0.5);
   }
 
