@@ -94,5 +94,9 @@ gulp build-watch
 | :---: | :--- | --- |
 | &#x2611; | sync configuration setup webpack, typescript, babel, react | 09/2023 |
 | &#x2611; | create markdown to JSX react converter | 09/2023 |
+| &#x2611; | create SEO static html for posts | 09/2023 |
 | &#x2611; | mapping and populate markdown posts | 09/2023 |
 | &#x2610; | mapping and populate markdown pages from `source` folder | - |
+| &#x2610; | complete layout using `flowbite-react` | - |
+| &#x2610; | generate yoast seo sitemaps | - |
+| &#x2610; | generate atom/feeds | - |
