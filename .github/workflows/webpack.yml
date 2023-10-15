@@ -29,7 +29,11 @@ jobs:
         rm ./submodule-install
         
     - name: install
-      run: touch yarn.lock && yarn install
+      run: |
+        touch yarn.lock
+        echo {} > _config.json
+        echo {} > routes.json
+        yarn install
 
     - name: copy source posts
       run: npx sbg post copy
