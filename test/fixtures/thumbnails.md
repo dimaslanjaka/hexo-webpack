@@ -2,6 +2,8 @@
 title: markdown with local thumbnail
 thumbnail: /The Legend Of Neverland/Quiz/SCENIC-QUIZ.jpg
 photos: ['/The Legend Of Neverland/Quiz/SCENIC-QUIZ.jpg', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII']
+id: local-thumbnail
+permalink: local-thumbnail.html
 ---
 
 body: markdown with local thumbnail

@@ -1,5 +1,7 @@
 ---
 title: post with javascript
+id: post-with-javascript
+permalink: post-with-javascript.html
 ---
 
 <h2 style="text-align: center; color: red">post with javascript</h2>

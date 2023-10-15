@@ -1,6 +1,7 @@
 ---
 title: highlight.js test
 id: highlight-js-test
+permalink: highlight-js-test.html
 ---
 
 ```js

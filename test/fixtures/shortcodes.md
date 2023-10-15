@@ -2,7 +2,8 @@
 title: shortcode sample
 date: 2023-10-04T09:26:26+07:00
 updated: 2023-10-04T09:26:26+07:00
-permalink: /shortcodes.html
+permalink: /shortcode-sample.html
+id: shortcode-sample
 ---
 
 {% codepen https://codepen.io/dimaslanjaka/pen/KowxjR %}
