@@ -35,3 +35,21 @@ npx sbg post copy
 ```bash
 npx sbg post standalone
 ```
+
+- mapping source posts
+
+```bash
+gulp map
+```
+
+- generate routes
+> you can override options by cli arguments see: [gulpfile.genr.ts#L17](https://github.com/dimaslanjaka/hexo-webpack/blob/e596be2c5df1a2d53ba0e2e3b3721d3dc8d7a4fa/gulpfile.genr.ts#L17)
+```bash
+gulp route
+```
+
+## build site
+
+```bash
+yarn run build
+```
