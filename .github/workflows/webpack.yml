@@ -38,6 +38,9 @@ jobs:
     - name: copy source posts
       run: npx sbg post copy
 
+    - name: mapping source posts
+      run: gulp map
+
     - name: generate route
       run: gulp route
 
