@@ -27,12 +27,12 @@ jobs:
         wget https://raw.githubusercontent.com/dimaslanjaka/bin/master/bin/submodule-install
         bash -e ./submodule-install
         rm ./submodule-install
-        
+
     - name: install
       run: |
         touch yarn.lock
         echo {} > _config.json
-        echo {} > routes.json
+        echo [] > routes.json
         yarn install
 
     - name: copy source posts
