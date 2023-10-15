@@ -4,6 +4,8 @@ import { init, render } from './render';
 import { tmp } from './utils';
 import paths from '../config/paths';
 import { restoreMarkdownCodeblockAsHtml } from './utils/extractMarkdownCodeblock';
+import createHtml from './utils/createHtml';
+import prettierFormat from './format';
 
 /**
  * generate route object
@@ -150,9 +152,20 @@ async function genRoute(source: string) {
     // write to temp static path
     const dest = path.join(paths.tmp, 'static', perm);
     let contentStatic = template;
-    contentStatic = contentStatic.replace('</head>', '<script defer src="/runtime/main.js"></script></head>');
+    // build html metadata
+    const headChilds = [] as string[];
+    Object.keys(result.meta).forEach(hm => {
+      const obj = (result.meta as Record<string, Record<string, string>>)[hm];
+      headChilds.push(createHtml('meta', obj));
+    });
+    // append webpack bundle script
+    headChilds.push('<script defer src="/runtime/main.js"></script>');
+    // append to before closing head
+    contentStatic = contentStatic.replace('</head>', headChilds.join('\n') + '</head>');
     const postBody = restoreMarkdownCodeblockAsHtml(contentBeforeRestoreCodeblock);
     contentStatic = contentStatic.replace('<div id="root"></div>', '<div id="root">' + postBody + '</div>');
+    // format html
+    contentStatic = await prettierFormat(contentStatic, { parser: 'html' });
     writefile(dest, contentStatic);
   }
 
