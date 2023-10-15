@@ -1,0 +1,40 @@
+# malfunction keyboard
+# 5 6 ^ %
+
+/node_modules
+!/page-source/node_modules/.gitignore
+/build
+/page
+tmp
+config.json
+*.log
+.env
+/dist
+
+# ignore yarn files except patterns
+**/.yarn/*
+!**/.yarn/releases
+!**/.yarn/plugins
+
+# ignore lock files
+yarn.lock
+package-lock.json
+
+# ignore auto generated paths
+source/_posts
+/routes.json
+/_config.json
+/src/posts
+.cache
+
+# ignore source posts
+/src-posts/*
+
+# ignore source folder
+/source/*
+/source/.git
+!/source/favicon.ico
+!/source/favicon.jpg
+!/source/robots.txt
+!/source/ads.txt
+!/source/sellers.json
