@@ -1,4 +1,4 @@
-export default function createhtml(tagName: string, attributes: Record<string, any>) {
+export default function createHtml(tagName: string, attributes: Record<string, any>) {
   const html = [] as string[];
   if (/\b(meta)\b/.test(tagName)) {
     const arr = Object.keys(attributes).map(key => {
@@ -10,5 +10,5 @@ export default function createhtml(tagName: string, attributes: Record<string, a
 }
 
 if (require.main === module) {
-  console.log(createhtml('meta', { rel: 'canonical', href: 'http://example.com' }));
+  console.log(createHtml('meta', { rel: 'canonical', href: 'http://example.com' }));
 }
