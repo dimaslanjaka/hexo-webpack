@@ -2,10 +2,11 @@ import Promise from 'bluebird';
 import { fs, path, writefile } from 'sbg-utility';
 import args from './config/cli';
 import paths from './config/paths';
-import { default as genRoute } from './test/genRoute';
+import { default as genRouteTest } from './test/genRoute';
 import { init } from './test/render';
 import { default as toJsx } from './test/toJsx';
 import { splitIntoChunks } from './test/utils/array';
+import moment from 'moment-timezone';
 
 /**
  * @param options
@@ -16,7 +17,7 @@ import { splitIntoChunks } from './test/utils/array';
  * gulp route --random --limit=10 --clean
  * ```
  */
-export default async function genR(
+export default async function genRoute(
   options: Partial<{
     filter: string;
     randomize: boolean;
@@ -96,7 +97,7 @@ export default async function genR(
   console.log('total post', posts.length);
 
   const processPost = async (postPath: string) => {
-    const route = await genRoute(postPath);
+    const route = await genRouteTest(postPath);
     try {
       const jsx = await toJsx({
         body: route.body,
@@ -139,4 +140,20 @@ export default async function genR(
   }
 
   writefile(__dirname + '/routes.json', JSON.stringify(routes, null, 2));
+}
+
+export async function sortRoute() {
+  const { default: routes } = await import('./routes.json');
+  const { default: config } = await import('./_config.json');
+  const orderBy = /updated/.test(config.index_generator.order_by) ? 'updated' : 'date';
+  const descending = /-/.test(config.index_generator.order_by) ? true : false;
+  const sorted = routes.sort(function (a, b) {
+    const dateA = moment((a.meta as any)[orderBy].content).unix();
+    const dateB = moment((b.meta as any)[orderBy].content).unix();
+
+    // ? -1 : 1 for ascending/increasing order
+    if (descending) return dateA < dateB ? 1 : -1;
+    return dateA < dateB ? -1 : 1;
+  });
+  writefile(__dirname + '/routes.json', JSON.stringify(sorted, null, 2));
 }
