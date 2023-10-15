@@ -48,8 +48,24 @@ gulp map
 gulp route
 ```
 
-## build site
+## site production build
 
 ```bash
 yarn run build
 ```
+
+## watch production build
+
+terminal 1
+```bash
+yarn run php
+```
+
+> listening dist folder at `http://localhost:4000`
+
+terminal 2
+```bash
+gulp build-watch
+```
+
+> watching `src`, `public`, `source` folders then run build production
