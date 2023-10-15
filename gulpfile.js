@@ -7,6 +7,7 @@ const yaml = require('yaml');
 const gulp = require('gulp');
 const { obj } = require('through2');
 const { fs, writefile } = require('sbg-utility');
+/** @type {typeof import('./_config.json')} */
 const config = yaml.parse(fs.readFileSync(__dirname + '/_config.yml', 'utf-8'));
 const { modifyConfigJson } = require('./config/utils');
 const { default: genR, sortRoute } = require('./gulpfile.genr');
