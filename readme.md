@@ -20,6 +20,8 @@ generate static site jekyll/hexo/huge markdown posts using webpack
 
 ```bash
 yarn install
+echo {} > _config.json
+echo {} > route.json
 ```
 
 - copy source post
