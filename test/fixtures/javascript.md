@@ -43,7 +43,7 @@ function Triangle(base,height){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="https://yandex.st/highlightjs/8.0/highlight.min.js"></script>
 <script>
-  $(document).ready(function(){
+  (function(){
     hljs.initHighlightingOnLoad();
-  });
+  })();
 </script>
