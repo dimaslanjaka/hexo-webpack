@@ -9,7 +9,7 @@ generate static site jekyll/hexo/huge markdown posts using webpack
 - markdown string to react jsx element converter
 - html string to react jsx element converter
 
-## Structure folders
+## Structure folders and files
 
 - `source` all page assets and markdowns (ex: source/about.md -> http://example.com/about)
 - `public` all static assets (no markdown should be processed)
@@ -20,6 +20,8 @@ generate static site jekyll/hexo/huge markdown posts using webpack
 - `tmp/meta` all parsed metadata post
 - `tmp/static` all SEO optimized static html
   > all generated html should be processed with `gulp build-html` later
+- `_config.json` auto generated file from `_config.yml` with additional properties
+- `routes.json` auto generated file from all mapped posts and pages
 
 ## Installation
 
@@ -80,3 +82,12 @@ gulp build-watch
 ```
 
 > watching `src`, `public`, `source` folders then run build production
+
+## RoadMap
+
+| Status | Goal | Date |
+| :---: | :--- | --- |
+| [x] | sync configuration setup webpack, typescript, babel, react | 09/2023 |
+| [x] | create markdown to JSX react converter | 09/2023 |
+| [x] | mapping and populate markdown posts | 09/2023 |
+| [ ] | mapping and populate markdown pages from `source` folder | - |
