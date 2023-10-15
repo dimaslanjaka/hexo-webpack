@@ -4,8 +4,9 @@ import prettierFormat from '../format';
 import genRoute from '../genRoute';
 import toJsx from '../toJsx';
 import { fixtures, fromRoot, tmp } from '../utils';
+import { Route } from '../../src/project';
 
-const routes = [] as any[];
+const routes = [] as Route[];
 const postDir = path.join(paths.src, 'posts');
 // empty post dir
 fs.emptyDirSync(postDir);
@@ -25,13 +26,14 @@ async function build(filename: string) {
     source,
     id: renderResult.id || 'custom-id-' + filename
   });
-  const value = { ...toPrint, jsxPath: jsxResult.jsxPath };
+  const value = { ...toPrint, jsxPath: jsxResult.jsxPath } as Route;
   routes.push(value);
 
   const route = writefile(fromRoot('routes.json'), JSON.stringify(routes, null, 2));
   const html = await prettierFormat(renderResult.body, { parser: 'html' });
   const wh = writefile(tmp('html/' + filename + '.html'), html);
   console.log({ jsx: jsxResult.jsxPath, html: wh.file, route: route.file });
+  return { jsxResult, renderResult, route: value, source };
 }
 
 export default build;
