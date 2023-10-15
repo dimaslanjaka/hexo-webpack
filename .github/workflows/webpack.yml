@@ -28,6 +28,12 @@ jobs:
         bash -e ./submodule-install
         rm ./submodule-install
 
+    - name: import sample source posts
+      run: |
+        cp -rf test/fixtures/javascript.md src-posts/javascript.md
+        cp -rf test/fixtures/thumbnails.md src-posts/thumbnails.md
+        cp -rf test/fixtures/image.jpg src-posts/image.jpg
+
     - name: set enviroment
       id: set-env
       shell: bash
