@@ -4,32 +4,13 @@ import React from 'react';
 import paths from '../config/paths';
 import { rConfig } from './routeConfig';
 import { renderStatic } from './template';
+import getDistScripts from './getDistScripts';
 // const devMode = /dev/i.test(process.env.NODE_ENV);
 
 async function generateRouteHtml() {
-  const generatedIndex = paths.build + '/index.html';
   const routes = rConfig;
-  const regex = /<script[\s\S]*?>[\s\S]*?<\/script>/gi;
+  const scripts = getDistScripts();
   const sitemaps: string[] = [];
-  let m: RegExpExecArray | null = null;
-  const scripts = [] as JSX.Element[];
-
-  if (fs.existsSync(generatedIndex)) {
-    const contents = fs.readFileSync(generatedIndex, 'utf-8');
-    // get script bundles
-    while ((m = regex.exec(contents)) !== null) {
-      if (m.index === regex.lastIndex) {
-        regex.lastIndex++;
-      }
-      if (typeof m[0] === 'string' && m[0].length > 0 && !m[0].includes('/page/main.js')) {
-        const srcRegEx = /src=["'](.*?)["']/g;
-        const source = srcRegEx.exec(m[0]);
-        if (source) {
-          scripts.push(<script src={source[1]} key={source[1]} defer={true}></script>);
-        }
-      }
-    }
-  }
 
   for (let i = 0; i < routes.length; i++) {
     const route = routes[i];

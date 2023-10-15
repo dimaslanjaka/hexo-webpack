@@ -1,3 +1,1 @@
-import { generateRouteHtml } from './generate';
-
-generateRouteHtml();
+import('./generate').then(loaded => loaded.generateRouteHtml());
