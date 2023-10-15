@@ -100,6 +100,10 @@ jobs:
         touch yarn.lock
         echo {} > _config.json
         echo [] > routes.json
+        mkdir tmp
+        mkdir tmp/meta
+        mkdir tmp/static
+        mkdir src/posts
         yarn install
 
     - name: copy source posts
