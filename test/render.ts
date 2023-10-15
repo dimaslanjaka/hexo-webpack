@@ -5,7 +5,11 @@ import { parse } from 'yaml';
 import paths from '../config/paths';
 import fixHtml from './fixHtml';
 import { fixtures, fromRoot, tmp } from './utils';
-import { extractMarkdownCodeblock, restoreMarkdownCodeblock } from './utils/extractMarkdownCodeblock';
+import {
+  extractMarkdownCodeblock,
+  restoreMarkdownCodeblock,
+  restoreMarkdownCodeblockAsHtml
+} from './utils/extractMarkdownCodeblock';
 import extractStyleTag, { extractScriptTag, restoreScriptTag, restoreStyleTag } from './utils/extractStyleScriptTag';
 import { default as htmlImg2base64 } from './utils/img2base64';
 import imgfinder from './utils/imgfinder';
@@ -235,6 +239,7 @@ export async function render(
   // restore script and style tag
   content = restoreStyleTag(content);
   content = restoreScriptTag(content);
+  const contentBeforeRestoreCodeblock = content;
   // restore markdown codeblock
   // keep raw markdown codeblock to be processed at toJsx.ts
   content = restoreMarkdownCodeblock(content);
@@ -252,9 +257,11 @@ export async function render(
     if (!perm.endsWith('.html')) perm += '.html';
     // write to temp static path
     const dest = path.join(paths.tmp, 'static', perm);
-    let content = template;
-    content = content.replace('</head>', '<script defer src="/runtime/main.js"></script></head>');
-    writefile(dest, content);
+    let contentStatic = template;
+    contentStatic = contentStatic.replace('</head>', '<script defer src="/runtime/main.js"></script></head>');
+    const postBody = restoreMarkdownCodeblockAsHtml(contentBeforeRestoreCodeblock);
+    contentStatic = contentStatic.replace('<div id="root"></div>', '<div id="root">' + postBody + '</div>');
+    writefile(dest, contentStatic);
   }
 
   return { content, hexo, ...meta };
