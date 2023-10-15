@@ -29,3 +29,12 @@ source/_posts
 
 # ignore source posts
 /src-posts/*
+
+# ignore source folder
+/source/*
+/source/.git
+!/source/favicon.ico
+!/source/favicon.jpg
+!/source/robots.txt
+!/source/ads.txt
+!/source/sellers.json
