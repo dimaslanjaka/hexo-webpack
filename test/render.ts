@@ -1,21 +1,17 @@
 import Hexo from 'hexo';
 import hpp from 'hexo-post-parser';
+import { gistEmbedTagRegister } from 'hexo-shortcodes/dist/gist';
+import { githubEmbedTagRegister } from 'hexo-shortcodes/dist/github';
+import { shortcodeParser, shortcodeParserResultToArrayAttrParam } from 'hexo-shortcodes/dist/utils';
 import { fs, md5, path, writefile } from 'sbg-utility';
 import { parse } from 'yaml';
 import paths from '../config/paths';
 import fixHtml from './fixHtml';
 import { fixtures, fromRoot, tmp } from './utils';
-import {
-  extractMarkdownCodeblock,
-  restoreMarkdownCodeblock,
-  restoreMarkdownCodeblockAsHtml
-} from './utils/extractMarkdownCodeblock';
+import { extractMarkdownCodeblock, restoreMarkdownCodeblock } from './utils/extractMarkdownCodeblock';
 import extractStyleTag, { extractScriptTag, restoreScriptTag, restoreStyleTag } from './utils/extractStyleScriptTag';
 import { default as htmlImg2base64 } from './utils/img2base64';
 import imgfinder from './utils/imgfinder';
-import { githubEmbedTagRegister } from 'hexo-shortcodes/dist/github';
-import { gistEmbedTagRegister } from 'hexo-shortcodes/dist/gist';
-import { shortcodeParserResultToArrayAttrParam, shortcodeParser } from 'hexo-shortcodes/dist/utils';
 
 // test render single post
 // need `sbg post copy`
@@ -247,24 +243,7 @@ export async function render(
   // write metadata to tmp/meta
   writefile(path.join(paths.tmp, 'meta', meta.id + '.json'), JSON.stringify(meta));
 
-  // write dev server static html
-  const template = fs.readFileSync(paths.public + '/index.html', 'utf-8');
-  if (meta.permalink && meta.permalink.length > 0) {
-    let perm = meta.permalink;
-    // add index.html
-    if (perm.endsWith('/')) perm += 'index.html';
-    // add extension .html
-    if (!perm.endsWith('.html')) perm += '.html';
-    // write to temp static path
-    const dest = path.join(paths.tmp, 'static', perm);
-    let contentStatic = template;
-    contentStatic = contentStatic.replace('</head>', '<script defer src="/runtime/main.js"></script></head>');
-    const postBody = restoreMarkdownCodeblockAsHtml(contentBeforeRestoreCodeblock);
-    contentStatic = contentStatic.replace('<div id="root"></div>', '<div id="root">' + postBody + '</div>');
-    writefile(dest, contentStatic);
-  }
-
-  return { content, hexo, ...meta };
+  return { content, contentBeforeRestoreCodeblock, hexo, ...meta };
 }
 
 export default { render, init };

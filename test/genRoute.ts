@@ -1,7 +1,9 @@
-import { md5, writefile } from 'sbg-utility';
+import { md5, writefile, fs, path } from 'sbg-utility';
 import { default as uuidv4 } from 'sbg-utility/dist/utils/uuid';
 import { init, render } from './render';
 import { tmp } from './utils';
+import paths from '../config/paths';
+import { restoreMarkdownCodeblockAsHtml } from './utils/extractMarkdownCodeblock';
 
 /**
  * generate route object
@@ -31,6 +33,7 @@ async function genRoute(source: string) {
     categories = ['uncategorized'],
     thumbnail = 'https://picsum.photos/600/400/?random' + md5(source),
     id,
+    contentBeforeRestoreCodeblock,
     hexo,
     ...props
   } = await render(source);
@@ -134,6 +137,23 @@ async function genRoute(source: string) {
         content: label
       };
     }
+  }
+
+  // write dev server static html
+  const template = fs.readFileSync(paths.public + '/index.html', 'utf-8');
+  if (permalink && permalink.length > 0) {
+    let perm = permalink;
+    // add index.html
+    if (perm.endsWith('/')) perm += 'index.html';
+    // add extension .html
+    if (!perm.endsWith('.html')) perm += '.html';
+    // write to temp static path
+    const dest = path.join(paths.tmp, 'static', perm);
+    let contentStatic = template;
+    contentStatic = contentStatic.replace('</head>', '<script defer src="/runtime/main.js"></script></head>');
+    const postBody = restoreMarkdownCodeblockAsHtml(contentBeforeRestoreCodeblock);
+    contentStatic = contentStatic.replace('<div id="root"></div>', '<div id="root">' + postBody + '</div>');
+    writefile(dest, contentStatic);
   }
 
   return { ...result, permalink, id };

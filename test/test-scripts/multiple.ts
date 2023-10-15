@@ -8,5 +8,5 @@ render
   .then(() => build('jsx-failed2'))
   .then(() => build('jsx-conflict'))
   .then(() => build('mixed'))
-  .then(() => build('thumbnail'))
+  .then(() => build('thumbnails'))
   .catch(console.error);
