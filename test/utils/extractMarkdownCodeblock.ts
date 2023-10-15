@@ -46,18 +46,24 @@ export function restoreMarkdownCodeblockAsHtml(str: string, jsx = false) {
 
   return str.replace(regex, function (_, index) {
     const data = globalCodeblock[index];
-    // eslint-disable-next-line prefer-const
+    let result: string;
     let html = data.content;
     if (jsx) {
       // This escapes all instances of the three special characters
       // that would break a backtick string literal definition: ` \
       // https://stackoverflow.com/a/75688937/6404439
       html = html.replace(/[`\\]|\${/g, '\\$&');
-      return `<pre><code class="hljs ${data.lang}">{\`${html}\`}</code></pre>`;
+      result = `<pre><code class="hljs ${data.lang}">{\`${html}\`}</code></pre>`;
+    } else {
+      result = `<!-- prettier-ignore-start --><pre><code class="hljs language-${data.lang}">${encodeEntities(
+        html
+      )}</code></pre><!-- prettier-ignore-end -->`;
     }
-    return `<!-- prettier-ignore-start --><pre><code class="hljs language-${data.lang}">${encodeEntities(
-      html
-    )}</code></pre><!-- prettier-ignore-end -->`;
+    // fix class to className in jsx
+    if (jsx) {
+      result = result.replace(/<code class="hljs /gm, '<code className="hljs ');
+    }
+    return result;
   });
 }
 
