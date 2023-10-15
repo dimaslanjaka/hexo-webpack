@@ -34,6 +34,9 @@ module.exports = merge(common, {
     // yarn start --host custom.host.name
     host: cli.host || 'adsense.webmanajemen.com',
     open: false
+  },
+  watchOptions: {
+    ignored: ['_config.json', 'routes.json', '**/tmp/**', '**/src/posts/**', '**/source/_posts/**']
   }
 });
 
