@@ -7,9 +7,12 @@ import { fixtures, fromRoot, tmp } from '../utils';
 import { Route } from '../../src/project';
 
 const routes = [] as Route[];
-const postDir = path.join(paths.src, 'posts');
-// empty post dir
-fs.emptyDirSync(postDir);
+const folders = ['src/posts', 'tmp/meta', 'tmp/static', 'public/post-images'];
+
+folders
+  .map(p => path.join(paths.cwd, p))
+  .filter(p => fs.existsSync(p))
+  .forEach(p => fs.emptyDirSync(p));
 
 /**
  * need render.init() before run this function
