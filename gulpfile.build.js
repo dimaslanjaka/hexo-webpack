@@ -1,11 +1,34 @@
 const paths = require('./config/paths');
 const gulp = require('gulp');
 const { generateRouteHtml } = require('./html/generate');
-const { copyPath } = require('sbg-utility');
+const { copyPath, fs, array_unique } = require('sbg-utility');
+const yaml = require('yaml');
 const gch = require('git-command-helper');
+/** @type {typeof import('./_config.json')} */
+const config = yaml.parse(fs.readFileSync(__dirname + '/_config.yml', 'utf-8'));
 
-// const publics = [];
-//[paths.public, , path.join(paths.cwd, 'source')];
+const configExcludes = array_unique([
+  '.gitignore',
+  /** ignore auto generated post (processed by `sbg post copy`) */
+  '**/_posts/**',
+  /** ignore hexo post data folder */
+  '**/_data/**',
+  /** ignore markdown files (processed by `gulp route`) */
+  '**/*.md',
+  /** ignore dot files */
+  '**/.*',
+  '**/LICENSE',
+  '**/License.md',
+  '**/node_modules/**',
+  '**/readme.md',
+  '**/bin',
+  // vscode settings
+  '**/.vscode',
+  // vscode frontmatter plugin folder
+  '**/.frontmatter',
+  // add exclude from _config.yml
+  ...config.exclude
+]);
 
 // generate html to build dir
 gulp.task('build-html', generateRouteHtml);
@@ -28,11 +51,7 @@ gulp.task('build-asset', async () => {
     gulp
       .src('**/*.*', {
         cwd: paths.cwd + '/source',
-        ignore: [
-          '.gitignore',
-          /** ignore auto generated processed post by `sbg post copy` */
-          '**/_posts/**'
-        ]
+        ignore: configExcludes
       })
       .pipe(gulp.dest(paths.build))
       .on('end', () => resolve('ends'))
@@ -54,7 +73,7 @@ gulp.task('watch-build', () => {
     }
   };
   const watcher = gulp.watch(['src/**/*.*', 'public/**/*.*', 'source/**/*.*', 'config/**/*.*', 'html/**/*.*'], {
-    ignored: ['**/node_modules', '**/posts/**', '**/_posts/**', '**/post-images/**', '**/tmp/**']
+    ignored: ['**/node_modules', '**/posts/**', '**/_data/**', '**/_posts/**', '**/post-images/**', '**/tmp/**']
   });
   watcher.on('change', (filename, _stat) => {
     console.log(filename);
