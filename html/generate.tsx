@@ -1,15 +1,18 @@
-import fs from 'fs';
-import path from 'path';
+import { fs, path } from 'sbg-utility';
 import React from 'react';
 import paths from '../config/paths';
 import { rConfig } from './routeConfig';
 import { renderStatic } from './template';
 import getDistScripts from './getDistScripts';
-// const devMode = /dev/i.test(process.env.NODE_ENV);
+import gulp from 'gulp';
+import { obj } from 'through2';
 
-async function generateRouteHtml() {
+/**
+ * generate route by populating `/routes.json` with template `/{paths.build}/index.html`
+ */
+export async function generateRouteHtml() {
   const routes = rConfig;
-  const scripts = getDistScripts();
+  const { scripts } = getDistScripts();
   const sitemaps: string[] = [];
 
   for (let i = 0; i < routes.length; i++) {
@@ -46,4 +49,22 @@ async function generateRouteHtml() {
   fs.writeFileSync(path.join(paths.build, 'sitemap.txt'), uniqueSitemaps.join('\n'));
 }
 
-export { generateRouteHtml };
+/**
+ * generate static html from `{paths.tmp}/static/**\/*.html` with script template from `/{paths.build}/index.html`
+ */
+export function generateRouteHtmlFromTmp() {
+  const { scripts } = getDistScripts(false);
+  const devScript = '<script defer src="/runtime/main.js"></script>';
+  return gulp
+    .src('**/*.html', { cwd: paths.tmp + '/static' })
+    .pipe(
+      obj((file, _encoding, cb) => {
+        if (file.isDirectory() || file.isNull() || file.isStream()) return cb();
+        if (!file.contents) file.contents = Buffer.from('');
+        const contents = file.contents.toString().replace(devScript, scripts.join('\n'));
+        file.contents = Buffer.from(contents);
+        cb(null, file);
+      })
+    )
+    .pipe(gulp.dest(paths.build));
+}
