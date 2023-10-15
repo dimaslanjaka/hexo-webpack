@@ -1,5 +1,4 @@
-import { Nullable } from 'hexo-post-parser';
-import { writefile } from 'sbg-utility';
+import { md5, writefile } from 'sbg-utility';
 import { default as uuidv4 } from 'sbg-utility/dist/utils/uuid';
 import { init, render } from './render';
 import { tmp } from './utils';
@@ -9,7 +8,7 @@ import { tmp } from './utils';
  * @param source
  * @returns
  */
-async function genRoute(source: Nullable<string>) {
+async function genRoute(source: string) {
   let result: import('html-webpack-plugin').Options & {
     body: string;
     source: string;
@@ -30,7 +29,7 @@ async function genRoute(source: Nullable<string>) {
     lang = 'en_US',
     tags = [],
     categories = ['uncategorized'],
-    thumbnail = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/2048px-No_image_available.svg.png',
+    thumbnail = 'https://picsum.photos/600/400/?random' + md5(source),
     id,
     hexo,
     ...props

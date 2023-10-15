@@ -140,9 +140,7 @@ export async function render(
   content = htmlImg2base64({ source: source as string, content });
 
   // local thumbnail to absolute path
-  const {
-    thumbnail = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/2048px-No_image_available.svg.png'
-  } = meta;
+  const { thumbnail = 'https://picsum.photos/600/400/?random=' + md5(source) } = meta;
   /**
    * process local image
    * @param thumbnail image source
