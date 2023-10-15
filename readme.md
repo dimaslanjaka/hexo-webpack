@@ -11,8 +11,15 @@ generate static site jekyll/hexo/huge markdown posts using webpack
 
 ## Structure folders
 
-- folder `src-posts` source markdown post
-- folder `source/_posts` auto generated post from `src-posts` using `sbg post copy`
+- `source` all page assets and markdowns (ex: source/about.md -> http://example.com/about)
+- `public` all static assets (no markdown should be processed)
+- `src` all layout react, scss, css
+- `src-posts` source markdown post
+- `source/_posts` auto generated post from `src-posts` using `sbg post copy`
+- `tmp` temp folder
+- `tmp/meta` all parsed metadata post
+- `tmp/static` all SEO optimized static html
+  > all generated html should be processed with `gulp build-html` later
 
 ## Installation
 
