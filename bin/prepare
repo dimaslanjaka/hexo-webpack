@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+echo [] > routes.json
+echo {} > _config.json
+chmod 777 routes.json
+chmod 777 _config.json
