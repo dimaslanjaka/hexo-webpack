@@ -44,13 +44,17 @@ export default async function genRoute(
   if (args.filter) filter = filter?.split(',').concat(args.filter.split(',')).join(',');
 
   if (clean) {
-    // truncate auto generated post folder
-    await fs.emptyDir(dest);
-    // truncate auto generated post images folder
-    await fs.emptyDir(paths.public + '/post-images');
-    // truncate auto generated static folder
-    await fs.emptyDir(paths.tmp + '/static');
-    await fs.emptyDir(paths.tmp + '/meta');
+    await Promise.all([
+      // truncate auto generated post folder
+      dest,
+      // truncate auto generated post images folder
+      paths.public + '/post-images',
+      // truncate auto generated static folder
+      paths.tmp + '/static',
+      paths.tmp + '/meta'
+    ])
+      .filter(p => fs.exists(p))
+      .each(p => fs.emptyDir(p));
   }
 
   // let total = 0;
