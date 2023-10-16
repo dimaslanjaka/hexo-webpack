@@ -7,14 +7,15 @@ import { init } from './test/render';
 import { default as toJsx } from './test/toJsx';
 import { splitIntoChunks } from './test/utils/array';
 import moment from 'moment-timezone';
+import { Route } from './src/project';
 
 /**
  * @param options
  * @example
  * ```bash
  * gulp route
- * # or force options
- * gulp route --random --limit=10 --clean
+ * # or force options (empty value it mean 'true')
+ * gulp route --random={boolean} --limit={number} --clean={boolean} --sort={boolean}
  * ```
  */
 export default async function genRoute(
@@ -25,14 +26,15 @@ export default async function genRoute(
     filter: string;
     randomize: boolean;
     limit: number;
+    sort: boolean;
     onBeforePostsProcess: ((posts: string[]) => string[]) | ((posts: string[]) => Promise<string[]>);
     clean: boolean;
   }> = {}
 ) {
   await init();
   const dest = paths.src + '/posts';
-  let { limit, filter, randomize, clean } = Object.assign(
-    { filter: '', clean: false, limit: 0, randomize: false },
+  let { limit, filter, randomize, clean, sort } = Object.assign(
+    { filter: '', clean: false, limit: 0, randomize: false, sort: true },
     options || {}
   );
   const { onBeforePostsProcess } = options;
@@ -45,6 +47,8 @@ export default async function genRoute(
   if (args.limit) limit = parseInt(args.limit);
   // force filter from cli
   if (args.filter) filter = filter?.split(',').concat(args.filter.split(',')).join(',');
+  // force sort from cli
+  if (args.sort) sort = args.sort === 'false' ? false : true;
 
   if (clean) {
     console.log('cleaning...');
@@ -62,7 +66,7 @@ export default async function genRoute(
   }
 
   // let total = 0;
-  const routes = [] as any[];
+  const routes = [] as Route[];
   let { default: posts } = await import('./.cache/posts.json');
   // filter only file
   posts = posts.filter(file => fs.existsSync(file) && fs.statSync(file).isFile());
@@ -116,7 +120,7 @@ export default async function genRoute(
       });
       const { body: _body, ...toPrint } = route;
       // total++;
-      const value = { ...toPrint, jsxPath: jsx.jsxPath };
+      const value = { ...toPrint, jsxPath: jsx.jsxPath } as Route;
       // console.log(total, route.permalink);
       routes.push(value);
 
@@ -148,12 +152,16 @@ export default async function genRoute(
     await Promise.all(chunk).each(processPost);
   }
 
+  if (sort) {
+    console.log('sorting routes...');
+    sortRoute(routes);
+  }
+
   writefile(__dirname + '/routes.json', JSON.stringify(routes, null, 2));
 }
 
-export async function sortRoute() {
-  const { default: routes } = await import('./routes.json');
-  const { default: config } = await import('./_config.json');
+async function sortRoute(routes: Route[]) {
+  const config: typeof import('./_config.json') = JSON.parse(fs.readFileSync(__dirname + '/_config.json', 'utf-8'));
   const orderBy = /updated/.test(config.index_generator.order_by) ? 'updated' : 'date';
   const descending = /-/.test(config.index_generator.order_by) ? true : false;
   const sorted = routes.sort(function (a, b) {

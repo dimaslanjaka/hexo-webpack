@@ -10,18 +10,17 @@ const { fs, writefile } = require('sbg-utility');
 /** @type {typeof import('./_config.json')} */
 const config = yaml.parse(fs.readFileSync(__dirname + '/_config.yml', 'utf-8'));
 const { modifyConfigJson } = require('./config/utils');
-const { default: genR, sortRoute } = require('./gulpfile.genr');
+const { default: genR } = require('./gulpfile.genr');
 require('./gulpfile.build');
 
 // generate route from processed post
 // using `sbg post copy`
 gulp.task(
   'rc',
-  gulp.series(() => genR({ clean: true }), sortRoute)
+  gulp.series(() => genR({ clean: true }))
 );
-gulp.task('route', gulp.series(genR, sortRoute));
-gulp.task('r', gulp.series(genR, sortRoute));
-gulp.task('sr', sortRoute);
+gulp.task('route', gulp.series(genR));
+gulp.task('r', gulp.series(genR));
 
 // generate posts list
 gulp.task('map', function () {
@@ -66,11 +65,7 @@ const modifyCfg = () => {
   // write to ./config.json
   modifyConfigJson({ mode: 'development' });
 };
-gulp.task('direct', () =>
-  genR(__dirname + '/src-posts', { clean: true })
-    .then(modifyCfg)
-    .then(sortRoute)
-);
+gulp.task('direct', () => genR(__dirname + '/src-posts', { clean: true }).then(modifyCfg));
 gulp.task('c', () => {
   return gulp
     .src('**/*.md', {
@@ -98,8 +93,8 @@ gulp.task('c', () => {
     .pipe(gulp.dest(__dirname + '/tmp/fake-c'))
     .on('end', modifyCfg);
 });
-gulp.task('rl', () => genR({ clean: true, limit: 4 }).then(modifyCfg).then(sortRoute));
-gulp.task('rr', () => genR({ clean: true, limit: 4, randomize: true }).then(modifyCfg).then(sortRoute));
+gulp.task('rl', () => genR({ clean: true, limit: 4 }).then(modifyCfg));
+gulp.task('rr', () => genR({ clean: true, limit: 4, randomize: true }).then(modifyCfg));
 // test: only specified post
 gulp.task('feature', () =>
   genR({
