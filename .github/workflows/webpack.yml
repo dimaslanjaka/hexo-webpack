@@ -97,10 +97,10 @@ jobs:
           touch yarn.lock
           echo {} > _config.json
           echo [] > routes.json
-          mkdir tmp
-          mkdir tmp/meta
-          mkdir tmp/static
-          mkdir src/posts
+          mkdir -p tmp
+          mkdir -p tmp/meta
+          mkdir -p tmp/static
+          mkdir -p src/posts
           yarn install
 
       - name: populate sample source posts and routes

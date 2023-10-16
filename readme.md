@@ -31,10 +31,10 @@ generate static site jekyll/hexo/huge markdown posts using webpack
 yarn install
 echo {} > _config.json
 echo [] > route.json
-mkdir tmp
-mkdir tmp/meta
-mkdir tmp/static
-mkdir src/posts
+mkdir -p tmp
+mkdir -p tmp/meta
+mkdir -p tmp/static
+mkdir -p src/posts
 ```
 
 - copy source post

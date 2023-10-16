@@ -1,5 +1,10 @@
 #!/bin/bash -e
 
+mkdir -p tmp
+mkdir -p tmp/meta
+mkdir -p tmp/static
+mkdir -p src/posts
+
 echo [] > routes.json
 echo {} > _config.json
 chmod 777 routes.json
