@@ -125,7 +125,8 @@ export async function render(
   body = extractStyleTag(body).html;
   body = extractScriptTag(body).html;
 
-  // writefile(__dirname + '/tmp/render/codeblock.html', body);
+  // dump
+  // writefile(__dirname + '/tmp/render/after-extract.html', body);
 
   // render hexo shortcodes
   let { content = '' } = (await hexo.post.render(null as any, {
@@ -221,8 +222,6 @@ export async function render(
         return _.replace(src, imgp);
       });
       content = content.replace(imgTag, replacement);
-      // update content
-      // cm.setContent(content);
     }
   }
   // process meta photos
@@ -239,6 +238,9 @@ export async function render(
   // restore markdown codeblock
   // keep raw markdown codeblock to be processed at toJsx.ts
   content = restoreMarkdownCodeblock(content);
+
+  // dump
+  writefile(__dirname + '/tmp/render/after-restore.html', body);
 
   // write metadata to tmp/meta
   writefile(path.join(paths.tmp, 'meta', meta.id + '.json'), JSON.stringify(meta));

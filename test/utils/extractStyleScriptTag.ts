@@ -46,10 +46,12 @@ export function extractScriptTag(str: string) {
       regex.lastIndex++;
     }
 
+    // push outer script
+    localScripts.push(m[0]);
+    globalScripts.push(m[0]);
+
     // delete style tag
     str = str.replace(m[0], `<div htmlFor="script" data-index="${scriptCounter}"></div>`);
-    localScripts.push(m[2]);
-    globalScripts.push(m[2]);
 
     // increase counter
     scriptCounter++;
@@ -65,7 +67,7 @@ export function restoreScriptTag(str: string) {
   // const regex = new RegExp('<div htmlFor="(.*)" data-index="(.*)"><\\\/div>', 'gmi')
 
   return str.replace(regex, function (_, index) {
-    return '<script>' + globalScripts[index] + '</script>';
+    return globalScripts[index];
   });
 }
 

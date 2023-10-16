@@ -103,12 +103,12 @@ async function toJsx(options: {
   }
   let newHtml = body;
 
-  // writefile(options.dest + '/body.html', body);
+  // writefile(__dirname + '/tmp/toJsx/before-extract-codeblock.html', body);
 
   // extract markdown codeblock
   newHtml = extractMarkdownCodeblock(newHtml).html;
 
-  // writefile(__dirname + '/tmp/toJsx/codeblock.html', newHtml);
+  // writefile(__dirname + '/tmp/toJsx/after-extract-codeblock.html', newHtml);
 
   // extract style tags
   let styleTagMatch: RegExpExecArray | null;
