@@ -100,3 +100,4 @@ gulp build-watch
 | &#x2610; | complete layout using `flowbite-react` | - |
 | &#x2610; | generate yoast seo sitemaps | - |
 | &#x2610; | generate atom/feeds | - |
+| &#x2610; | localization (multi languages) | - |
