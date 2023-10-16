@@ -3,6 +3,7 @@ import { FC } from 'react';
 import { useSidebarContext } from './context/SidebarContext';
 import Image from '../Image';
 import React from 'react';
+import { projectConfig } from '@root/src/project';
 
 const Header: FC<Record<string, never>> = function () {
   const { isOpenOnSmallScreens, isPageWithSidebar, setOpenOnSmallScreens } = useSidebarContext();
@@ -38,7 +39,9 @@ const Header: FC<Record<string, never>> = function () {
         )}
         <Navbar.Brand href="/">
           <Image alt="Flowbite logo" height="24" src="/favicon.jpg" width="24" />
-          <span className="self-center whitespace-nowrap px-3 text-xl font-semibold dark:text-white">Flowbite</span>
+          <span className="self-center whitespace-nowrap px-3 text-xl font-semibold dark:text-white">
+            {projectConfig.title}
+          </span>
         </Navbar.Brand>
         <div className="flex md:order-2">
           <Navbar.Toggle />
