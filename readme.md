@@ -83,6 +83,16 @@ gulp build-watch
 
 > watching `src`, `public`, `source` folders then run build production
 
+## Q&A
+
+### Why webpack error file not found
+
+you can noticing webpack to rebuild by
+
+```bash
+gulp notice
+```
+
 ## RoadMap
 
 <!--
