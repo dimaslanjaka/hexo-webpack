@@ -11,6 +11,7 @@ generate static site jekyll/hexo/huge markdown posts using webpack
 
 ## Structure folders and files
 
+- `.cache` webpack cache directory and post map json from `gulp map`
 - `source` all page assets and markdowns (ex: source/about.md -> http://example.com/about)
 - `public` all static assets (no markdown should be processed)
 - `src` all layout react, scss, css
