@@ -24,8 +24,11 @@ generate static site jekyll/hexo/huge markdown posts using webpack
 - `_config.json` auto generated file from `_config.yml` with additional properties
 - `routes.json` auto generated file from all mapped posts and pages
 
-![editor preview](https://github.com/dimaslanjaka/hexo-webpack/assets/12471057/0e3b4e79-afa8-4cda-9818-e022bf5bc28d)
-![web preview](https://github.com/dimaslanjaka/hexo-webpack/assets/12471057/747cdc5d-031e-4c69-a62b-d4acce1e4781)
+<p align="center">
+  <img alt="Light" src="https://github.com/dimaslanjaka/hexo-webpack/assets/12471057/0e3b4e79-afa8-4cda-9818-e022bf5bc28d" width="45%" title="editor preview" />
+&nbsp; &nbsp;
+  <img alt="Dark" src="https://github.com/dimaslanjaka/hexo-webpack/assets/12471057/747cdc5d-031e-4c69-a62b-d4acce1e4781" width="45%" title="web preview" />
+</p>
 
 
 ## Installation
