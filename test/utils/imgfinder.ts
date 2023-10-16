@@ -7,7 +7,8 @@ if (fs.existsSync(configJson)) {
   config = JSON.parse(fs.readFileSync(configJson, 'utf-8'));
 }
 
-const pj = (...args: (string | null | undefined)[]) => args.join('/');
+const pj = (...args: (string | null | undefined)[]) =>
+  args.filter(o => typeof o === 'string' && o.length > 0).join('/');
 
 /**
  * find image by given string
