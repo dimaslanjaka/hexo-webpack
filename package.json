@@ -1,8 +1,8 @@
 {
-  "name": "wmi-page-monorepo",
-  "version": "3.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "hexo-webpack",
+  "version": "1.0.0",
+  "description": "generate static site jekyll/hexo/huge markdown posts using webpack",
+  "main": "gulpfile.js",
   "private": true,
   "scripts": {
     "prepare": "touch routes.json && husky install",
