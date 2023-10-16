@@ -3,6 +3,8 @@ import React from 'react';
 import { useLoaderData } from 'react-router-dom';
 import { DisqusEmbed } from './components/Disqus/DisqusEmbed';
 import FlowbiteCarousel from './components/FlowbiteLayout/Carousel';
+import { BiSolidCategoryAlt } from 'react-icons/bi';
+import { PiTagSimpleFill } from 'react-icons/pi';
 
 export default function routeMap(route: Route) {
   const importPath = './' + route.jsxPath.replace(projectConfig.paths.src, '').replace(/^\//, '');
@@ -45,36 +47,32 @@ export default function routeMap(route: Route) {
           title: data.title
           // language: (data.meta.language && data.meta.language.content) || 'en_US'
         };
+
         // console.log(disqus_config);
         return (
           <>
             <div>
               <h1 className="mb-4 text-3xl font-bold">{data.title}</h1>
-              <p className="mb-6 flex items-center font-bold uppercase text-danger dark:text-danger-500">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="currentColor"
-                  className="mr-2 h-5 w-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z"
-                  />
-                </svg>
-                {data.id}
+              <p className="mb-6 flex items-center font-bold uppercase">
+                <BiSolidCategoryAlt className="mr-1" />
+                {meta.categories && meta.categories.join(', ')}
               </p>
             </div>
 
             <Post />
+
+            <div className="flex">
+              <PiTagSimpleFill className="mr-1" />
+              {meta.tags &&
+                meta.tags.map(tag => (
+                  <div
+                    key={'tag-' + tag}
+                    className="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300"
+                  >
+                    {tag}
+                  </div>
+                ))}
+            </div>
 
             {/* mix photos */}
             {meta.photos && (
