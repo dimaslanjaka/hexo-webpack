@@ -20,7 +20,7 @@ class Home extends React.Component<any, State> {
     super(props);
     this.state = {
       keyword: '',
-      limit: parseInt(String(projectConfig.per_page)) || 10,
+      limit: parseInt(String(projectConfig.index_generator.per_page)) || 10,
       loading: false
     };
   }
