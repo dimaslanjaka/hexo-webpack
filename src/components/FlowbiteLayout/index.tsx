@@ -11,7 +11,7 @@ import { darkModeAuto } from './utils';
 import(/* webpackChunkName: "flowbite-css" */ './style.scss');
 import(/* webpackChunkName: "main-css" */ '@assets/css/main.scss');
 
-function FlowbiteLayout(props?: Record<string, any>) {
+function FlowbiteLayout(props?: { children: JSX.Element | React.ReactNode }) {
   React.useEffect(() => {
     darkModeAuto();
   });
@@ -21,18 +21,20 @@ function FlowbiteLayout(props?: Record<string, any>) {
       <FlowbiteContext>
         <SidebarProvider>
           <Header />
-          {props.children ? (
-            props.children
-          ) : (
-            <div className="flex flex-col md:flex-row dark:bg-gray-900">
-              <div className="order-2 mx-4 mt-4 mb-24 flex-[1_0_16rem]" id="flowbite-main-content">
-                <Outlet />
+          <div id="flowbite-main-content">
+            {props.children ? (
+              props.children
+            ) : (
+              <div className="flex flex-col md:flex-row dark:bg-gray-900">
+                <div className="order-2 mx-4 mt-4 mb-24 flex-[1_0_16rem]">
+                  <Outlet />
+                </div>
+                <div className="order-1">
+                  <ActualSidebar />
+                </div>
               </div>
-              <div className="order-1">
-                <ActualSidebar />
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </SidebarProvider>
       </FlowbiteContext>
     </div>
