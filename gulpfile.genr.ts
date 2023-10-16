@@ -9,6 +9,9 @@ import { splitIntoChunks } from './test/utils/array';
 import moment from 'moment-timezone';
 import { Route } from './src/project';
 
+/** notice webpack file changes by adding space to ./src/index.tsx */
+export const noticeWebpack = () => fs.appendFile(__dirname + '/src/index.tsx', ' ');
+
 /**
  * @param options
  * @example

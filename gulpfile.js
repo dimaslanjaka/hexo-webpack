@@ -11,17 +11,23 @@ const { fs, writefile } = require('sbg-utility');
 /** @type {typeof import('./_config.json')} */
 const config = yaml.parse(fs.readFileSync(__dirname + '/_config.yml', 'utf-8'));
 const { modifyConfigJson } = require('./config/utils');
-const { default: genR } = require('./gulpfile.genr');
+const { default: genR, noticeWebpack } = require('./gulpfile.genr');
 require('./gulpfile.build');
 
+// notice webpack file changes
+// by add space to ./src/index.tsx
+gulp.task('notice', noticeWebpack);
+
 // generate route from processed post
-// using `sbg post copy`
-gulp.task(
-  'rc',
-  gulp.series(() => genR({ clean: true }))
-);
-gulp.task('route', gulp.series(genR));
-gulp.task('r', gulp.series(genR));
+// need `sbg post copy`
+
+const generateRouteTask = options => gulp.series(() => genR(options), 'notice');
+// normal
+gulp.task('route', generateRouteTask());
+gulp.task('r', generateRouteTask());
+
+// with clean arg
+gulp.task('rc', generateRouteTask({ clean: true }));
 
 // generate posts list
 gulp.task('map', function () {
