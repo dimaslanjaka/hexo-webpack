@@ -10,9 +10,9 @@ function FlowbitePostLayout() {
       <SidebarProvider>
         <Header />
         <div className="dark:bg-gray-900">
-          <main className="mx-4 mt-4 mb-24">
+          <div className="mx-4 mt-4 mb-24">
             <Outlet />
-          </main>
+          </div>
         </div>
       </SidebarProvider>
     </FlowbiteContext>
