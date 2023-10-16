@@ -85,7 +85,7 @@ class Home extends React.Component<any, State> {
 
   render() {
     return (
-      <div id="homepage">
+      <main id="homepage">
         <div className="w-full sm:fit mb-2">
           <div className="mb-2 block">
             <Label htmlFor="searchTerm" value="Search Post" />
@@ -148,7 +148,7 @@ class Home extends React.Component<any, State> {
             <Spinner aria-label="Extra small spinner example" size="lg" />
           </div>
         )}
-      </div>
+      </main>
     );
   }
 }

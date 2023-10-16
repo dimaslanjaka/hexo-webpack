@@ -50,10 +50,10 @@ export default function routeMap(route: Route) {
 
         // console.log(disqus_config);
         return (
-          <>
-            <div>
-              <h1 className="mb-4 text-3xl font-bold">{data.title}</h1>
-              <p className="mb-6 flex items-center font-bold uppercase">
+          <div className="post">
+            <div className="w-full sm:w-fit">
+              <h1 className="mb-4 text-3xl">{data.title}</h1>
+              <p className="mb-6 flex items-center uppercase">
                 <BiSolidCategoryAlt className="mr-1" />
                 {meta.categories && meta.categories.join(', ')}
               </p>
@@ -61,7 +61,7 @@ export default function routeMap(route: Route) {
 
             <Post />
 
-            <div className="flex">
+            <div className="flex mt-4">
               <PiTagSimpleFill className="mr-1" />
               {meta.tags &&
                 meta.tags.map(tag => (
@@ -82,7 +82,7 @@ export default function routeMap(route: Route) {
             )}
 
             <DisqusEmbed shortname="dimaslanjaka" config={disqus_config} />
-          </>
+          </div>
         );
       }
     };

@@ -1,7 +1,11 @@
-export const FlowbiteLoadStylesheet = () =>
-  Promise.all([
-    import(/* webpackChunkName: "flowbite-css" */ './style.scss'),
-    import(/* webpackChunkName: "main-css" */ '@assets/css/main.scss')
-  ]);
-export const FlowbiteWithSidebarLayout = () => import(/* webpackChunkName: "flowbite-with-sidebar-layout" */ './index');
-export const FlowbiteSingleContentLayout = () => import(/* webpackChunkName: "flowbite-single-layout" */ './post');
+export function darkModeAuto() {
+  // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+  if (
+    localStorage.getItem('color-theme') === 'dark' ||
+    (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+  ) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+}

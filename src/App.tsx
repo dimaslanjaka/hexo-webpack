@@ -1,21 +1,19 @@
 import React from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { initHljs } from './components/Highlight.js/helper';
 import * as project from './project';
 import routeMap from './routeMap';
-import {
-  FlowbiteLoadStylesheet,
-  FlowbiteSingleContentLayout,
-  FlowbiteWithSidebarLayout
-} from './components/FlowbiteLayout/utils';
-import { initHljs } from './components/Highlight.js/helper';
-
-FlowbiteLoadStylesheet();
 
 const postRoute = project.routeConfig.map(routeMap).flat();
 
 const router = createBrowserRouter([
   {
-    lazy: FlowbiteWithSidebarLayout,
+    lazy: async () => {
+      const { default: Component } = await import(
+        /* webpackChunkName: "flowbite-with-sidebar-layout" */ '@components/FlowbiteLayout/index'
+      );
+      return { Component };
+    },
     children: [
       {
         index: true,
@@ -33,7 +31,15 @@ const router = createBrowserRouter([
       }
     ]
   },
-  { lazy: FlowbiteSingleContentLayout, children: postRoute }
+  {
+    lazy: async () => {
+      const { FlowbiteLayoutWithoutSidebar: Component } = await import(
+        /* webpackChunkName: "flowbite-with-sidebar-layout" */ '@components/FlowbiteLayout/index'
+      );
+      return { Component };
+    },
+    children: postRoute
+  }
 ]);
 
 window.adsense_option = Object.assign(window.adsense_option || {}, {

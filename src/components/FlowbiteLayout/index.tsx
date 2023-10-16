@@ -6,21 +6,33 @@ import { SidebarProvider } from './context/SidebarContext';
 import Header from './header';
 import Sidebar from './sidebar';
 import FlowbiteContext from './context/FlowbitContext';
+import { darkModeAuto } from './utils';
 
-function FlowbiteLayout() {
+import(/* webpackChunkName: "flowbite-css" */ './style.scss');
+import(/* webpackChunkName: "main-css" */ '@assets/css/main.scss');
+
+function FlowbiteLayout(props?: Record<string, any>) {
+  React.useEffect(() => {
+    darkModeAuto();
+  });
+
   return (
     <div id="FlowbiteLayout">
       <FlowbiteContext>
         <SidebarProvider>
           <Header />
-          <div className="flex flex-col md:flex-row dark:bg-gray-900">
-            <div className="order-2 mx-4 mt-4 mb-24 flex-[1_0_16rem]" id="flowbite-main-content">
-              <Outlet />
+          {props.children ? (
+            props.children
+          ) : (
+            <div className="flex flex-col md:flex-row dark:bg-gray-900">
+              <div className="order-2 mx-4 mt-4 mb-24 flex-[1_0_16rem]" id="flowbite-main-content">
+                <Outlet />
+              </div>
+              <div className="order-1">
+                <ActualSidebar />
+              </div>
             </div>
-            <div className="order-1">
-              <ActualSidebar />
-            </div>
-          </div>
+          )}
         </SidebarProvider>
       </FlowbiteContext>
     </div>
@@ -72,3 +84,15 @@ function ActualSidebar(): JSX.Element {
 
 export default FlowbiteLayout;
 export { FlowbiteLayout as Component };
+
+export function FlowbiteLayoutWithoutSidebar() {
+  return (
+    <FlowbiteLayout>
+      <div className="bg-white dark:bg-gray-900">
+        <div className="mx-4 text-gray-900 dark:text-white">
+          <Outlet />
+        </div>
+      </div>
+    </FlowbiteLayout>
+  );
+}
