@@ -36,7 +36,9 @@ module.exports = merge(common, {
     open: false
   },
   watchOptions: {
-    ignored: ['_config.json', 'routes.json', '**/tmp/**', '**/src/posts/**', '**/source/_posts/**']
+    ignored: ['_config.json', 'routes.json', '**/tmp/**', '**/src/posts/**', '**/source/_posts/**'],
+    // delay build task 10s after changes
+    aggregateTimeout: 10000
   }
 });
 
