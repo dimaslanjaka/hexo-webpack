@@ -13,10 +13,10 @@ function FlowbiteLayout() {
       <FlowbiteContext>
         <SidebarProvider>
           <Header />
-          <div className="flex flex-col md:flex-row h-screen w-screen dark:bg-gray-900">
-            <main className="order-2 mx-4 mt-4 mb-24 flex-[1_0_16rem]" id="flowbite-main-content">
+          <div className="flex flex-col md:flex-row dark:bg-gray-900">
+            <div className="order-2 mx-4 mt-4 mb-24 flex-[1_0_16rem]" id="flowbite-main-content">
               <Outlet />
-            </main>
+            </div>
             <div className="order-1">
               <ActualSidebar />
             </div>
