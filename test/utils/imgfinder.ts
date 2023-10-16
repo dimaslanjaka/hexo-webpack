@@ -13,7 +13,8 @@ if (fs.existsSync(configJson)) {
  * @param includePaths add more folder to search
  * @returns
  */
-export default function imgfinder(src: string, includePaths?: string[] | string) {
+export default function imgfinder(src: string | null | undefined, includePaths?: string[] | string) {
+  if (!src || src.length == 0) return undefined;
   const finds = [
     // path.join(path.dirname(source), src),
     path.join(paths.src, src),
