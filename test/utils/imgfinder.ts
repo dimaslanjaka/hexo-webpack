@@ -7,6 +7,8 @@ if (fs.existsSync(configJson)) {
   config = JSON.parse(fs.readFileSync(configJson, 'utf-8'));
 }
 
+const pj = (...args: (string | null | undefined)[]) => args.join('/');
+
 /**
  * find image by given string
  * @param src image path string
@@ -16,14 +18,14 @@ if (fs.existsSync(configJson)) {
 export default function imgfinder(src: string | null | undefined, includePaths?: string[] | string) {
   if (!src || src.length == 0) return undefined;
   const finds = [
-    // path.join(path.dirname(source), src),
-    path.join(paths.src, src),
-    path.join(paths.public, src),
-    path.join(paths.cwd, src),
-    path.join(config.post_dir, src),
-    path.join(paths.cwd, config.post_dir, src),
-    path.join(config.source_dir, src),
-    path.join(paths.cwd, config.source_dir, src)
+    pj(path.dirname(src), src),
+    pj(paths.src, src),
+    pj(paths.public, src),
+    pj(paths.cwd, src),
+    pj(config.post_dir, src),
+    pj(paths.cwd, config.post_dir, src),
+    pj(config.source_dir, src),
+    pj(paths.cwd, config.source_dir, src)
   ];
   if (includePaths) {
     const addPaths = (sources: string[]) => sources.map(source => path.join(path.dirname(source), src));
