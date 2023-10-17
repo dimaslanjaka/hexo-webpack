@@ -1,4 +1,3 @@
-import Bluebird from 'bluebird';
 import CryptoJS from 'crypto-js';
 import * as safelinkify from 'safelinkify';
 
@@ -62,7 +61,7 @@ export function loadJS(url: string, props?: LoadJSOpt) {
     props || {}
   );
 
-  return new Bluebird((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     // fix dynamic protocol source
     if (url.startsWith('//')) url = window.location.protocol + url;
@@ -186,8 +185,8 @@ export function islocalhost() {
  * @returns
  */
 export const delay = (millis: number) =>
-  new Bluebird(resolve => {
-    setTimeout(_ => resolve(), millis);
+  new Promise(resolve => {
+    setTimeout(_ => resolve(null), millis);
   });
 
 export type InstanceHtml = HTMLElement | Element;
