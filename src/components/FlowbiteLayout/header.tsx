@@ -1,12 +1,14 @@
-import { DarkThemeToggle, Navbar } from 'flowbite-react';
-import { FC } from 'react';
-import { useSidebarContext } from './context/SidebarContext';
-import Image from '../Image';
-import React from 'react';
 import { projectConfig } from '@root/src/project';
+import { Navbar } from 'flowbite-react';
+import React, { FC } from 'react';
+import { BiMoon, BiSun } from 'react-icons/bi';
+import Image from '../Image';
+import { useSidebarContext } from './context/SidebarContext';
+import { getMode, toggleDarkMode } from './utils';
 
 const Header: FC<Record<string, never>> = function () {
   const { isOpenOnSmallScreens, isPageWithSidebar, setOpenOnSmallScreens } = useSidebarContext();
+  const [themeMode, setThemeMode] = React.useState(getMode());
 
   return (
     <header className="sticky top-0 z-20">
@@ -45,7 +47,17 @@ const Header: FC<Record<string, never>> = function () {
         </Navbar.Brand>
         <div className="flex md:order-2">
           <Navbar.Toggle />
-          <DarkThemeToggle />
+          {/* <DarkThemeToggle /> */}
+          <button
+            aria-label="Toggle dark mode"
+            type="button"
+            className="rounded-lg p-2.5 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+            onClick={() => {
+              setThemeMode(toggleDarkMode());
+            }}
+          >
+            {themeMode == 'dark' ? <BiMoon className="h-5 w-5" /> : <BiSun className="h-5 w-5" />}
+          </button>
         </div>
         <Navbar.Collapse>
           <Navbar.Link href="/" active>
