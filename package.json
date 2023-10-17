@@ -125,6 +125,7 @@
     "react-icons": "^4.11.0",
     "react-router-dom": "^6.16.0",
     "rsuite": "^5.40.0",
+    "safelinkify": "^1.2.2",
     "sort-by": "^1.2.0",
     "stream-browserify": "^3.0.0",
     "tw-elements": "^1.0.0",

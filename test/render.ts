@@ -12,14 +12,41 @@ import { extractMarkdownCodeblock, restoreMarkdownCodeblock } from './utils/extr
 import extractStyleTag, { extractScriptTag, restoreScriptTag, restoreStyleTag } from './utils/extractStyleScriptTag';
 import { default as htmlImg2base64 } from './utils/img2base64';
 import imgfinder from './utils/imgfinder';
+import safelinkify from 'safelinkify';
 
 // test render single post
 // need `sbg post copy`
 
+// CONFIGURATION
+
+type CFG = Hexo['config'] & {
+  external_link: {
+    enable: boolean;
+    field: string;
+    safelink: {
+      enable: boolean;
+      exclude: string[];
+      redirect: string;
+      type: string;
+      password: string;
+    };
+    exclude: string[];
+  };
+};
+
 const base = path.resolve(__dirname, '..');
-const _config = parse(fs.readFileSync(base + '/_config.yml', 'utf8'));
+const _config: CFG = parse(fs.readFileSync(base + '/_config.yml', 'utf8'));
 // const hexo = new Hexo(base, { ...yaml.parse(fs.readFileSync(base + '/_config.yml', 'utf8')), silent: false });
 const hexo = new Hexo(__dirname, { ..._config, silent: true });
+
+// initializer external anchor/hyperlink anonymizer
+const safelinkConfig = _config.external_link.safelink;
+const sf = new safelinkify.safelink({
+  exclude: safelinkConfig.exclude,
+  password: safelinkConfig.password,
+  type: safelinkConfig.type,
+  redirect: safelinkConfig.redirect
+});
 
 /**
  * initialize renderer
@@ -136,6 +163,22 @@ export async function render(
   })) as { content: string };
 
   content = await fixHtml(content);
+
+  // anonimize hyperlink using safelinkify
+  const rA = /<a[^>]*>([^<]+)<\/a>/gm;
+  content = content.replace(rA, function (outer) {
+    const rH = /<a[^>]+href=(?:"|')(.[^">]+?)(?="|')/;
+    const m = outer.match(rH);
+    if (m) {
+      const href = m[1];
+      const anonymize = sf.parseUrl(href);
+      if (typeof anonymize === 'string') {
+        return outer.replace(href, anonymize);
+      }
+    }
+    // return original string
+    return outer;
+  });
 
   // replace image src to url base64
   content = htmlImg2base64({ source: source as string, content });
