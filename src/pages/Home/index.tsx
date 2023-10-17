@@ -115,7 +115,7 @@ class Home extends React.Component<any, State> {
                   key={o.title + o.permalink}
                 >
                   <Image
-                    className="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-l-lg"
+                    className="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-l-lg bg-white dark:bg-gray-300"
                     src={thumb}
                     alt={o.title}
                     fallbackSrc={fallbackSrc}
