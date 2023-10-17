@@ -42,6 +42,15 @@ $gray-800: #1f2937;
     margin-right: 0.4em;
   }
 
+  // fixed elements inside paragraph not have space/margin
+  p {
+    *:not(code) {
+      // all elements except inline codeblock
+      margin-left: 0.2em;
+      margin-right: 0.2em;
+    }
+  }
+
   // inline codeblock - <code/> not <pre><code>
   :not(pre) > code {
     padding: 2px 4px;
