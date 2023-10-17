@@ -5,6 +5,7 @@ import { DisqusEmbed } from './components/Disqus/DisqusEmbed';
 import FlowbiteCarousel from './components/FlowbiteLayout/Carousel';
 import { BiSolidCategoryAlt } from 'react-icons/bi';
 import { PiTagSimpleFill } from 'react-icons/pi';
+import { islocalhost } from './utils';
 
 export default function routeMap(route: Route) {
   const importPath = './' + route.jsxPath.replace(projectConfig.paths.src, '').replace(/^\//, '');
@@ -81,7 +82,8 @@ export default function routeMap(route: Route) {
               </div>
             )}
 
-            <DisqusEmbed shortname="dimaslanjaka" config={disqus_config} />
+            {/* skip display disqus on localhost */}
+            {!islocalhost() && <DisqusEmbed shortname="dimaslanjaka" config={disqus_config} />}
           </div>
         );
       }
