@@ -1,7 +1,15 @@
 const typographyShared = {
   css: {
+    color: '#333',
+    a: {
+      color: '#3182ce',
+      '&:hover': {
+        color: '#2c5282'
+      },
+      'text-decoration': 'none'
+    },
+    // disable tailwind typography
     // codeblock are handled with highlight.js
-    // disable tailwind typography for codeblocks
     pre: false,
     code: false,
     'pre code': false,
