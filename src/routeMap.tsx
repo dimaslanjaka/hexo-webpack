@@ -76,22 +76,24 @@ export default function routeMap(route: Route) {
               </p>
             </div>
 
-            <div className="border-2 border-slate-900 dark:border-slate-300 mb-8 px-2 w-fit not-prose">
-              <b className="pl-2.5 mb-2 font-semibold tracking-wide text-gray-900 uppercase dark:text-white" id="toc">
-                Table of contents
-              </b>
-              <nav id="TableOfContents">
-                <ul className="list-none">
-                  {toc.map(heading => {
-                    return (
-                      <li key={heading.id} style={{ marginLeft: `${heading.level - 2}em` }}>
-                        <a href={`#${heading.id}`}>{heading.text}</a>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </nav>
-            </div>
+            {toc.length > 0 && (
+              <div className="border-2 border-slate-900 dark:border-slate-300 mb-8 px-2 w-fit not-prose">
+                <b className="pl-2.5 mb-2 font-semibold tracking-wide text-gray-900 uppercase dark:text-white" id="toc">
+                  Table of contents
+                </b>
+                <nav id="TableOfContents">
+                  <ul className="list-none">
+                    {toc.map(heading => {
+                      return (
+                        <li key={heading.id} style={{ marginLeft: `${heading.level - 2}em` }}>
+                          <a href={`#${heading.id}`}>{heading.text}</a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </nav>
+              </div>
+            )}
 
             <Post />
 
