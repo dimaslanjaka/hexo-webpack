@@ -1,23 +1,29 @@
-export const isDarkMode = () => document.documentElement.classList.contains('dark');
+/**
+ * get current mode by indicating class dark
+ * @returns
+ */
+export const getModeByClass = () => document.documentElement.classList.contains('dark');
+
+/**
+ * get current theme mode by reading local storage
+ * @returns dark or light
+ */
+export const getModeByLocalstorage = () => (localStorage.getItem('color-theme') === 'dark' ? 'dark' : 'light');
 
 /**
  * set theme mode
  * @param mode
  */
 export function setMode(mode: 'dark' | 'light') {
+  console.log('set theme mode', mode);
   localStorage.setItem('color-theme', mode);
-  if (mode == 'dark') {
+  if (mode === 'dark') {
+    if (document.documentElement.classList.contains('dark')) document.documentElement.classList.remove('dark');
     document.documentElement.classList.add('dark');
   } else {
     document.documentElement.classList.remove('dark');
   }
 }
-
-/**
- * get current theme mode
- * @returns dark or light
- */
-export const getMode = () => (isDarkMode() ? 'dark' : 'light');
 
 /**
  * enable auto dark mode
@@ -39,7 +45,7 @@ export function darkModeAuto() {
  * @returns current mode
  */
 export function toggleDarkMode() {
-  if (isDarkMode()) {
+  if (getModeByClass()) {
     setMode('light');
     return 'light';
   } else {

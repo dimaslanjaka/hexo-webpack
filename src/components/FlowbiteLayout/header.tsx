@@ -4,11 +4,22 @@ import React, { FC } from 'react';
 import { BiMoon, BiSun } from 'react-icons/bi';
 import Image from '../Image';
 import { useSidebarContext } from './context/SidebarContext';
-import { getMode, toggleDarkMode } from './utils';
+import { getModeByLocalstorage, setMode, toggleDarkMode } from './utils';
 
 const Header: FC<Record<string, never>> = function () {
   const { isOpenOnSmallScreens, isPageWithSidebar, setOpenOnSmallScreens } = useSidebarContext();
-  const [themeMode, setThemeMode] = React.useState(getMode());
+  const [themeMode, setThemeMode] = React.useState<'dark' | 'light'>(getModeByLocalstorage());
+  const isMounted = React.useRef(false); // unmounted by default
+
+  React.useEffect(() => {
+    isMounted.current = true;
+    setTimeout(() => {
+      if (isMounted.current) setMode(themeMode);
+    }, 1000);
+    return () => {
+      isMounted.current = false;
+    };
+  });
 
   return (
     <header className="sticky top-0 z-20">
