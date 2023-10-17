@@ -1,5 +1,3 @@
-import '@utils/promise';
-
 export const text = [
   'Our website is made possible by displaying online advertisements to our visitors.',
   'We only display a few banner ads.',
