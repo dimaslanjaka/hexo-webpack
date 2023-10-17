@@ -6,7 +6,6 @@ import { Label, Spinner, TextInput } from 'flowbite-react';
 import moment from 'moment-timezone';
 import React from 'react';
 import { BiSearch } from 'react-icons/bi';
-import { MdPublishedWithChanges, MdUpdateDisabled } from 'react-icons/md';
 import './home.scss';
 
 interface State {
@@ -122,17 +121,9 @@ class Home extends React.Component<any, State> {
                   />
                   <div className="flex flex-col justify-between p-4 leading-normal">
                     <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{o.title}</h5>
-                    <div className="flex">
-                      <div>
-                        <small title={published} style={{ display: 'inline-flex' }}>
-                          <MdPublishedWithChanges className="mr-1" /> {moment(published).format('DD/MM/YYYY HH:mm:ss')}
-                        </small>
-                      </div>
-                      <div>
-                        <small title={modified} style={{ display: 'inline-flex' }}>
-                          <MdUpdateDisabled className="mr-1" /> {moment(modified).format('DD/MM/YYYY HH:mm:ss')}
-                        </small>
-                      </div>
+                    <div className="flex justify-between text-gray-900 dark:text-gray-200 text-xs">
+                      <div title={'published ' + published}>{moment(published).format('DD/MM/YYYY HH:mm:ss')}</div>
+                      <div title={'updated ' + modified}>{moment(modified).format('DD/MM/YYYY HH:mm:ss')}</div>
                     </div>
                     <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                       {o.description.substring(0, 200)}
