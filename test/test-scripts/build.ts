@@ -1,10 +1,27 @@
-import { path, writefile, fs } from 'sbg-utility';
+import { fs, path, writefile } from 'sbg-utility';
 import paths from '../../config/paths';
+import { Route } from '../../src/project';
 import prettierFormat from '../format';
 import genRoute from '../genRoute';
 import toJsx from '../toJsx';
 import { fixtures, fromRoot, tmp } from '../utils';
-import { Route } from '../../src/project';
+
+// notify webpack changes before process exit
+// by adding space to index
+process.once('exit', () => {
+  const indexjs = [
+    paths.src + '/App.tsx',
+    paths.src + '/index.tsx',
+    paths.src + '/index.jsx',
+    paths.src + '/index.js'
+  ].filter(fs.existsSync);
+  console.log('notify webpack', indexjs.length > 0);
+  setTimeout(() => {
+    if (indexjs.length > 0) {
+      indexjs.forEach(p => fs.appendFileSync(p, ''));
+    }
+  }, 3000);
+});
 
 const routes = [] as Route[];
 const folders = ['src/posts', 'tmp/meta', 'tmp/static', 'public/post-images'];
