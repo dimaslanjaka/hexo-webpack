@@ -64,7 +64,7 @@ gulp map
 ```
 
 - generate routes
-> you can override options by cli arguments see: [gulpfile.genr.ts#L17](https://github.com/dimaslanjaka/hexo-webpack/blob/e596be2c5df1a2d53ba0e2e3b3721d3dc8d7a4fa/gulpfile.genr.ts#L17)
+> you can override options by cli arguments see: [sample](https://github.com/dimaslanjaka/hexo-webpack/blob/e596be2c5df1a2d53ba0e2e3b3721d3dc8d7a4fa/gulpfile.genr.ts#L17) [complex](https://github.com/dimaslanjaka/hexo-webpack/blob/9d0580c75de9acf19b2c9876886f3df9bb7714f4/gulpfile.genr.ts#L21)
 ```bash
 gulp route
 ```
