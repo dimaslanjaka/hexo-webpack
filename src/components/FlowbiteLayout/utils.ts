@@ -15,7 +15,7 @@ export const getModeByLocalstorage = () => (localStorage.getItem('color-theme') 
  * @param mode
  */
 export function setMode(mode: 'dark' | 'light') {
-  console.log('set theme mode', mode);
+  // console.log('set theme mode', mode);
   localStorage.setItem('color-theme', mode);
   if (mode === 'dark') {
     if (document.documentElement.classList.contains('dark')) document.documentElement.classList.remove('dark');
