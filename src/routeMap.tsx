@@ -5,7 +5,7 @@ import { DisqusEmbed } from './components/Disqus/DisqusEmbed';
 import FlowbiteCarousel from './components/FlowbiteLayout/Carousel';
 import { BiSolidCategoryAlt } from 'react-icons/bi';
 import { PiTagSimpleFill } from 'react-icons/pi';
-import { islocalhost } from './utils';
+import { islocalhost, md5 } from './utils';
 
 export default function routeMap(route: Route) {
   const importPath = './' + route.jsxPath.replace(projectConfig.paths.src, '').replace(/^\//, '');
@@ -27,16 +27,32 @@ export default function routeMap(route: Route) {
       Component: () => {
         const data = (useLoaderData() || { meta: {} }) as ReturnType<typeof loader>;
         const [meta, setMeta] = React.useState(data.meta as import('hexo-post-parser').postMeta & Record<string, any>);
+        const [toc, setToc] = React.useState<{ text: string; id: string; level: number }[]>([]);
         React.useEffect(() => {
           document.title = data.title;
           import('@root/tmp/meta/' + data.id + '.json').then(importedMeta => {
             setMeta({ ...data.meta, ...importedMeta });
           });
 
+          const elements = Array.from(document.querySelectorAll('h2, h3, h4, h5, h6'))
+            .map(element => {
+              if (!element.hasAttribute('id')) {
+                element.setAttribute('id', md5(element.textContent));
+              }
+              if (element.id === 'toc') return;
+              return {
+                id: element.getAttribute('id'),
+                text: element.textContent ?? '',
+                level: Number(element.tagName.substring(1))
+              };
+            })
+            .filter(o => typeof o != 'undefined');
+          setToc(elements);
+
           return () => {
             //
           };
-        });
+        }, [data.id, data.meta, data.title]);
 
         // const thumbnail = data.meta.og_image
         //   ? data.meta.og_image.content
@@ -58,6 +74,23 @@ export default function routeMap(route: Route) {
                 <BiSolidCategoryAlt className="mr-1" />
                 {meta.categories && meta.categories.join(', ')}
               </p>
+            </div>
+
+            <div className="border-2 border-slate-900 dark:border-slate-300 mb-8 px-2 w-fit not-prose">
+              <b className="pl-2.5 mb-2 font-semibold tracking-wide text-gray-900 uppercase dark:text-white" id="toc">
+                Table of contents
+              </b>
+              <nav id="TableOfContents">
+                <ul className="list-none">
+                  {toc.map(heading => {
+                    return (
+                      <li key={heading.id} style={{ marginLeft: `${heading.level - 2}em` }}>
+                        <a href={`#${heading.id}`}>{heading.text}</a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </nav>
             </div>
 
             <Post />
