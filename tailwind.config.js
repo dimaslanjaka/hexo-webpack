@@ -1,3 +1,15 @@
+const typographyShared = {
+  css: {
+    // codeblock are handled with highlight.js
+    // disable tailwind typography for codeblocks
+    pre: false,
+    code: false,
+    'pre code': false,
+    'code::before': false,
+    'code::after': false
+  }
+};
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -10,7 +22,16 @@ module.exports = {
     './node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}'
   ],
   theme: {
-    extend: {}
+    extend: {
+      typography: {
+        DEFAULT: typographyShared,
+        sm: typographyShared,
+        md: typographyShared,
+        lg: typographyShared,
+        xl: typographyShared,
+        '2xl': typographyShared
+      }
+    }
   },
   variants: {
     extend: {}
@@ -19,5 +40,5 @@ module.exports = {
   // tw-elements
   // plugins: [require('tw-elements-react/dist/plugin.cjs')]
   // flowbite
-  plugins: [require('flowbite/plugin')]
+  plugins: [require('@tailwindcss/typography'), require('flowbite/plugin')]
 };

@@ -89,7 +89,7 @@ export { FlowbiteLayout as Component };
 export function FlowbiteLayoutWithoutSidebar() {
   return (
     <FlowbiteLayout>
-      <div className="bg-white dark:bg-gray-900">
+      <div className="bg-white dark:bg-gray-900 prose dark:prose-invert max-w-none">
         <div className="mx-4 text-gray-900 dark:text-white">
           <Outlet />
         </div>
