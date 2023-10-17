@@ -61,13 +61,13 @@ export default function routeMap(route: Route) {
 
             <Post />
 
-            <div className="flex mt-4">
-              <PiTagSimpleFill className="mr-1" />
+            <div className="block mt-4 mb-4">
+              <PiTagSimpleFill className="mr-1 inline" />
               {meta.tags &&
                 meta.tags.map(tag => (
                   <div
                     key={'tag-' + tag}
-                    className="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300"
+                    className="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300 inline"
                   >
                     {tag}
                   </div>
@@ -76,7 +76,7 @@ export default function routeMap(route: Route) {
 
             {/* mix photos */}
             {meta.photos && (
-              <div className="py-4 h-56 sm:h-64 xl:h-80 2xl:h-96">
+              <div className="py-4 h-56 sm:h-64 xl:h-80 2xl:h-96 bg-white dark:bg-gray">
                 <FlowbiteCarousel data={meta.photos} height="100%" />
               </div>
             )}
