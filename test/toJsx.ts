@@ -151,6 +151,12 @@ async function toJsx(options: {
   });
   extractor.extractScriptTag();
 
+  // extract <ins/>
+  // extractor.on('before_extract_custom', obj => {
+  //   console.log(obj.outer);
+  // });
+  extractor.extractTag('ins');
+
   // re-assign extracted script and style tags html
   newHtml = extractor.getHtml();
 
@@ -197,10 +203,17 @@ async function toJsx(options: {
 
   // re-assign html with JSDOM inner body
   newHtml = dom.window.document.body.innerHTML;
+  // update extractor html
+  extractor.setHtml(newHtml);
 
   // close JSDOM instance
   // free memory
   dom.window.close();
+
+  // restore <ins/>
+  extractor.restoreTag('ins');
+  // re-assign restored <ins/>
+  newHtml = extractor.getHtml();
 
   // fix unclosed tags
   UNCLOSED_TAGS.forEach(tag => {
