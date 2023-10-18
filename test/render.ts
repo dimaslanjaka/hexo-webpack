@@ -146,9 +146,9 @@ export async function render(
     body = body.replace(mg[0], replacement);
   }
 
-  // extract script and style tag
-
+  // extract markdown codeblocks
   body = extractMarkdownCodeblock(body).html;
+  // extract script and style tag
   body = extractStyleTag(body).html;
   body = extractScriptTag(body).html;
 
@@ -294,7 +294,7 @@ export async function render(
   content = restoreMarkdownCodeblock(content);
 
   // dump
-  writefile(__dirname + '/tmp/render/after-restore.html', body);
+  // writefile(__dirname + '/tmp/render/after-restore.html', body);
 
   // write metadata to tmp/meta
   writefile(path.join(paths.tmp, 'meta', meta.id + '.json'), JSON.stringify(meta));
