@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import { Readable, Stream, Transform } from 'stream';
 import through2 from 'through2';
 
-let ONEXIT;
+let ONEXIT: (value: string, index?: number, array?: string[]) => void;
 
 class cache {
   cache: any = {};
@@ -96,7 +96,7 @@ class cache {
     stream.pipe(hash);
   }
 
-  onexit() {
+  save() {
     console.log('onExit', this.cache);
     if (this.changes) {
       try {
@@ -113,7 +113,7 @@ class cache {
   pipeOnExit() {
     const self = this;
     return through2.obj((vinyl, _enc, cb) => {
-      self.onexit();
+      self.save();
       cb(null, vinyl);
     });
   }
@@ -123,5 +123,5 @@ export default cache;
 
 export function gulpCache() {
   const c = new cache();
-  return c.start().on('end', c.onexit);
+  return c.start().on('end', c.save);
 }

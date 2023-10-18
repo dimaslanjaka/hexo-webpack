@@ -62,7 +62,7 @@ gulp.task('map', function () {
     .pipe(gulp.dest('./tmp/fake'))
     .on('end', () => {
       const w = writefile(dest, JSON.stringify(routes, null, 2));
-      cache.onexit();
+      cache.save();
       console.log('map stream ends', w.file);
     });
 });
