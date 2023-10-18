@@ -6,6 +6,8 @@ permalink: /shortcode-sample.html
 id: shortcode-sample
 ---
 
+{% githubCard user:dimaslanjaka %}
+
 {% codepen https://codepen.io/dimaslanjaka/pen/KowxjR %}
 
 {% blockquote @DevDocs https://twitter.com/devdocs/status/356095192085962752 %}

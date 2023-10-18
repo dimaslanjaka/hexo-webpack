@@ -11,5 +11,6 @@ render
   .then(() => build('thumbnails'))
   .then(() => build('embed-tiktok'))
   .then(() => build('javascript'))
+  .then(() => build('shortcodes'))
   .then(() => build('highlight.js'))
   .catch(console.error);
