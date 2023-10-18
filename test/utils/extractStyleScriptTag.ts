@@ -126,8 +126,9 @@ export interface Extractor {
 export class Extractor extends EventEmitter {
   styles: string[] = [];
   scripts: string[] = [];
-  html: string;
+  private html: string;
   getHtml = () => this.html;
+  setHtml = (str: string) => (this.html = str);
 
   constructor(html: string) {
     super();
