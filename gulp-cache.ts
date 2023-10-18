@@ -5,14 +5,25 @@ import through2 from 'through2';
 
 let ONEXIT: (value: string, index?: number, array?: string[]) => void;
 
+interface Opt {
+  /**
+   * cache file location
+   */
+  cacheFile: string;
+}
+
 class cache {
   cache: any = {};
-  options = {
-    cacheFile: __dirname + '/tmp/gulpCache'
-  };
+  options: Opt;
   changes = false;
 
-  constructor() {
+  constructor(options?: Opt) {
+    this.options = Object.assign(
+      {
+        cacheFile: __dirname + '/tmp/gulpCache'
+      },
+      options || {}
+    );
     // Load the cache file if any, synchronously.
     if (fs.existsSync(this.options.cacheFile)) this.fromFile(this.options.cacheFile);
   }
@@ -97,7 +108,7 @@ class cache {
   }
 
   save() {
-    console.log('onExit', this.cache);
+    // console.log('onExit', this.changes);
     if (this.changes) {
       try {
         this.toFile(this.options.cacheFile);

@@ -34,7 +34,7 @@ gulp.task('map', function () {
   const dest = __dirname + '/.cache/posts.json';
   const routes = [];
   const gc = require('./gulp-cache').default;
-  const cache = new gc();
+  const cache = new gc({ cacheFile: __dirname + '/.cache/gulp-map-task' });
   return gulp
     .src('**/*.md', {
       cwd: __dirname + '/source/_posts',
