@@ -25,6 +25,7 @@ source/_posts
 /routes.json
 /_config.json
 /src/posts
+/src/pages
 .cache
 
 # ignore source posts
