@@ -307,6 +307,22 @@ export class Extractor extends EventEmitter {
 
     return str;
   }
+
+  /**
+   * remove all replacement elements `<div htmlFor="(.*)" data-index="(.*)"></div>`
+   * @param str custom html?
+   * @returns
+   */
+  removeReplacements(str?: string) {
+    if (!str) str = this.html;
+    // eslint-disable-next-line prettier/prettier, no-useless-escape
+    const regex = new RegExp('<div htmlFor="(.*)" data-index="(.*)"><\\\/div>', 'gmi')
+    str = str.replace(regex, '');
+    // apply local html
+    this.html = str;
+
+    return str;
+  }
 }
 
 if (require.main === module) {
