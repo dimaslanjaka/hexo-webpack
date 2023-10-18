@@ -2,7 +2,7 @@ import Promise from 'bluebird';
 import { fs, path, writefile } from 'sbg-utility';
 import args from './config/cli';
 import paths from './config/paths';
-import { default as genRouteTest } from './test/genRoute';
+import genRoute from './test/genRoute';
 import { init } from './test/render';
 import { default as toJsx } from './test/toJsx';
 import { splitIntoChunks } from './test/utils/array';
@@ -21,7 +21,7 @@ export const noticeWebpack = () => fs.appendFile(__dirname + '/src/index.tsx', '
  * gulp route --random={boolean} --limit={number} --clean={boolean} --sort={boolean}
  * ```
  */
-export default async function genRoute(
+export default async function gulpGenRoute(
   options: Partial<{
     /**
      * filter by keywords (comma separated)
@@ -113,7 +113,7 @@ export default async function genRoute(
   console.log('total post', posts.length);
 
   const processPost = async (postPath: string) => {
-    const route = await genRouteTest(postPath);
+    const route = await genRoute(postPath);
     try {
       const jsx = await toJsx({
         body: route.body,
