@@ -1,3 +1,7 @@
+import Bluebird from 'bluebird';
+import { fs, path, writefile } from 'sbg-utility';
+import { fixtures, tmp } from '.';
+
 let styleCounter = 0;
 const globalStyles = [] as string[];
 
@@ -13,12 +17,32 @@ export default function extractStyleTag(str: string) {
 
     // delete style tag
     str = str.replace(m[0], `<div htmlFor="style" data-index="${styleCounter}"></div>`);
-    localStyles.push(m[2]);
-    globalStyles.push(m[2]);
+    localStyles.push(m[0]);
+    globalStyles.push(m[0]);
 
     // increase counter
     styleCounter++;
   }
+
+  if (regex.test(str)) {
+    console.log('extract script deeper');
+    // extract deeper
+    str = str.replace(regex, outer => {
+      // push outer script
+      localStyles.push(outer);
+      globalStyles.push(outer);
+
+      // capture pushed outer
+      const replacement = `<div htmlFor="style" data-index="${scriptCounter}"></div>`;
+
+      // increase counter
+      styleCounter++;
+
+      // delete style tag
+      return replacement;
+    });
+  }
+
   return { extracted: localStyles, html: str };
 }
 
@@ -29,7 +53,7 @@ export function restoreStyleTag(str: string) {
   // const regex = new RegExp('<div htmlFor="(.*)" data-index="(.*)"><\\\/div>', 'gmi')
 
   return str.replace(regex, function (_, index) {
-    return '<style>' + globalStyles[index] + '</style>';
+    return globalStyles[index];
   });
 }
 
@@ -37,9 +61,9 @@ let scriptCounter = 0;
 const globalScripts = [] as string[];
 export function extractScriptTag(str: string) {
   const regex = /(<script\b[^>]*>)([\s\S]*?)(<\/script\b[^>]*>)/gim;
-  let m: RegExpExecArray | null;
   const localScripts = [] as string[];
 
+  let m: RegExpExecArray | null;
   while ((m = regex.exec(str)) !== null) {
     // This is necessary to avoid infinite loops with zero-width matches
     if (m.index === regex.lastIndex) {
@@ -57,6 +81,25 @@ export function extractScriptTag(str: string) {
     scriptCounter++;
   }
 
+  if (regex.test(str)) {
+    console.log('extract script deeper');
+    // extract deeper
+    str = str.replace(regex, outer => {
+      // push outer script
+      localScripts.push(outer);
+      globalScripts.push(outer);
+
+      // capture pushed outer
+      const replacement = `<div htmlFor="script" data-index="${scriptCounter}"></div>`;
+
+      // increase counter
+      scriptCounter++;
+
+      // delete style tag
+      return replacement;
+    });
+  }
+
   return { extracted: localScripts, html: str };
 }
 
@@ -72,77 +115,52 @@ export function restoreScriptTag(str: string) {
 }
 
 if (require.main === module) {
-  const html = `
-  <style>[id*="questions-filter"] li:not([data-id]) {
-    display: none;
-  }
+  let html = fs.readFileSync(fixtures('toJsx.html'), 'utf-8');
+  const test = async function () {
+    const { default: Axios } = await import('axios');
+    const { setupCache } = await import('axios-cache-interceptor');
+    const axios = setupCache(Axios);
+    const urls = Bluebird.all([
+      'https://gist.githubusercontent.com/tatygrassini/3055168/raw/7cba04ea8d606df967e789f562cf353ece947c20/google_adsense%2520250x300.html',
+      'https://gist.githubusercontent.com/JarvusChen/7ba1546cfb89616cfae71dabce2910ee/raw/d918fb308fd33f5ef48efc740e282c699835ccbf/AdSense.html'
+    ]);
+    await urls.map(async url => {
+      const { data } = await axios.get(url);
+      html += '\n\n\n' + data;
+    });
+    const dump_before = writefile(tmp(path.basename(__filename, path.extname(__filename)), 'before.html'), html);
+    console.log('raw original html', dump_before.file);
 
-  [id*="questions"] li {
-    display: block;
-    /*text-transform: lowercase;*/
-  }
+    let extract = extractScriptTag(html);
+    extract = extractStyleTag(extract.html);
 
-  [id*="questions"] li:first-letter {
-    text-transform: uppercase;
-  }
+    const dump_extract = writefile(
+      tmp(path.basename(__filename, path.extname(__filename)), 'after-extract.html'),
+      extract.html
+    );
+    console.log(
+      'extracted html should not have style tags',
+      !/(<style\b[^>]*>)([\s\S]*?)(<\/style\b[^>]*>)/gim.test(extract.html)
+    );
+    console.log(
+      'extracted html should not have script tags',
+      !/(<script\b[^>]*>)([\s\S]*?)(<\/script\b[^>]*>)/gim.test(extract.html)
+    );
+    console.log('extracted result', dump_extract.file);
 
-  input[type="text"] {
-    width: 90%;
-    border: 2px solid #aaa;
-    border-radius: 4px;
-    margin: 8px 0;
-    outline: none;
-    padding: 8px;
-    box-sizing: border-box;
-    transition: 0.3s;
-    display: inline-block;
-  }
+    let restore = restoreStyleTag(extract.html);
+    restore = restoreScriptTag(restore);
+    const dump_restore = writefile(
+      tmp(path.basename(__filename, path.extname(__filename)), 'after-restore.html'),
+      restore
+    );
 
-  input[type="text"]:focus {
-    border-color: dodgerBlue;
-    box-shadow: 0 0 8px 0 dodgerBlue;
-  }
-  </style>
-  <script>console.clear();
+    console.log(
+      'restored html should not have replacement tags',
+      !/htmlFor=["'](script|style)["'] data-index/gim.test(restore)
+    );
+    console.log('restored result', dump_restore.file);
+  };
 
-  /* eslint-disable no-undef */
-  /* eslint-disable no-prototype-builtins */
-  /* eslint-disable no-inner-declarations */
-
-  if (location.host == 'cdpn.io') {
-    console.clear();
-
-    function rangeAlphabetic(start, stop) {
-    var result = [];
-    for (
-      var idx = start.charCodeAt(0), end = stop.charCodeAt(0);
-      idx <= end;
-      ++idx
-    ) {
-      result.push(String.fromCharCode(idx));
-    }
-    return result;
-    }
-
-    let aZ = rangeAlphabetic('a', 'z')
-    .concat(rangeAlphabetic('A', 'Z'))
-    .filter(function (el) {
-      return el != null;
-    }); // a-zA-Z array
-
-    // automated test
-    setTimeout(function () {
-    let inputSearch = document.getElementById('search-questions');
-    var keyword = aZ[Math.floor(Math.random() * aZ.length)];
-    inputSearch.value = keyword;
-    inputSearch.dispatchEvent(new Event('keyup'));
-    }, 3000);
-  }
-  </script>
-  `;
-  let extract = extractStyleTag(html);
-  extract = extractScriptTag(extract.html);
-  let restore = restoreStyleTag(extract.html);
-  restore = restoreScriptTag(restore);
-  console.log(restore.trim() === html.trim());
+  test();
 }
