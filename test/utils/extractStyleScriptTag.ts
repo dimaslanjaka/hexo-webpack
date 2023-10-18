@@ -125,6 +125,7 @@ export interface Extractor {
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class Extractor extends EventEmitter {
   styles: string[] = [];
+  scripts: string[] = [];
   html: string;
   getHtml = () => this.html;
 
@@ -133,6 +134,11 @@ export class Extractor extends EventEmitter {
     this.html = html;
   }
 
+  /**
+   * extract style tags
+   * @param str custom html?
+   * @returns
+   */
   extractStyleTag(str?: string) {
     if (!str) str = this.html;
     const self = this;
@@ -160,7 +166,7 @@ export class Extractor extends EventEmitter {
       str = str.replace(regex, outer => {
         // push outer script
         localStyles.push(outer);
-        globalStyles.push(outer);
+        self.styles.push(outer);
         self.emit('before_extract_style', outer);
 
         // capture pushed outer
@@ -180,6 +186,11 @@ export class Extractor extends EventEmitter {
     return { extracted: localStyles, html: str };
   }
 
+  /**
+   * extract script tags
+   * @param str custom html?
+   * @returns
+   */
   extractScriptTag(str?: string) {
     if (!str) str = this.html;
     const self = this;
@@ -196,7 +207,7 @@ export class Extractor extends EventEmitter {
       // push outer script
       this.emit('before_extract_script', m[0]);
       localScripts.push(m[0]);
-      globalScripts.push(m[0]);
+      this.scripts.push(m[0]);
 
       // delete style tag
       str = str.replace(m[0], `<div htmlFor="script" data-index="${scriptCounter}"></div>`);
@@ -211,7 +222,7 @@ export class Extractor extends EventEmitter {
         // push outer script
         self.emit('before_extract_script', outer);
         localScripts.push(outer);
-        globalScripts.push(outer);
+        self.scripts.push(outer);
 
         // capture pushed outer
         const replacement = `<div htmlFor="script" data-index="${scriptCounter}"></div>`;
@@ -229,6 +240,15 @@ export class Extractor extends EventEmitter {
 
     return { extracted: localScripts, html: str };
   }
+
+  /**
+   * extract custom tags
+   * @param tagName tagname to extracted
+   * @param str
+   */
+  // extractTag(tagName: string, str?: string) {
+  //   //
+  // }
 }
 
 if (require.main === module) {
