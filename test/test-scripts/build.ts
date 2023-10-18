@@ -24,7 +24,7 @@ process.once('exit', () => {
 });
 
 const routes = [] as Route[];
-const folders = ['src/posts', 'tmp/meta', 'tmp/static', 'public/post-images'];
+const folders = ['src/posts', 'tmp/meta', 'tmp/static', 'public/post-images', 'src/pages', 'test/tmp'];
 
 /** prune auto generated folders */
 export const pruneFolders = () =>
