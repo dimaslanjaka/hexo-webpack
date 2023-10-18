@@ -4,6 +4,7 @@ import { fs, md5, path, writefile } from 'sbg-utility';
 import prettierFormat from './format';
 import { fixtures, tmp } from './utils';
 import { extractMarkdownCodeblock, restoreMarkdownCodeblockAsHtml } from './utils/extractMarkdownCodeblock';
+import { Extractor } from './utils/extractStyleScriptTag';
 
 // inspired by
 // https://github.com/probablyup/markdown-to-jsx/blob/main/index.tsx#L266
@@ -59,9 +60,6 @@ const ATTRIBUTE_TO_JSX_PROP_MAP = JSX_ATTRIBUTES.reduce(
   { for: 'htmlFor', class: 'className', defaultvalue: 'defaultValue' }
 );
 
-const re_script_tag = /<script(\b[^>]*)>([\s\S]*?)<\/script\b[^>]*>/gim;
-const re_style_tag = /<style\b[^>]*>([\s\S]*?)<\/style\b[^>]*>/gim;
-
 const UNCLOSED_TAGS = [
   'area',
   'base',
@@ -110,84 +108,51 @@ async function toJsx(options: {
 
   // writefile(__dirname + '/tmp/toJsx/after-extract-codeblock.html', newHtml);
 
+  const extractor = new Extractor(newHtml);
+
   // extract style tags
-  let styleTagMatch: RegExpExecArray | null;
-  while ((styleTagMatch = re_style_tag.exec(newHtml)) !== null) {
-    // delete style tag
-    newHtml = newHtml.replace(styleTagMatch[0], '');
-    _styles.push(styleTagMatch[1]);
-  }
+  extractor.on('before_extract_style', styleTag => {
+    const regex = /<style\b[^>]*>([\s\S]*?)<\/style\b[^>]*>/gim;
+    _styles.push(
+      styleTag.replace(regex, (_outer, inner: string) => {
+        return inner;
+      })
+    );
+  });
+  extractor.extractStyleTag();
 
   // extract script tags
   const allScriptSrc: string[] = [];
-  let hasScript = re_script_tag.test(newHtml);
-  let scriptTagMatch: null | RegExpExecArray;
-  while ((scriptTagMatch = re_script_tag.exec(newHtml)) !== null) {
-    // This is necessary to avoid infinite loops with zero-width matches
-    if (scriptTagMatch.index === re_script_tag.lastIndex) {
-      re_script_tag.lastIndex++;
-    }
-    // console.log('script', scriptTagMatch[1], scriptTagMatch[2]);
-    // delete script tag
-    newHtml = newHtml.replace(scriptTagMatch[0], '');
-    const src = ((scriptTagMatch[1] || '').match(/src=['"](.*)['"]/) || [])[1] || '';
-    let inner = (scriptTagMatch[2] || '').trim().length > 0 ? scriptTagMatch[2] : '';
-    // call src script dynamically
-    // skip duplicated script
-    if (src.length > 0 && !allScriptSrc.includes(src)) {
-      allScriptSrc.push(src);
-      inner +=
-        '\n' +
-        `
-(()=>{
-const script = document.createElement('script');
-script.src = '${src}';
-document.body.appendChild(script);
-})();
-              `.trim() +
-        '\n';
-    }
 
-    _scripts.push(inner);
-  }
+  extractor.on('before_extract_script', scriptTag => {
+    const regex = /<script(\b[^>]*)>([\s\S]*?)<\/script\b[^>]*>/gim;
+    _scripts.push(
+      scriptTag.replace(regex, (_outer, attr: string, inner: string) => {
+        let src = '';
+        if (attr && attr.length > 0) {
+          src = (attr.match(/src=['"](.*)['"]/) || [])[1] || '';
+        }
+        if (src.length > 0 && !allScriptSrc.includes(src)) {
+          allScriptSrc.push(src);
+          inner =
+            '\n' +
+            `
+  (()=>{
+  const script = document.createElement('script');
+  script.src = '${src}';
+  document.body.appendChild(script);
+  })();
+                `.trim() +
+            '\n';
+        }
+        return inner;
+      })
+    );
+  });
+  extractor.extractScriptTag();
 
-  // double check extract script tags
-  hasScript = re_script_tag.test(newHtml);
-  if (hasScript && _scripts.length === 0) {
-    const regex = /(<script\b[^>]*>)([\s\S]*?)(<\/script\b[^>]*>)/gim;
-    let m: RegExpExecArray | null;
-    while ((m = regex.exec(newHtml)) !== null) {
-      // This is necessary to avoid infinite loops with zero-width matches
-      if (m.index === regex.lastIndex) {
-        regex.lastIndex++;
-      }
-      let inner = (m[2] || '').trim().length > 0 ? m[2] : '';
-      let src = '';
-      if (m[1] && m[1].trim().length > 0) {
-        src = ((m[1] || '').match(/src=['"](.*)['"]/) || [])[1] || '';
-      }
-      // call src script dynamically
-      // skip duplicated script
-      if (src.length > 0 && !allScriptSrc.includes(src)) {
-        allScriptSrc.push(src);
-        inner +=
-          '\n' +
-          `
-(()=>{
-const script = document.createElement('script');
-script.src = '${src}';
-document.body.appendChild(script);
-})();
-              `.trim() +
-          '\n';
-      }
-
-      // delete script tag
-      newHtml = newHtml.replace(m[0], '');
-
-      _scripts.push(inner);
-    }
-  }
+  // re-assign extracted script and style tags html
+  newHtml = extractor.getHtml();
 
   // initialize JSDOM
   // prepare modification
