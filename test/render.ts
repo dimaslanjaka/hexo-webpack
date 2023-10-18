@@ -1,5 +1,5 @@
 import Hexo from 'hexo';
-import hpp from 'hexo-post-parser';
+import hpp, { parsePermalink } from 'hexo-post-parser';
 import { gistEmbedTagRegister } from 'hexo-shortcodes/dist/gist';
 import { githubEmbedTagRegister } from 'hexo-shortcodes/dist/github';
 import { shortcodeParser, shortcodeParserResultToArrayAttrParam } from 'hexo-shortcodes/dist/utils';
@@ -270,8 +270,19 @@ export async function render(
   // process meta photos
   meta.photos = meta.photos.map(imgProcess);
   if (!meta.permalink) {
-    meta.permalink = '/' + meta.id;
-    console.error('meta permalink empty', 'settled to', meta.permalink);
+    let perm = path.toUnix(
+      parsePermalink(source, {
+        url: _config.url,
+        title: _config.title,
+        date: String(meta.date || new Date()),
+        permalink: _config.permalink
+      })
+    );
+    perm = perm.replace(path.join(paths.cwd, _config.source_dir, '_posts'), '');
+    perm = perm.replace(path.join(paths.cwd, _config.source_dir), '');
+    // meta.permalink = '/' + meta.id;
+    meta.permalink = perm;
+    console.error('meta permalink empty', 'settled to', perm);
   }
 
   // restore script and style tag
