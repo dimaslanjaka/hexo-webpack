@@ -212,7 +212,13 @@ async function toJsx(options: {
 
   // restore <ins/>
   extractor.restoreTag('ins');
-  // re-assign restored <ins/>
+
+  // remove all replacement elements
+  // cuz already moved and processed from this function
+  // so no need to keep the unused elements from jsx
+  extractor.removeReplacements();
+
+  // re-assign restored elements
   newHtml = extractor.getHtml();
 
   // fix unclosed tags
