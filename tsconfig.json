@@ -52,7 +52,9 @@
     "**/assets/js/gijgo*.js",
     "**/packages/**",
     "**/src/posts/**",
+    "**/src/pages/**",
     "**/src-posts/**",
-    "**/source/_posts/**"
+    "**/source/_posts/**",
+    "**/tmp/**"
   ]
 }
