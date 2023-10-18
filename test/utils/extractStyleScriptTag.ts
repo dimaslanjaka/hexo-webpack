@@ -119,6 +119,7 @@ export function restoreScriptTag(str: string) {
 export interface Extractor {
   on(event: 'before_extract_style', listener: (outerHTML: string) => void): this;
   on(event: 'before_extract_script', listener: (outerHTML: string) => void): this;
+  on(event: 'before_extract_custom', listener: (obj: { outer: string; inner: string; attr: string }) => void): this;
   on(event: string, listener: (...args: any[]) => any): this;
 }
 
@@ -126,8 +127,9 @@ export interface Extractor {
 export class Extractor extends EventEmitter {
   styles: string[] = [];
   scripts: string[] = [];
-  html: string;
+  private html: string;
   getHtml = () => this.html;
+  setHtml = (str: string) => (this.html = str);
 
   constructor(html: string) {
     super();
@@ -141,7 +143,6 @@ export class Extractor extends EventEmitter {
    */
   extractStyleTag(str?: string) {
     if (!str) str = this.html;
-    const self = this;
     const regex = /(<style\b[^>]*>)([\s\S]*?)(<\/style\b[^>]*>)/gim;
     let m: RegExpExecArray | null;
     const localStyles = [] as string[];
@@ -166,8 +167,8 @@ export class Extractor extends EventEmitter {
       str = str.replace(regex, outer => {
         // push outer script
         localStyles.push(outer);
-        self.styles.push(outer);
-        self.emit('before_extract_style', outer);
+        this.styles.push(outer);
+        this.emit('before_extract_style', outer);
 
         // capture pushed outer
         const replacement = `<div htmlFor="style" data-index="${scriptCounter}"></div>`;
@@ -193,7 +194,6 @@ export class Extractor extends EventEmitter {
    */
   extractScriptTag(str?: string) {
     if (!str) str = this.html;
-    const self = this;
     const regex = /(<script\b[^>]*>)([\s\S]*?)(<\/script\b[^>]*>)/gim;
     const localScripts = [] as string[];
 
@@ -218,11 +218,11 @@ export class Extractor extends EventEmitter {
 
     if (regex.test(str)) {
       // extract deeper
-      str = str.replace(regex, function (outer) {
+      str = str.replace(regex, outer => {
         // push outer script
-        self.emit('before_extract_script', outer);
+        this.emit('before_extract_script', outer);
         localScripts.push(outer);
-        self.scripts.push(outer);
+        this.scripts.push(outer);
 
         // capture pushed outer
         const replacement = `<div htmlFor="script" data-index="${scriptCounter}"></div>`;
@@ -241,14 +241,72 @@ export class Extractor extends EventEmitter {
     return { extracted: localScripts, html: str };
   }
 
+  customTags = {} as {
+    [tagName: string]: { counter: number; values: { outer: string; attr: string; inner: string }[] };
+  };
+
   /**
    * extract custom tags
    * @param tagName tagname to extracted
-   * @param str
+   * @param str custom html?
    */
-  // extractTag(tagName: string, str?: string) {
-  //   //
-  // }
+  extractTag(tagName: string, str?: string) {
+    if (!str) str = this.html;
+    const localTags = [] as {
+      outer: string;
+      attr: string;
+      inner: string;
+    }[];
+    // assign empty array when not exist
+    if (!this.customTags[tagName]) this.customTags[tagName] = { counter: 0, values: [] };
+
+    // eslint-disable-next-line prettier/prettier, no-useless-escape
+    const regex = new RegExp(`(<${tagName}(\\b[^>]*)>)([\\s\\S]*?)(<\\\/${tagName}\\b[^>]*>)`, 'gmi');
+    str = str.replace(regex, (outer, attr, inner) => {
+      this.customTags[tagName].values.push({ outer, attr, inner });
+      localTags.push({ outer, attr, inner });
+      this.emit('before_extract_custom', { outer, attr, inner });
+      // capture pushed outer
+      const replacement = `<div htmlFor="${tagName}" data-index="${this.customTags[tagName].counter}"></div>`;
+
+      // increase counter
+      this.customTags[tagName].counter++;
+
+      // delete style tag
+      return replacement;
+    });
+
+    // modify local html
+    this.html = str;
+
+    return { extracted: localTags, html: str };
+  }
+
+  /**
+   * restore custom tags
+   * @param tagName
+   * @param str custom html?
+   */
+  restoreTag(tagName: string, str?: string) {
+    if (!str) str = this.html;
+    if (!this.customTags[tagName]) {
+      throw new Error(
+        `tag name ${tagName} never extracted, please extract ${tagName} with \`extractTag('${tagName}')\` before restoring`
+      );
+    }
+
+    // eslint-disable-next-line prettier/prettier, no-useless-escape
+    const regex = new RegExp(`<div htmlFor="${tagName}" data-index="(.*)"><\\\/div>`, 'gmi');
+
+    str = str.replace(regex, (_, index) => {
+      return this.customTags[tagName].values[index].outer;
+    });
+
+    // modify local html
+    this.html = str;
+
+    return str;
+  }
 }
 
 if (require.main === module) {
