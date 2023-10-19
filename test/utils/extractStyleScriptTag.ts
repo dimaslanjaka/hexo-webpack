@@ -186,6 +186,25 @@ export class Extractor extends EventEmitter {
   }
 
   /**
+   * restore style tags
+   * @param str custom html?
+   * @returns
+   */
+  restoreStyleTag(str?: string) {
+    if (!str) str = this.html;
+    const regex = /<div htmlFor="style" data-index="(.*)"><\/div>/gim;
+
+    str = str.replace(regex, (_, index) => {
+      return this.styles[index];
+    });
+
+    // modify local html
+    this.html = str;
+
+    return str;
+  }
+
+  /**
    * extract script tags
    * @param str custom html?
    * @returns
@@ -237,6 +256,20 @@ export class Extractor extends EventEmitter {
     this.html = str;
 
     return { extracted: localScripts, html: str };
+  }
+
+  restoreScriptTag(str?: string) {
+    if (!str) str = this.html;
+    const regex = /<div htmlFor="script" data-index="(.*)"><\/div>/gim;
+
+    str = str.replace(regex, (_, index) => {
+      return this.scripts[index];
+    });
+
+    // modify local html
+    this.html = str;
+
+    return str;
   }
 
   customTags = {} as {
