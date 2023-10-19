@@ -6,6 +6,7 @@ const yaml = require('yaml');
 const gch = require('git-command-helper');
 /** @type {typeof import('./_config.json')} */
 const config = yaml.parse(fs.readFileSync(__dirname + '/_config.yml', 'utf-8'));
+const args = require('./config/cli');
 
 const configExcludes = array_unique([
   '.gitignore',
@@ -72,7 +73,10 @@ gulp.task('watch-build', () => {
       building = false;
     }
   };
-  const watcher = gulp.watch(['src/**/*.*', 'public/**/*.*', 'source/**/*.*', 'config/**/*.*', 'html/**/*.*'], {
+  let patterns = ['src/**/*.*', 'public/**/*.*', 'source/**/*.*', 'config/**/*.*', 'html/**/*.*'];
+  // change watch files by -p=patterns comma separated
+  if (args.p) patterns = String(args.p).split(',');
+  const watcher = gulp.watch(patterns, {
     ignored: ['**/node_modules', '**/posts/**', '**/_data/**', '**/_posts/**', '**/post-images/**', '**/tmp/**']
   });
   watcher.on('change', (filename, _stat) => {
