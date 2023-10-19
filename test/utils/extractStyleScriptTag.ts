@@ -373,33 +373,36 @@ if (require.main === module) {
     const dump_before = writefile(tmp(path.basename(__filename, path.extname(__filename)), 'before.html'), html);
     console.log('raw original html', dump_before.file);
 
-    let extract = extractScriptTag(html);
-    extract = extractStyleTag(extract.html);
+    const instance = new Extractor(html);
+
+    instance.extractStyleTag();
+    instance.extractScriptTag();
 
     const dump_extract = writefile(
       tmp(path.basename(__filename, path.extname(__filename)), 'after-extract.html'),
-      extract.html
+      instance.getHtml()
     );
     console.log(
       'extracted html should not have style tags',
-      !/(<style\b[^>]*>)([\s\S]*?)(<\/style\b[^>]*>)/gim.test(extract.html)
+      !/(<style\b[^>]*>)([\s\S]*?)(<\/style\b[^>]*>)/gim.test(instance.getHtml())
     );
     console.log(
       'extracted html should not have script tags',
-      !/(<script\b[^>]*>)([\s\S]*?)(<\/script\b[^>]*>)/gim.test(extract.html)
+      !/(<script\b[^>]*>)([\s\S]*?)(<\/script\b[^>]*>)/gim.test(instance.getHtml())
     );
     console.log('extracted result', dump_extract.file);
 
-    let restore = restoreStyleTag(extract.html);
-    restore = restoreScriptTag(restore);
+    instance.restoreStyleTag();
+    instance.restoreScriptTag();
+
     const dump_restore = writefile(
       tmp(path.basename(__filename, path.extname(__filename)), 'after-restore.html'),
-      restore
+      instance.getHtml()
     );
 
     console.log(
       'restored html should not have replacement tags',
-      !/htmlFor=["'](script|style)["'] data-index/gim.test(restore)
+      !/htmlFor=["'](script|style)["'] data-index/gim.test(instance.getHtml())
     );
     console.log('restored result', dump_restore.file);
   };
