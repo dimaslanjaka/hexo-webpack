@@ -339,3 +339,31 @@ title: mixed html and markdown
   })();
 </script>
 ```
+
+<!-- Channel Responsive -->
+<ins
+  class="adsbygoogle"
+  style="display: block"
+  data-ad-client="ca-pub-7975270895217217"
+  data-ad-slot="2600604346"
+  data-ad-format="auto"
+></ins>
+
+<!-- Channel Responsive -->
+<ins
+  class="adsbygoogle"
+  style="display: block"
+  data-ad-client="ca-pub-7975270895217217"
+  data-ad-slot="2600604346"
+  data-ad-format="auto"
+></ins>
+
+<!-- Channel Responsive -->
+<ins
+  class="adsbygoogle"
+  style="display: block"
+  data-ad-client="ca-pub-7975270895217217"
+  data-ad-slot="2600604346"
+  data-ad-format="auto"
+></ins>
+
