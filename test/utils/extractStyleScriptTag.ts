@@ -3,116 +3,6 @@ import { fs, path, writefile } from 'sbg-utility';
 import { fixtures, tmp } from '.';
 import EventEmitter from 'events';
 
-let styleCounter = 0;
-const globalStyles = [] as string[];
-
-export default function extractStyleTag(str: string) {
-  const regex = /(<style\b[^>]*>)([\s\S]*?)(<\/style\b[^>]*>)/gim;
-  let m: RegExpExecArray | null;
-  const localStyles = [] as string[];
-  while ((m = regex.exec(str)) !== null) {
-    // This is necessary to avoid infinite loops with zero-width matches
-    if (m.index === regex.lastIndex) {
-      regex.lastIndex++;
-    }
-
-    // delete style tag
-    str = str.replace(m[0], `<div htmlFor="style" data-index="${styleCounter}"></div>`);
-    localStyles.push(m[0]);
-    globalStyles.push(m[0]);
-
-    // increase counter
-    styleCounter++;
-  }
-
-  if (regex.test(str)) {
-    // extract deeper
-    str = str.replace(regex, outer => {
-      // push outer script
-      localStyles.push(outer);
-      globalStyles.push(outer);
-
-      // capture pushed outer
-      const replacement = `<div htmlFor="style" data-index="${scriptCounter}"></div>`;
-
-      // increase counter
-      styleCounter++;
-
-      // delete style tag
-      return replacement;
-    });
-  }
-
-  return { extracted: localStyles, html: str };
-}
-
-export function restoreStyleTag(str: string) {
-  const regex = /<div htmlFor="style" data-index="(.*)"><\/div>/gim;
-
-  // Alternative syntax using RegExp constructor
-  // const regex = new RegExp('<div htmlFor="(.*)" data-index="(.*)"><\\\/div>', 'gmi')
-
-  return str.replace(regex, function (_, index) {
-    return globalStyles[index];
-  });
-}
-
-let scriptCounter = 0;
-const globalScripts = [] as string[];
-export function extractScriptTag(str: string) {
-  const regex = /(<script\b[^>]*>)([\s\S]*?)(<\/script\b[^>]*>)/gim;
-  const localScripts = [] as string[];
-
-  let m: RegExpExecArray | null;
-  while ((m = regex.exec(str)) !== null) {
-    // This is necessary to avoid infinite loops with zero-width matches
-    if (m.index === regex.lastIndex) {
-      regex.lastIndex++;
-    }
-
-    // push outer script
-    localScripts.push(m[0]);
-    globalScripts.push(m[0]);
-
-    // delete style tag
-    str = str.replace(m[0], `<div htmlFor="script" data-index="${scriptCounter}"></div>`);
-
-    // increase counter
-    scriptCounter++;
-  }
-
-  if (regex.test(str)) {
-    // extract deeper
-    str = str.replace(regex, outer => {
-      // push outer script
-      localScripts.push(outer);
-      globalScripts.push(outer);
-
-      // capture pushed outer
-      const replacement = `<div htmlFor="script" data-index="${scriptCounter}"></div>`;
-
-      // increase counter
-      scriptCounter++;
-
-      // delete style tag
-      return replacement;
-    });
-  }
-
-  return { extracted: localScripts, html: str };
-}
-
-export function restoreScriptTag(str: string) {
-  const regex = /<div htmlFor="script" data-index="(.*)"><\/div>/gim;
-
-  // Alternative syntax using RegExp constructor
-  // const regex = new RegExp('<div htmlFor="(.*)" data-index="(.*)"><\\\/div>', 'gmi')
-
-  return str.replace(regex, function (_, index) {
-    return globalScripts[index];
-  });
-}
-
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface Extractor {
   on(event: 'before_extract_style', listener: (outerHTML: string) => void): this;
@@ -124,7 +14,9 @@ export interface Extractor {
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class Extractor extends EventEmitter {
   styles: string[] = [];
+  styleCounter = 0;
   scripts: string[] = [];
+  scriptCounter = 0;
   private html: string;
   getHtml = () => this.html;
   setHtml = (str: string) => (this.html = str);
@@ -151,13 +43,13 @@ export class Extractor extends EventEmitter {
       }
 
       // delete style tag
-      str = str.replace(m[0], `<div htmlFor="style" data-index="${styleCounter}"></div>`);
+      str = str.replace(m[0], `<div htmlFor="style" data-index="${this.styleCounter}"></div>`);
       this.emit('before_extract_style', m[0]);
       localStyles.push(m[0]);
       this.styles.push(m[0]);
 
       // increase counter
-      styleCounter++;
+      this.styleCounter++;
     }
 
     if (regex.test(str)) {
@@ -169,10 +61,10 @@ export class Extractor extends EventEmitter {
         this.emit('before_extract_style', outer);
 
         // capture pushed outer
-        const replacement = `<div htmlFor="style" data-index="${scriptCounter}"></div>`;
+        const replacement = `<div htmlFor="style" data-index="${this.scriptCounter}"></div>`;
 
         // increase counter
-        styleCounter++;
+        this.styleCounter++;
 
         // delete style tag
         return replacement;
@@ -227,10 +119,10 @@ export class Extractor extends EventEmitter {
       this.scripts.push(m[0]);
 
       // delete style tag
-      str = str.replace(m[0], `<div htmlFor="script" data-index="${scriptCounter}"></div>`);
+      str = str.replace(m[0], `<div htmlFor="script" data-index="${this.scriptCounter}"></div>`);
 
       // increase counter
-      scriptCounter++;
+      this.scriptCounter++;
     }
 
     if (regex.test(str)) {
@@ -242,10 +134,10 @@ export class Extractor extends EventEmitter {
         this.scripts.push(outer);
 
         // capture pushed outer
-        const replacement = `<div htmlFor="script" data-index="${scriptCounter}"></div>`;
+        const replacement = `<div htmlFor="script" data-index="${this.scriptCounter}"></div>`;
 
         // increase counter
-        scriptCounter++;
+        this.scriptCounter++;
 
         // delete style tag
         return replacement;
