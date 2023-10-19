@@ -3,21 +3,16 @@ import hpp, { parsePermalink } from 'hexo-post-parser';
 import { gistEmbedTagRegister } from 'hexo-shortcodes/dist/gist';
 import { githubEmbedTagRegister } from 'hexo-shortcodes/dist/github';
 import { shortcodeParser, shortcodeParserResultToArrayAttrParam } from 'hexo-shortcodes/dist/utils';
+import safelinkify from 'safelinkify';
 import { fs, md5, path, writefile } from 'sbg-utility';
 import { parse } from 'yaml';
 import paths from '../config/paths';
 import fixHtml from './fixHtml';
 import { fixtures, fromRoot, tmp } from './utils';
 import { extractMarkdownCodeblock, restoreMarkdownCodeblock } from './utils/extractMarkdownCodeblock';
-import extractStyleTag, {
-  Extractor,
-  extractScriptTag,
-  restoreScriptTag,
-  restoreStyleTag
-} from './utils/extractStyleScriptTag';
+import { Extractor } from './utils/extractStyleScriptTag';
 import { default as htmlImg2base64 } from './utils/img2base64';
 import imgfinder from './utils/imgfinder';
-import safelinkify from 'safelinkify';
 
 // test render single post
 // need `sbg post copy`
@@ -153,11 +148,12 @@ export async function render(
 
   // extract markdown codeblocks
   body = extractMarkdownCodeblock(body).html;
-  // extract script and style tag
-  body = extractStyleTag(body).html;
-  body = extractScriptTag(body).html;
-  // extract <ins/>
+
   const extractor = new Extractor(body);
+  // extract script and style tag
+  extractor.extractStyleTag();
+  extractor.extractScriptTag();
+  // extract <ins/>
   extractor.extractTag('ins');
   // re-assign extracted tags result
   body = extractor.getHtml();
@@ -306,12 +302,13 @@ export async function render(
   extractor.setHtml(content);
   // restore <ins/>
   extractor.restoreTag('ins');
-  // re-assign restored tags
-  content = extractor.getHtml();
 
   // restore script and style tag
-  content = restoreStyleTag(content);
-  content = restoreScriptTag(content);
+  extractor.restoreStyleTag();
+  extractor.restoreScriptTag();
+
+  // re-assign restored tags
+  content = extractor.getHtml();
 
   const contentBeforeRestoreCodeblock = content;
   // restore markdown codeblock
@@ -331,13 +328,14 @@ export default { render, init };
 
 if (require.main === module) {
   (async () => {
+    const yaml = await import('yaml');
     await init();
     const source = fixtures('mixed.md');
     const start = Date.now();
     const { content, hexo: __, ...meta } = await render(source);
     const end = Date.now();
     console.log(`Execution time: ${end - start} ms`);
-    const yaml = await import('yaml');
+    console.log('render result should not have replacement tags', !/htmlFor=["'].*["'] data-index/gim.test(content));
     const metadata = yaml.stringify(meta);
     const ml = writefile(tmp('render/metadata.yml'), metadata);
     const cl = writefile(tmp('render/content.html'), content);
