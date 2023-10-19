@@ -13,6 +13,8 @@ const config = yaml.parse(fs.readFileSync(__dirname + '/_config.yml', 'utf-8'));
 const { modifyConfigJson } = require('./config/utils');
 const { default: genR, noticeWebpack } = require('./gulpfile.genr');
 require('./gulpfile.build');
+// require('./gulpfile.page');
+require('./gulpfile.server');
 
 // notice webpack file changes
 // by add space to ./src/index.tsx
