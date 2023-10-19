@@ -26,7 +26,6 @@ export default function extractStyleTag(str: string) {
   }
 
   if (regex.test(str)) {
-    console.log('extract script deeper');
     // extract deeper
     str = str.replace(regex, outer => {
       // push outer script
@@ -83,7 +82,6 @@ export function extractScriptTag(str: string) {
   }
 
   if (regex.test(str)) {
-    console.log('extract script deeper');
     // extract deeper
     str = str.replace(regex, outer => {
       // push outer script
