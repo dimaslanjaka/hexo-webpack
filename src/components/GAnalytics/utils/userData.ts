@@ -168,10 +168,7 @@ function processData() {
       TAG_ID,
       gtagBuilder({
         user_id: ip.replace(/\./g, '-'),
-        send_page_view: true,
-        cookie_prefix: 'GA',
-        cookie_domain: location.host,
-        cookie_expires: 28 * 24 * 60 * 60 // 28 days, in seconds
+        send_page_view: true
       })
     );
   }
