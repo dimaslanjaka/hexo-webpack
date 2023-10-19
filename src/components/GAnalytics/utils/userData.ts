@@ -154,10 +154,23 @@ const ipApi = async function () {
   return setDataUser(IP);
 };
 
-const localhost = islocalhost();
+const isLocal = islocalhost();
 export function gtagBuilder(obj: Record<string, any>) {
-  if (localhost) obj.debug_mode = true;
+  if (isLocal) obj.debug_mode = true;
   return obj;
+}
+
+/**
+ * send custom event
+ * @param actionName action name
+ * @param eventCategory event category
+ * @param dimension5 event value
+ */
+export function sendCustomEvent(actionName: string, eventCategory: string, dimension5: string) {
+  gtag('event', actionName, {
+    eventCategory,
+    dimension5
+  });
 }
 
 function processData() {
@@ -172,6 +185,15 @@ function processData() {
       })
     );
   }
+
+  gtag(
+    'event',
+    'screen_view',
+    gtagBuilder({
+      app_name: projectConfig.title,
+      screen_name: document.title
+    })
+  );
 }
 
 /**

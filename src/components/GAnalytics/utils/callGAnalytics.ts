@@ -1,8 +1,7 @@
 /* global gtag */
-import { projectConfig } from '@root/src/project';
 import { insertBefore } from '@root/src/utils';
-import { TAG_ID, fetchIp, gtagBuilder } from './userData';
 import './dummy';
+import { TAG_ID, fetchIp } from './userData';
 
 /**
  * call google analytics script
@@ -30,14 +29,12 @@ function sendInitialData() {
   // window.gtag('config', TAG_ID);
   // send user by ip
   fetchIp().then(() => {
-    // send custom event
-    gtag(
-      'event',
-      'screen_view',
-      gtagBuilder({
-        app_name: projectConfig.title,
-        screen_name: document.title
-      })
-    );
+    // send custom event here
+    // sendCustomEvent('custom_event', 'sample', 'hello world');
+    // gtag('set', 'user_properties', {
+    //   favorite_composer: 'Mahler',
+    //   favorite_instrument: 'double bass',
+    //   season_ticketholder: 'true'
+    // });
   });
 }
