@@ -269,6 +269,7 @@ export async function render(
   }
   // process meta photos
   meta.photos = meta.photos.map(imgProcess);
+  // set permalink
   if (!meta.permalink) {
     let perm = path.toUnix(
       parsePermalink(source, {
@@ -278,9 +279,15 @@ export async function render(
         permalink: _config.permalink
       })
     );
-    perm = perm.replace(path.join(paths.cwd, _config.source_dir, '_posts'), '');
-    perm = perm.replace(path.join(paths.cwd, _config.source_dir), '');
-    // meta.permalink = '/' + meta.id;
+    // fix absolute path in permalink
+    [
+      path.join(paths.cwd, _config.source_dir, '_posts'),
+      path.join(paths.cwd, _config.source_dir),
+      path.join(paths.cwd, 'test/fixtures'),
+      path.join(paths.cwd, _config.post_dir || 'src-posts')
+    ]
+      .filter(p => perm.includes(p))
+      .forEach(p => (perm = perm.replace(p, '')));
     meta.permalink = perm;
     console.error('meta permalink empty', 'settled to', perm);
   }
