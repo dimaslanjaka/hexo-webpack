@@ -269,6 +269,7 @@ if (require.main === module) {
 
     instance.extractStyleTag();
     instance.extractScriptTag();
+    instance.extractTag('ins');
 
     const dump_extract = writefile(
       tmp(path.basename(__filename, path.extname(__filename)), 'after-extract.html'),
@@ -282,10 +283,15 @@ if (require.main === module) {
       'extracted html should not have script tags',
       !/(<script\b[^>]*>)([\s\S]*?)(<\/script\b[^>]*>)/gim.test(instance.getHtml())
     );
+    console.log(
+      'extracted html should not have ins tags',
+      !/(<ins\b[^>]*>)([\s\S]*?)(<\/ins\b[^>]*>)/gim.test(instance.getHtml())
+    );
     console.log('extracted result', dump_extract.file);
 
     instance.restoreStyleTag();
     instance.restoreScriptTag();
+    instance.restoreTag('ins');
 
     const dump_restore = writefile(
       tmp(path.basename(__filename, path.extname(__filename)), 'after-restore.html'),
