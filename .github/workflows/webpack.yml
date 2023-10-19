@@ -88,6 +88,7 @@ jobs:
             ./dist
             ./routes.json
             ./_config.json
+            ./.cache
             ${{ steps.set-env.outputs.CACHE_YARN }}
             ${{ steps.set-env.outputs.CACHE_NPM }}
           key: test-${{ runner.os }}-${{ matrix.node-version }}
