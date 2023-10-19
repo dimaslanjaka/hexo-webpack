@@ -4,3 +4,4 @@ rm -rf tmp
 rm -rf test/tmp
 rm -rf dist
 rm -rf src/posts
+rm -rf src/pages
