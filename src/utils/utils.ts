@@ -212,9 +212,24 @@ export function replaceWith(newElement: InstanceHtml, oldElement: InstanceHtml) 
  * @param newNode
  * @param referenceNode insert after this element
  */
-export function insertAfter(newNode: InstanceHtml, referenceNode: InstanceHtml | undefined) {
+export function insertAfter(newNode: InstanceHtml, referenceNode?: InstanceHtml) {
   if (referenceNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+  } else {
+    throw new Error('insertAfter: referenced node undefined/null');
+  }
+}
+
+/**
+ * insert before other
+ * @param newNode
+ * @param referenceNode insert before this element
+ */
+export function insertBefore(newNode: InstanceHtml, referenceNode?: InstanceHtml) {
+  if (referenceNode) {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode);
+  } else {
+    throw new Error('insertBefore: referenced node undefined/null');
   }
 }
 
