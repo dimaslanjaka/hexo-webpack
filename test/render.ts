@@ -9,7 +9,12 @@ import paths from '../config/paths';
 import fixHtml from './fixHtml';
 import { fixtures, fromRoot, tmp } from './utils';
 import { extractMarkdownCodeblock, restoreMarkdownCodeblock } from './utils/extractMarkdownCodeblock';
-import extractStyleTag, { extractScriptTag, restoreScriptTag, restoreStyleTag } from './utils/extractStyleScriptTag';
+import extractStyleTag, {
+  Extractor,
+  extractScriptTag,
+  restoreScriptTag,
+  restoreStyleTag
+} from './utils/extractStyleScriptTag';
 import { default as htmlImg2base64 } from './utils/img2base64';
 import imgfinder from './utils/imgfinder';
 import safelinkify from 'safelinkify';
@@ -151,6 +156,11 @@ export async function render(
   // extract script and style tag
   body = extractStyleTag(body).html;
   body = extractScriptTag(body).html;
+  // extract <ins/>
+  const extractor = new Extractor(body);
+  extractor.extractTag('ins');
+  // re-assign extracted tags result
+  body = extractor.getHtml();
 
   // dump
   // writefile(__dirname + '/tmp/render/after-extract.html', body);
@@ -292,9 +302,17 @@ export async function render(
     console.error('meta permalink empty', 'settled to', perm);
   }
 
+  // re-assign modified content into extractor
+  extractor.setHtml(content);
+  // restore <ins/>
+  extractor.restoreTag('ins');
+  // re-assign restored tags
+  content = extractor.getHtml();
+
   // restore script and style tag
   content = restoreStyleTag(content);
   content = restoreScriptTag(content);
+
   const contentBeforeRestoreCodeblock = content;
   // restore markdown codeblock
   // keep raw markdown codeblock to be processed at toJsx.ts
