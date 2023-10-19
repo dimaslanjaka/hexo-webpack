@@ -315,10 +315,14 @@ if (require.main === module) {
   (async () => {
     await init();
     const source = fixtures('mixed.md');
+    const start = Date.now();
     const { content, hexo: __, ...meta } = await render(source);
+    const end = Date.now();
+    console.log(`Execution time: ${end - start} ms`);
     const yaml = await import('yaml');
     const metadata = yaml.stringify(meta);
-    writefile(tmp('render/metadata.yml'), metadata);
-    writefile(tmp('render/content.html'), content);
+    const ml = writefile(tmp('render/metadata.yml'), metadata);
+    const cl = writefile(tmp('render/content.html'), content);
+    console.log({ meta: ml.file, content: cl.file });
   })();
 }
