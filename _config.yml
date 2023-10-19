@@ -147,3 +147,14 @@ external_link:
     - webmanajemen.com
     - web-manajemen.blogspot.com
     - dimaslanjaka.github.io
+
+# next project: hexo-analytics
+analytics:
+  # google tag manager
+  tagmanager: GTM-NJNNXSR
+  # google analytics v4
+  GA4: G-BG75CLNJZ1
+  # google analytics v3
+  GA3: UA-106238155-1
+  # cloudflare web statistics
+  cloudflare: 2157c0f3b9e74a92badffe39156166b9

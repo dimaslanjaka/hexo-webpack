@@ -3,6 +3,8 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { initHljs } from './components/Highlight.js/helper';
 import * as project from './project';
 import routeMap from './routeMap';
+import callGAnalytics from './components/GAnalytics/utils/callGAnalytics';
+import { TAG_ID } from './components/GAnalytics/utils/userData';
 
 const postRoute = project.routeConfig.map(routeMap).flat();
 
@@ -55,7 +57,10 @@ class App extends React.Component {
       load.setAdsenseConfig(window.adsense_option);
       load.triggerAdsense({ react: true });
     });
+    // initialize google analytics when property id is settled
+    if (TAG_ID.length > 0) callGAnalytics();
   }
+
   render() {
     return <RouterProvider router={router} fallbackElement={<div>Loading...</div>} />;
   }
