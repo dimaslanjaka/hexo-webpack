@@ -13,8 +13,8 @@ const config = yaml.parse(fs.readFileSync(__dirname + '/_config.yml', 'utf-8'));
 const { modifyConfigJson } = require('./config/utils');
 const { default: genR, noticeWebpack } = require('./gulpfile.genr');
 require('./gulpfile.build');
-// require('./gulpfile.page');
 require('./gulpfile.server');
+// require('./gulpfile.page');
 
 // notice webpack file changes
 // by add space to ./src/index.tsx
@@ -72,10 +72,10 @@ gulp.task('map', function () {
 // just testing
 const modifyCfg = () => {
   // write to ./config.json
-  modifyConfigJson({ mode: 'development' });
+  return Promise.resolve(modifyConfigJson({ mode: 'development' }));
 };
-gulp.task('direct', () => genR(__dirname + '/src-posts', { clean: true }).then(modifyCfg));
-gulp.task('c', () => {
+
+gulp.task('map-direct', () => {
   return gulp
     .src('**/*.md', {
       cwd: __dirname + '/src-posts',
@@ -95,15 +95,20 @@ gulp.task('c', () => {
     .pipe(
       obj((vinyl, _enc, callback) => {
         if (vinyl.isNull() || vinyl.isStream() || vinyl.isDirectory()) return callback(); // skip null and stream object
-        //
-        callback(null, vinyl);
+        // skip writting
+        callback();
       })
     )
     .pipe(gulp.dest(__dirname + '/tmp/fake-c'))
     .on('end', modifyCfg);
 });
+gulp.task(
+  'direct',
+  gulp.series('map-direct', () => genR({ clean: true }), modifyCfg)
+);
+
 gulp.task('rl', () => genR({ clean: true, limit: 4 }).then(modifyCfg));
-gulp.task('rr', () => genR({ clean: true, limit: 4, randomize: true }).then(modifyCfg));
+gulp.task('rr', () => genR({ limit: 4, randomize: true }).then(modifyCfg));
 // test: only specified post
 gulp.task('feature', () =>
   genR({
