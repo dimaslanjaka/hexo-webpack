@@ -14,4 +14,6 @@ function modifyConfigJson(obj) {
   writefile(file, JSON.stringify(Object.assign(json, obj)));
 }
 
-module.exports = { modifyConfigJson };
+const isWin = process.platform === 'win32';
+
+module.exports = { modifyConfigJson, isWin };
