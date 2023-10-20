@@ -75,17 +75,15 @@ export default async function gulpGenRoute(
   posts = posts.filter(file => fs.existsSync(file) && fs.statSync(file).isFile());
   // filter by options
   if (filter.length > 0) {
-    console.log('filtering by keywords', filter);
+    const splitfilter = (filter?.split(',') || []).filter(str => str.length > 0);
+    console.log('filtering by keywords', ...splitfilter);
     posts = posts.filter(file => {
-      const fil = filter
-        ?.split(',')
-        .filter(str => str.length > 0)
-        .some(str => {
-          const regex = new RegExp(str);
-          const test = regex.test(file);
-          // if (test) console.log({ str, regex, test, file });
-          return test;
-        });
+      const fil = splitfilter.some(str => {
+        const regex = new RegExp(str);
+        const test = regex.test(file);
+        // if (test) console.log({ str, regex, test, file });
+        return test;
+      });
       return fil || false;
     });
   }
