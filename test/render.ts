@@ -156,11 +156,15 @@ export async function render(
   content = content.replace(rA, function (outer) {
     const rH = /<a[^>]+href=(?:"|')(.[^">]+?)(?="|')/;
     const m = outer.match(rH);
+    let href = undefined as string | undefined;
     if (m) {
-      const href = m[1];
-      const anonymize = sf.parseUrl(href);
-      if (typeof anonymize === 'string') {
-        return outer.replace(href, anonymize);
+      href = m[1];
+      if (href.startsWith('http') && !href.includes(safelinkConfig.redirect)) {
+        // console.log(href);
+        const anonymize = sf.parseUrl(href);
+        if (typeof anonymize === 'string') {
+          outer = outer.replace(href, anonymize.trim());
+        }
       }
     }
     // return original string
