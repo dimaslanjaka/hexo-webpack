@@ -1,11 +1,10 @@
-import { md5, writefile, fs, path } from 'sbg-utility';
+import { fs, md5, path, writefile } from 'sbg-utility';
 import { default as uuidv4 } from 'sbg-utility/dist/utils/uuid';
+import paths from '../config/paths';
 import { init, render } from './render';
 import { tmp } from './utils';
-import paths from '../config/paths';
-import { restoreMarkdownCodeblockAsHtml } from './utils/extractMarkdownCodeblock';
 import createHtml from './utils/createHtml';
-import prettierFormat from './format';
+import { restoreMarkdownCodeblockAsHtml } from './utils/extractMarkdownCodeblock';
 
 /**
  * generate route object
@@ -165,7 +164,7 @@ async function genRoute(source: string) {
     const postBody = restoreMarkdownCodeblockAsHtml(contentBeforeRestoreCodeblock);
     contentStatic = contentStatic.replace('<div id="root"></div>', '<div id="root">' + postBody + '</div>');
     // format html
-    contentStatic = await prettierFormat(contentStatic, { parser: 'html' });
+    // contentStatic = await prettierFormat(contentStatic, { parser: 'html' });
     writefile(dest, contentStatic);
   }
 

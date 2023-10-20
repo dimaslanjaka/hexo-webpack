@@ -102,20 +102,16 @@ init().then(hexo => {
     })
     .filter(o => 'format' in o)
     .each(async post => {
-      try {
-        const {
-          content: _,
-          scriptContent: __,
-          styleContent: ___,
-          ..._jsx
-        } = await toJsx({
-          body: post.format,
-          dest: paths.src + '/posts/' + post.parsed.attributes.id,
-          source: post.source,
-          id: post.parsed.attributes.id
-        });
-      } catch {
-        console.log('fail convert jsx', post.source);
-      }
+      const {
+        content: _,
+        scriptContent: __,
+        styleContent: ___,
+        ..._jsx
+      } = await toJsx({
+        body: post.format,
+        dest: paths.src + '/posts/' + post.parsed.attributes.id,
+        source: post.source,
+        id: post.parsed.attributes.id
+      });
     });
 });
