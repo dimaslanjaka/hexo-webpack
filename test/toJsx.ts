@@ -302,11 +302,16 @@ export { ${funcName} as Component };
     result = await prettierFormat(result, { parser: 'babel' });
     // writefile(tmp('toJsx/format.jsx'), result);
   } catch (e) {
+    // print first 100 chars of body
+    e.body = body.substring(0, 100);
+    // print output destination
+    e.jsxPath = jsxPath;
+    // print source file
     e.source = source;
     throw e;
+  } finally {
+    writefile(jsxPath, result);
   }
-
-  writefile(jsxPath, result);
 
   return {
     content: result,
