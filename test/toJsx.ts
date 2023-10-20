@@ -303,7 +303,7 @@ export { ${funcName} as Component };
     // writefile(tmp('toJsx/format.jsx'), result);
   } catch (e) {
     e.source = source;
-    console.error(e);
+    throw e;
   }
 
   writefile(jsxPath, result);
