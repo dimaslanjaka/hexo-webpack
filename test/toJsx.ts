@@ -262,13 +262,16 @@ async function toJsx(options: {
   let scriptContent = '';
   let styleContent = '';
   if (_scripts.length > 0) {
-    scriptContent = await prettierFormat(_scripts.join('\n'), { parser: 'typescript' });
+    // scriptContent = await prettierFormat(_scripts.join('\n'), { parser: 'typescript' });
+    scriptContent = _scripts.join('\n');
     writefile(scriptPath, scriptContent);
   }
   if (_styles.length > 0) {
-    styleContent = await prettierFormat(`.${classWrapperName}{\n` + _styles.join('\n') + '\n}', {
-      parser: 'scss'
-    });
+    const css = `.${classWrapperName}{\n` + _styles.join('\n') + '\n}';
+    styleContent = css;
+    // styleContent = await prettierFormat(css, {
+    //   parser: 'scss'
+    // });
     writefile(stylePath, styleContent);
   }
 
