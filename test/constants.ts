@@ -15,8 +15,14 @@ export type CFG = Hexo['config'] & {
     };
     exclude: string[];
   };
+  exclude: string[];
+  skip_render: string[];
 };
+
 const base = path.resolve(__dirname, '..');
-export const _config: CFG = parse(fs.readFileSync(base + '/_config.yml', 'utf8'));
+export const _config: CFG = Object.assign(
+  { skip_render: [], exclude: [] },
+  parse(fs.readFileSync(base + '/_config.yml', 'utf8'))
+);
 // const hexo = new Hexo(base, { ...yaml.parse(fs.readFileSync(base + '/_config.yml', 'utf8')), silent: false });
 // const hexo = new Hexo(__dirname, { ..._config, silent: true });
