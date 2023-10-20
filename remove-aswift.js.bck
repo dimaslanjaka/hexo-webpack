@@ -1,0 +1,42 @@
+const glob = require('glob');
+const { join } = require('path');
+const { writefile } = require('sbg-utility');
+const Bluebird = require('bluebird');
+const { parsePostFM } = require('hexo-post-parser');
+const { JSDOM } = require('jsdom');
+const yaml = require('yaml');
+
+// remove blogger adsense adswift
+
+Bluebird.all(glob.glob('src-posts/**/*.md', { ignore: ['**/node_modules/**'] }))
+  .map(p => join(__dirname, p))
+  .map(file => {
+    const parsed = parsePostFM(file);
+    return { file, parsed };
+  })
+  .filter(({ parsed: post }) => post.body.includes('aswift_'))
+  .each(post => {
+    const { file, parsed } = post;
+    let { body: contents } = parsed;
+    let save = false;
+    if (contents.trim().length > 0) {
+      const dom = new JSDOM(contents);
+      const elements = Array.from(dom.window.document.querySelectorAll('ins[id^="aswift"]'));
+      if (elements.length > 0) {
+        elements.filter(el => typeof el === 'object').forEach(el => el.remove());
+        save = true;
+        contents = dom.window.document.body.innerHTML;
+      }
+      dom.window.close();
+    }
+    if (save) {
+      const build = `
+---
+${yaml.stringify(parsed.attributes)}
+---
+
+${contents}
+      `;
+      writefile(file, build.trim());
+    }
+  });
