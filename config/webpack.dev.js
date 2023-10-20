@@ -4,6 +4,7 @@ const common = require('./webpack.common.js');
 const cli = require('./cli');
 const excludePatterns = require('./webpack.excludes');
 const { modifyConfigJson } = require('./utils');
+const path = require('path');
 
 /**
  * @type {import('webpack').Configuration}
@@ -25,7 +26,13 @@ module.exports = merge(common, {
   mode: 'development',
   devtool: 'inline-source-map',
   devServer: {
-    static: [paths.public, paths.tmp + '/static', paths.cwd + '/source'],
+    devMiddleware: {
+      // output dev server to build folder
+      // https://github.com/webpack/webpack-dev-server/issues/1141#issuecomment-1193153563
+      writeToDisk: true
+    },
+    // bug: webpack static folder must not using unix slash in windows
+    static: [path.resolve(paths.public), path.join(paths.tmp, 'static'), path.join(paths.cwd, 'source')],
     historyApiFallback: true,
     compress: true,
     hot: true,
