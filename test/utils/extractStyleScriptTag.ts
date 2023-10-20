@@ -222,7 +222,14 @@ export class Extractor extends EventEmitter {
     const regex = new RegExp(`<div htmlFor="${tagName}" data-index="(.*)"><\\\/div>`, 'gmi');
 
     str = str.replace(regex, (_, index) => {
-      return this.customTags[tagName].values[index].outer;
+      // validate index exist before taking the outer
+      // otherwise return original string
+      if (this.customTags[tagName]) {
+        if (this.customTags[tagName].values[index]) {
+          return this.customTags[tagName].values[index].outer;
+        }
+      }
+      return _;
     });
 
     // modify local html
