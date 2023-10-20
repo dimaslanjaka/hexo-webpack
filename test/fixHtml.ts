@@ -3,10 +3,10 @@ import prettierFormat from './format';
 
 /**
  * html fixer
- * @param {string} html
- * @returns
+ * @param  html
+ * @returns fail=empty string
  */
-async function fixHtml(html) {
+async function fixHtml(html: string) {
   const dom = new JSDOM(html);
   html = dom.serialize();
 
@@ -15,7 +15,8 @@ async function fixHtml(html) {
   dom.window.close();
   const regex_body_tag = /<body\b[^>]*>([\s\S]*?)<\/body\b[^>]*>/gim;
   const exec = regex_body_tag.exec(html);
-  return await prettierFormat(exec[1], { parser: 'html' });
+  if (exec) return await prettierFormat(exec[1], { parser: 'html' });
+  return '';
 }
 
 export default fixHtml;
