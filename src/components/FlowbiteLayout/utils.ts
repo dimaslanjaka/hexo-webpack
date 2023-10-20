@@ -53,3 +53,11 @@ export function toggleDarkMode() {
     return 'dark';
   }
 }
+
+/**
+ * load flowbite stylesheets
+ */
+export async function FlowbiteCss() {
+  await import(/* webpackChunkName: "flowbite-css" */ './style.scss');
+  await import(/* webpackChunkName: "flowbite-main-css" */ '@assets/css/main.scss');
+}

@@ -7,9 +7,6 @@ import { SidebarProvider } from './context/SidebarContext';
 import Header from './header';
 import Sidebar from './sidebar';
 
-import(/* webpackChunkName: "flowbite-css" */ './style.scss');
-import(/* webpackChunkName: "flowbite-main-css" */ '@assets/css/main.scss');
-
 function FlowbiteLayout(props?: { children: JSX.Element | React.ReactNode }) {
   // React.useEffect(() => {
   //   darkModeAuto();

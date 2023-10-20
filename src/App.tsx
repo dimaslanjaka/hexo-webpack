@@ -5,6 +5,7 @@ import * as project from './project';
 import routeMap from './routeMap';
 import callGAnalytics from './components/GAnalytics/utils/callGAnalytics';
 import { TAG_ID } from './components/GAnalytics/utils/userData';
+import { FlowbiteCss } from './components/FlowbiteLayout/utils';
 
 const postRoute = project.routeConfig.map(routeMap).flat();
 
@@ -20,14 +21,14 @@ const router = createBrowserRouter([
       {
         index: true,
         async lazy() {
-          const { default: Component } = await import('./layout/Home/index');
+          const { default: Component } = await import(/* webpackChunkName: "homepage-layout" */ './layout/Home/index');
           return { Component };
         }
       },
       {
         path: '*',
         async lazy() {
-          const { default: Component } = await import('./components/NoMatch');
+          const { default: Component } = await import(/* webpackChunkName: "404-layout" */ './components/NoMatch');
           return { Component };
         }
       }
@@ -52,7 +53,11 @@ window.adsense_option = Object.assign(window.adsense_option || {}, {
 
 class App extends React.Component {
   componentDidMount(): void {
+    // load theme stylesheet
+    FlowbiteCss();
+    // initialize highlight.js
     initHljs();
+    // initialize adsense
     import('@components/Adsense/utils/exports').then(load => {
       load.setAdsenseConfig(window.adsense_option);
       load.triggerAdsense({ react: true });
