@@ -290,7 +290,7 @@ React.useEffect(() => {
 `
     : ''
 }
-  return (<div className="${classWrapperName}">${newHtml}</div>)
+  return (<React.Fragment><div className="${classWrapperName}">${newHtml}</div></React.Fragment>)
 }
 
 export default ${funcName};
