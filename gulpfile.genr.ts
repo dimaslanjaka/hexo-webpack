@@ -49,7 +49,7 @@ export default async function gulpGenRoute(
   // force limit from cli
   if (args.limit) limit = parseInt(args.limit);
   // force filter from cli
-  if (args.filter) filter = filter?.split(',').concat(args.filter.split(',')).join(',');
+  if (args.filter) filter = (filter?.split(',') || []).concat(String(args.filter).split(',')).join(',');
   // force sort from cli
   if (args.sort) sort = args.sort === 'false' ? false : true;
 
@@ -75,7 +75,7 @@ export default async function gulpGenRoute(
   posts = posts.filter(file => fs.existsSync(file) && fs.statSync(file).isFile());
   // filter by options
   if (filter.length > 0) {
-    console.log('filtering by keywords...');
+    console.log('filtering by keywords', filter);
     posts = posts.filter(file => {
       const fil = filter
         ?.split(',')
