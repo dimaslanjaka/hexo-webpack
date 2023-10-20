@@ -73,7 +73,7 @@
     "gulp": "^4.0.2",
     "hexo": "^7.0.0-rc2",
     "hexo-asset-link": "^2.2.2",
-    "hexo-post-parser": "workspace:^",
+    "hexo-post-parser": "^1.2.12",
     "hexo-renderers": "^2.0.2",
     "hexo-shortcodes": "^1.2.3",
     "html-webpack-plugin": "^5.5.0",
