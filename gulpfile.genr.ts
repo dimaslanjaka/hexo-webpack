@@ -79,7 +79,7 @@ export default async function gulpGenRoute(
     console.log('filtering by keywords', ...splitfilter);
     posts = posts.filter(file => {
       const fil = splitfilter.some(str => {
-        const regex = new RegExp(str);
+        const regex = new RegExp(str, 'i');
         const test = regex.test(file);
         // if (test) console.log({ str, regex, test, file });
         return test;
