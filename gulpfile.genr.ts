@@ -128,6 +128,7 @@ export default async function gulpGenRoute(
       return { route, jsx, value };
     } catch (e) {
       console.error('jsx cannot parse', route.source);
+      if (e.codeFrame) delete e.codeFrame;
       console.error(e);
     }
   };
