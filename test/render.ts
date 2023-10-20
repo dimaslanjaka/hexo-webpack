@@ -5,8 +5,8 @@ import { githubEmbedTagRegister } from 'hexo-shortcodes/dist/github';
 import { shortcodeParser, shortcodeParserResultToArrayAttrParam } from 'hexo-shortcodes/dist/utils';
 import safelinkify from 'safelinkify';
 import { fs, md5, path, writefile } from 'sbg-utility';
-import { parse } from 'yaml';
 import paths from '../config/paths';
+import { _config } from './constants';
 import fixHtml from './fixHtml';
 import { fixtures, fromRoot, tmp } from './utils';
 import { extractMarkdownCodeblock, restoreMarkdownCodeblock } from './utils/extractMarkdownCodeblock';
@@ -17,26 +17,7 @@ import imgfinder from './utils/imgfinder';
 // test render single post
 // need `sbg post copy`
 
-// CONFIGURATION
-
-type CFG = Hexo['config'] & {
-  external_link: {
-    enable: boolean;
-    field: string;
-    safelink: {
-      enable: boolean;
-      exclude: string[];
-      redirect: string;
-      type: string;
-      password: string;
-    };
-    exclude: string[];
-  };
-};
-
 const base = path.resolve(__dirname, '..');
-const _config: CFG = parse(fs.readFileSync(base + '/_config.yml', 'utf8'));
-// const hexo = new Hexo(base, { ...yaml.parse(fs.readFileSync(base + '/_config.yml', 'utf8')), silent: false });
 const hexo = new Hexo(__dirname, { ..._config, silent: true });
 
 // initializer external anchor/hyperlink anonymizer
