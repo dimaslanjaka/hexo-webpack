@@ -18,16 +18,16 @@ const config = {
   output: {
     path: paths.build,
     filename: '[name].bundle.js',
-    chunkFilename: `runtime/chunk/[name].[chunkhash].js`,
+    chunkFilename: 'runtime/chunk/[name].[chunkhash].js',
     assetModuleFilename: 'runtime/media/[name][hash][ext][query]',
-    publicPath: '/'
+    publicPath: paths.base
   },
   module: {
     rules: [
-      // {
-      //   test: /\.(txt|md)$/i,
-      //   use: ['raw-loader', 'front-matter-loader']
-      // },
+      {
+        test: /\.md$/,
+        use: 'raw-loader'
+      },
       { test: /\.bck$/, loader: 'ignore-loader' },
       {
         test: /\.(woff(2)?|eot|ttf|otf|svg|)$/,

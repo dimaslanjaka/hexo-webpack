@@ -10,8 +10,8 @@ const { obj } = require('through2');
 const { fs, writefile } = require('sbg-utility');
 /** @type {typeof import('./_config.json')} */
 const config = yaml.parse(fs.readFileSync(__dirname + '/_config.yml', 'utf-8'));
-const { modifyConfigJson } = require('./config/utils');
 const { default: genR, noticeWebpack } = require('./gulpfile.genr');
+const { modifyCfg } = require('./gulpfile.config');
 require('./gulpfile.build');
 require('./gulpfile.server');
 // require('./gulpfile.page');
@@ -68,12 +68,6 @@ gulp.task('map', function () {
       console.log('map stream ends', w.file);
     });
 });
-
-// just testing
-const modifyCfg = () => {
-  // write to ./config.json
-  return Promise.resolve(modifyConfigJson({ mode: 'development' }));
-};
 
 gulp.task('map-direct', () => {
   return gulp
