@@ -38,7 +38,7 @@ generate static site jekyll/hexo/huge markdown posts using webpack
 ```bash
 yarn install
 echo {} > _config.json
-echo [] > route.json
+echo [] > routes.json
 mkdir -p tmp
 mkdir -p tmp/meta
 mkdir -p tmp/static
