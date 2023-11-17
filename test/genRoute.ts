@@ -59,7 +59,7 @@ async function genRoute(source: string) {
   // const jsxPath = path.join(__dirname, '/../src/posts/', id + '.jsx');
   // content = await toJsx({ source, body: content, dest: jsxPath });
 
-  if (!result.meta)
+  if (!result.meta) {
     result.meta = {
       canonical: {
         rel: 'canonical',
@@ -90,6 +90,7 @@ async function genRoute(source: string) {
         content: String(thumbnail)
       }
     };
+  }
 
   if (date) {
     result.meta.date = {
@@ -150,6 +151,7 @@ async function genRoute(source: string) {
     if (!perm.endsWith('.html')) perm += '.html';
     // write to temp static path
     const dest = path.join(paths.tmp, 'static', perm);
+    // console.log('tmp static dest', dest);
     let contentStatic = template;
     // build html metadata
     const headChilds = [] as string[];

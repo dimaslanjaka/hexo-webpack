@@ -94,7 +94,7 @@ async function toJsx(options: {
 }) {
   const _scripts: string[] = [];
   const _styles: string[] = [];
-  const { source, id: _id } = options;
+  const { source, id } = options;
   let { body } = options;
   if (!body) {
     body = fs.readFileSync(source, 'utf-8');
@@ -203,6 +203,10 @@ async function toJsx(options: {
 
   // re-assign html with JSDOM inner body
   newHtml = dom.window.document.body.innerHTML;
+
+  // dump
+  // writefile(path.join(tmp('toJsx/dump'), id + '.html'), await prettierFormat(newHtml, { parser: 'html' }));
+
   // update extractor html
   extractor.setHtml(newHtml);
 
@@ -220,6 +224,9 @@ async function toJsx(options: {
 
   // re-assign restored elements
   newHtml = extractor.getHtml();
+
+  // dump
+  // writefile(path.join(tmp('toJsx/dump'), id + '.html'), await prettierFormat(newHtml, { parser: 'html' }));
 
   // fix unclosed tags
   UNCLOSED_TAGS.forEach(tag => {
@@ -241,6 +248,9 @@ async function toJsx(options: {
   newHtml = newHtml.replace(/<!--[\s\S]*?(?:-->)/gm, function (_) {
     return `{/*${_}*/}`;
   });
+
+  // dump
+  writefile(path.join(tmp('toJsx/dump'), id + '.html'), await prettierFormat(newHtml, { parser: 'html' }));
 
   // fix lowercased attributes
   // const regexAttr = /(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|\s*\/?[>"']))+.)["']?/gmi
