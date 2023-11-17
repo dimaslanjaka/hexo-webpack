@@ -17,6 +17,7 @@ export type CFG = Hexo['config'] & {
   };
   exclude: string[];
   skip_render: string[];
+  post_dir: string;
 };
 
 const base = path.resolve(__dirname, '..');
