@@ -1,7 +1,9 @@
 import hpp from 'hexo-post-parser';
+import path from 'path';
 import TurndownService from 'turndown';
 
-const file = 'src-posts/2019/12/related-post-blogger-support-webp.md';
+const file = path.join(process.cwd(), 'src-posts/2019/12/related-post-blogger-support-webp.md');
+
 hpp
   .parsePost(file, {
     sourceFile: file
