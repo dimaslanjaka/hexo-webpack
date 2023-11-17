@@ -13,6 +13,7 @@ import { extractMarkdownCodeblock, restoreMarkdownCodeblock } from './utils/extr
 import { Extractor } from './utils/extractStyleScriptTag';
 import { default as htmlImg2base64 } from './utils/img2base64';
 import imgfinder from './utils/imgfinder';
+import ansiColor from 'ansi-colors';
 
 // test render single post
 // need `sbg post copy`
@@ -262,25 +263,32 @@ export async function render(
   meta.photos = meta.photos.map(imgProcess);
   // set permalink
   if (!meta.permalink) {
+    const lowercaseDriveLetter = (thePath: string) => {
+      const regex = /^([a-zA-Z]):/;
+      return thePath.replace(regex, _ => {
+        // console.log({ letter, _ });
+        return _.toLowerCase();
+      });
+    };
     let perm = path.toUnix(
-      parsePermalink(source, {
+      parsePermalink(lowercaseDriveLetter(source), {
         url: _config.url,
         title: _config.title,
         date: String(meta.date || new Date()),
         permalink: _config.permalink
       })
     );
-    // fix absolute path in permalink
-    [
+    const todel = [
+      // fix absolute path in permalink
       path.join(paths.cwd, _config.source_dir, '_posts'),
       path.join(paths.cwd, _config.source_dir),
       path.join(paths.cwd, 'test/fixtures'),
       path.join(paths.cwd, _config.post_dir || 'src-posts')
-    ]
-      .filter(p => perm.includes(p))
-      .forEach(p => (perm = perm.replace(p, '')));
+    ];
+    // console.log(todel, perm);
+    todel.filter(p => perm.includes(p)).forEach(p => (perm = perm.replace(p, '')));
     meta.permalink = perm;
-    console.error('meta permalink empty', 'settled to', perm);
+    console.error(ansiColor.red('meta permalink empty'), 'settled to', perm);
   }
 
   // re-assign modified content into extractor
